@@ -1,0 +1,40 @@
+[gd_scene format=3 uid="uid://byyxjpkgbecw2"]
+
+[node name="MainInterface_UI" type="CanvasLayer"]
+follow_viewport_enabled = true
+
+[node name="Control" type="Control" parent="."]
+custom_minimum_size = Vector2(100, 360)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 200.0
+offset_bottom = 360.0
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+custom_minimum_size = Vector2(100, 360)
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 360.0
+color = Color(0.3854925, 0.38549247, 0.38549247, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect"]
+layout_mode = 0
+offset_right = 200.0
+offset_bottom = 360.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/ColorRect/MarginContainer"]
+layout_mode = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/ColorRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(100, 50)
+layout_mode = 2
+text = "Main Interface"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button" type="Button" parent="Control/ColorRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 50)
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "Create note"
+text = "Create Note"

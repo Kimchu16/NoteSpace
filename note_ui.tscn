@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://c1onusjh3iu6f"]
+
+[node name="Note_UI" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+color = Color(1, 1, 0.5019608, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect"]
+custom_minimum_size = Vector2(500, 500)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Control/ColorRect/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=black]New Note"

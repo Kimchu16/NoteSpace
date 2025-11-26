@@ -1,0 +1,19 @@
+[gd_scene load_steps=5 format=3 uid="uid://ddw8o4h4wa7h8"]
+
+[ext_resource type="PackedScene" uid="uid://c8afp62753414" path="res://note3D.tscn" id="1_gvid0"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_lym6o"]
+resource_local_to_scene = true
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_363ou"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_iyrsh"]
+resource_local_to_scene = true
+albedo_texture = SubResource("ViewportTexture_363ou")
+
+[node name="PickableObject" instance=ExtResource("1_gvid0")]
+
+[node name="MeshInstance3D" parent="." index="0"]
+mesh = SubResource("QuadMesh_lym6o")
+surface_material_override/0 = SubResource("StandardMaterial3D_iyrsh")
