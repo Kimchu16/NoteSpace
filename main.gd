@@ -4,8 +4,8 @@ var xr_interface: XRInterface
 
 @onready var right_ray: RayCast3D = $XROrigin3D/RightController/RayCast3D
 
-@onready var ui := $SubViewport/MainInterface_UI
-@onready var create_button := $SubViewport/MainInterface_UI/Control/ColorRect/MarginContainer/VBoxContainer/Button
+@onready var ui := $MainInterface/SubViewport/MainInterface_UI
+@onready var create_button := $MainInterface/SubViewport/MainInterface_UI/Control/ColorRect/MarginContainer/VBoxContainer/Button
 @export var xr_origin: Node3D
 
 func _ready():

@@ -1,8 +1,9 @@
-[gd_scene load_steps=12 format=3 uid="uid://s0tsdods7k8r"]
+[gd_scene load_steps=9 format=3 uid="uid://s0tsdods7k8r"]
 
 [ext_resource type="Script" uid="uid://d22p2hrwfk61h" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://byyxjpkgbecw2" path="res://main_interface_ui.tscn" id="2_0xm2m"]
-[ext_resource type="Script" uid="uid://bmpya5512hyh1" path="res://ui_main_pointer.gd" id="4_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="2_lquwl"]
+[ext_resource type="Script" uid="uid://bfexqup2rhlxp" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.gd" id="4_7mycd"]
 [ext_resource type="PackedScene" uid="uid://b4ysuy43poobf" path="res://addons/godot-xr-tools/functions/function_pickup.tscn" id="4_lquwl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
@@ -17,42 +18,6 @@ background_mode = 2
 sky = SubResource("Sky_h2yge")
 tonemap_mode = 2
 
-[sub_resource type="SphereMesh" id="SphereMesh_h2yge"]
-radius = 0.05
-height = 0.1
-
-[sub_resource type="GDScript" id="GDScript_h2yge"]
-script/source = "extends RayCast3D
-
-@onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
-
-var is_active: bool = false
-
-
-func _process(delta: float) -> void:
-	var mat = mesh_instance_3d.get_surface_override_material(0)
-
-	if is_active:
-		mat.albedo_color = Color.YELLOW
-		return
-
-	if not is_colliding():
-		mesh_instance_3d.mesh.height = 10
-		mesh_instance_3d.position.z = -5
-		mat.albedo_color = Color.RED
-	else:
-		var height = (get_collision_point() - global_position).length()
-		mesh_instance_3d.mesh.height = height
-		mesh_instance_3d.position.z = -(height / 2)
-		mat.albedo_color = Color.GREEN
-"
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_1bvp3"]
-top_radius = 0.005
-bottom_radius = 0.005
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lquwl"]
-
 [node name="Main" type="Node3D" node_paths=PackedStringArray("xr_origin")]
 script = ExtResource("1_h2yge")
 xr_origin = NodePath("XROrigin3D")
@@ -62,12 +27,6 @@ environment = SubResource("Environment_1bvp3")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(-0.8660254, -0.43301278, 0.25000003, 0.4872028, -0.6184051, 0.6166106, -0.11239898, 0.6558011, 0.7465195, 0, 1.7532778, 0)
-
-[node name="SubViewport" type="SubViewport" parent="."]
-transparent_bg = true
-render_target_update_mode = 4
-
-[node name="MainInterface_UI" parent="SubViewport" instance=ExtResource("2_0xm2m")]
 
 [node name="XROrigin3D" type="XROrigin3D" parent="."]
 
@@ -117,36 +76,37 @@ bones/25/name = "RightLittleTip"
 [node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightHand/OpenXRFbHandTrackingMesh"]
 hand_tracker = &"/user/hand_tracker/right"
 
-[node name="UI_main" type="OpenXRCompositionLayerQuad" parent="XROrigin3D" node_paths=PackedStringArray("layer_viewport", "controller")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -1)
-layer_viewport = NodePath("../../SubViewport")
-sort_order = -1
-alpha_blend = true
-enable_hole_punch = true
-script = ExtResource("4_1bvp3")
-controller = NodePath("../RightController")
-
-[node name="Pointer" type="MeshInstance3D" parent="XROrigin3D/UI_main"]
-transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
-mesh = SubResource("SphereMesh_h2yge")
-
 [node name="LeftController" type="XRController3D" parent="XROrigin3D"]
 tracker = &"/user/fbhandaim/left"
 
 [node name="RightController" type="XRController3D" parent="XROrigin3D"]
 tracker = &"/user/fbhandaim/right"
 
-[node name="RayCast3D" type="RayCast3D" parent="XROrigin3D/RightController"]
-target_position = Vector3(0, -1, -10)
-script = SubResource("GDScript_h2yge")
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="XROrigin3D/RightController/RayCast3D"]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, 0)
-mesh = SubResource("CylinderMesh_1bvp3")
-skeleton = NodePath("")
-surface_material_override/0 = SubResource("StandardMaterial3D_lquwl")
+[node name="FunctionPointer" parent="XROrigin3D/RightController" instance=ExtResource("2_lquwl")]
+active_button_action = "\"index_pinch\""
+laser_length = 1
+collide_with_areas = true
 
 [node name="FunctionPickup" parent="XROrigin3D/RightController" instance=ExtResource("4_lquwl")]
+
+[node name="MainInterface" type="Node3D" parent="."]
+script = ExtResource("4_7mycd")
+screen_size = Vector2(0.6, 0.4)
+scene = ExtResource("2_0xm2m")
+viewport_size = Vector2(1024, 768)
+alpha_scissor_threshold = 0.25
+unshaded = true
+filter = true
+scene_properties_keys = PackedStringArray()
+metadata/_custom_type_script = "uid://bfexqup2rhlxp"
+
+[node name="SubViewport" type="SubViewport" parent="MainInterface"]
+transparent_bg = true
+render_target_update_mode = 4
+
+[node name="MainInterface_UI" parent="MainInterface/SubViewport" instance=ExtResource("2_0xm2m")]
+
+[node name="NotesContainer" type="Node3D" parent="."]
 
 [connection signal="button_pressed" from="XROrigin3D/LeftController" to="." method="_on_left_controller_button_pressed"]
 [connection signal="button_released" from="XROrigin3D/LeftController" to="." method="_on_left_controller_button_released"]
