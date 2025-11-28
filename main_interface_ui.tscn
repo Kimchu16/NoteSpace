@@ -38,7 +38,8 @@ layout_mode = 2
 [node name="RichTextLabel" type="RichTextLabel" parent="Control/ColorRect/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(100, 50)
 layout_mode = 2
-text = "Main Interface"
+bbcode_enabled = true
+text = "[font_size=40]Main Interface[/font_size]"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -47,6 +48,7 @@ custom_minimum_size = Vector2(600, 300)
 layout_mode = 2
 size_flags_horizontal = 4
 tooltip_text = "Create note"
+theme_override_font_sizes/font_size = 50
 text = "Create Note"
 
 [connection signal="pressed" from="Control/ColorRect/MarginContainer/VBoxContainer/Button" to="." method="_on_create_button_pressed"]
