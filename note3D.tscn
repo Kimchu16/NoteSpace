@@ -1,7 +1,9 @@
-[gd_scene load_steps=7 format=3 uid="uid://c8afp62753414"]
+[gd_scene load_steps=9 format=3 uid="uid://c8afp62753414"]
 
 [ext_resource type="Script" uid="uid://dvttbistqecef" path="res://note_3d.gd" id="2_o2bde"]
 [ext_resource type="PackedScene" uid="uid://c1onusjh3iu6f" path="res://note_ui.tscn" id="2_psaa7"]
+[ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="3_o2bde"]
+[ext_resource type="PackedScene" uid="uid://bhf7bu488y3xk" path="res://toolbar_ui.tscn" id="4_ymklu"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_e1omw"]
 resource_local_to_scene = true
@@ -33,3 +35,10 @@ shape = SubResource("BoxShape3D_ygjor")
 [node name="SubViewport" type="SubViewport" parent="."]
 
 [node name="Note_UI" parent="SubViewport" instance=ExtResource("2_psaa7")]
+
+[node name="Toolbar" parent="." instance=ExtResource("3_o2bde")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
+screen_size = Vector2(0.2, 0.05)
+collision_layer = 24
+scene = ExtResource("4_ymklu")
+viewport_size = Vector2(800, 200)
