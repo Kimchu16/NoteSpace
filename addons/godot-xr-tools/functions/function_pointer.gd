@@ -143,18 +143,15 @@ func _ready():
 	if _controller:
 		# Set as active on the parent controller
 		_active_controller = _controller
-		print("active controller", _active_controller)
+		#print("active controller", _active_controller)
 
 		# Get button press feedback from our parent controller
 		_controller.button_pressed.connect(_on_button_pressed.bind(_controller))
-		print("connected buttons")
 		_controller.button_released.connect(_on_button_released.bind(_controller))
 	else:
 		# Get the left and right controllers
 		_controller_left_node = XRHelpers.get_left_controller(self)
 		_controller_right_node = XRHelpers.get_right_controller(self)
-		print("controller left node", _controller_left_node)
-		print("controller right node", _controller_right_node)
 
 		# Start out right hand controller
 		_active_controller = _controller_right_node
@@ -422,7 +419,7 @@ func _update_pointer() -> void:
 func _button_pressed() -> void:
 	if $RayCast.is_colliding():
 		# Report pressed
-		print("pointer-activation button pressed handler")
+		#print("pointer-activation button pressed handler")
 		target = $RayCast.get_collider()
 		last_collided_at = $RayCast.get_collision_point()
 		XRToolsPointerEvent.pressed(self, target, last_collided_at)
@@ -439,7 +436,7 @@ func _button_released() -> void:
 # Button pressed handler
 func _on_button_pressed(p_button : String, controller : XRController3D) -> void:
 	if p_button == active_button_action and enabled:
-		print("button pressed")
+		#print("button pressed")
 		if controller == _active_controller:
 			_button_pressed()
 		else:

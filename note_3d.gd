@@ -14,19 +14,21 @@ func _on_pointer_event(event: XRToolsPointerEvent) -> void:
 
 	match type:
 		XRToolsPointerEvent.Type.ENTERED:
-			print("Pointer hovering Note")
+			#print("Pointer hovering Note")
+			pass
 
 		XRToolsPointerEvent.Type.EXITED:
-			print("Pointer left Note")
+			#print("Pointer left Note")
+			pass
 
 		XRToolsPointerEvent.Type.PRESSED:
-			print("Pointer pressed Note")
+			#print("Pointer pressed Note")
 			is_dragged = true
 			dragging_pointer = pointer
 			drag_offset = global_transform.origin - at # How far the note is from the hit point
 
 		XRToolsPointerEvent.Type.RELEASED:
-			print("Pointer released Note")
+			#print("Pointer released Note")
 			is_dragged = false
 			dragging_pointer = null
 
