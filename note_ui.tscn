@@ -24,5 +24,11 @@ offset_bottom = 40.0
 
 [node name="RichTextLabel" type="RichTextLabel" parent="Control/ColorRect/MarginContainer"]
 layout_mode = 2
+theme_override_font_sizes/normal_font_size = 30
 bbcode_enabled = true
-text = "[color=black]New Note"
+text = "[color=black]New Note. This is a test.
+
+- Point 1
+- Point 2
+
+This is supposed to be a very long paragraph in order to test what a long paragraph looks like in this note. I need more text for this paragraph but I am running out on what to say."
