@@ -1,26 +1,36 @@
-[gd_scene format=3 uid="uid://byyxjpkgbecw2"]
+[gd_scene load_steps=2 format=3 uid="uid://byyxjpkgbecw2"]
+
+[ext_resource type="Script" uid="uid://c0d7n4dv0mg0e" path="res://main_interface_ui.gd" id="1_4i5p1"]
 
 [node name="MainInterface_UI" type="CanvasLayer"]
 follow_viewport_enabled = true
+script = ExtResource("1_4i5p1")
 
 [node name="Control" type="Control" parent="."]
 custom_minimum_size = Vector2(100, 360)
 layout_mode = 3
-anchors_preset = 0
-offset_right = 200.0
-offset_bottom = 360.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ColorRect" type="ColorRect" parent="Control"]
-custom_minimum_size = Vector2(100, 360)
-layout_mode = 0
-offset_right = 200.0
-offset_bottom = 360.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 color = Color(0.3854925, 0.38549247, 0.38549247, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect"]
-layout_mode = 0
-offset_right = 200.0
-offset_bottom = 360.0
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/ColorRect/MarginContainer"]
 layout_mode = 2
@@ -33,8 +43,10 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Button" type="Button" parent="Control/ColorRect/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 50)
+custom_minimum_size = Vector2(600, 300)
 layout_mode = 2
 size_flags_horizontal = 4
 tooltip_text = "Create note"
 text = "Create Note"
+
+[connection signal="pressed" from="Control/ColorRect/MarginContainer/VBoxContainer/Button" to="." method="_on_create_button_pressed"]
