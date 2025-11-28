@@ -76,7 +76,7 @@ bones/25/name = "RightLittleTip"
 [node name="XRHandModifier3D" type="XRHandModifier3D" parent="XROrigin3D/RightHand/OpenXRFbHandTrackingMesh"]
 hand_tracker = &"/user/hand_tracker/right"
 
-[node name="LeftController" type="XRController3D" parent="XROrigin3D"]
+[node name="LeftController" type="XRController3D" parent="XROrigin3D" groups=["LeftController"]]
 tracker = &"/user/fbhandaim/left"
 
 [node name="RightController" type="XRController3D" parent="XROrigin3D"]
@@ -102,7 +102,6 @@ scene = ExtResource("2_0xm2m")
 viewport_size = Vector2(720, 1080)
 scene_properties_keys = PackedStringArray("main_interface_ui.gd", "notes_root")
 
-[node name="MainInterface_UI" parent="MainInterface" node_paths=PackedStringArray("notes_root") instance=ExtResource("2_0xm2m")]
-notes_root = NodePath("../../NotesContainer")
+[node name="MainInterface_UI" parent="MainInterface" instance=ExtResource("2_0xm2m")]
 
 [node name="NotesContainer" type="Node3D" parent="." groups=["Notes"]]
