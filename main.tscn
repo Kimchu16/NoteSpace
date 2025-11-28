@@ -1,10 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://s0tsdods7k8r"]
+[gd_scene load_steps=8 format=3 uid="uid://s0tsdods7k8r"]
 
 [ext_resource type="Script" uid="uid://d22p2hrwfk61h" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://byyxjpkgbecw2" path="res://main_interface_ui.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="2_lquwl"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="4_7mycd"]
-[ext_resource type="PackedScene" uid="uid://b4ysuy43poobf" path="res://addons/godot-xr-tools/functions/function_pickup.tscn" id="4_lquwl"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -83,7 +82,7 @@ tracker = &"/user/fbhandaim/left"
 [node name="RightController" type="XRController3D" parent="XROrigin3D"]
 tracker = &"/user/fbhandaim/right"
 
-[node name="FunctionPointer" parent="XROrigin3D/RightController" instance=ExtResource("2_lquwl")]
+[node name="FunctionPointer" parent="XROrigin3D/RightController" groups=["Pointer"] instance=ExtResource("2_lquwl")]
 show_laser = 2
 laser_length = 1
 show_target = true
@@ -91,7 +90,7 @@ target_radius = 0.01
 collision_mask = 12
 collide_with_areas = true
 
-[node name="FunctionPickup" parent="XROrigin3D/RightController" instance=ExtResource("4_lquwl")]
+[node name="Managers" type="Node" parent="."]
 
 [node name="MainInterface" type="Node3D" parent="."]
 

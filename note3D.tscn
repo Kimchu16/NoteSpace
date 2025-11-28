@@ -1,6 +1,5 @@
-[gd_scene load_steps=8 format=3 uid="uid://c8afp62753414"]
+[gd_scene load_steps=7 format=3 uid="uid://c8afp62753414"]
 
-[ext_resource type="PackedScene" uid="uid://c8l60rnugru40" path="res://addons/godot-xr-tools/objects/pickable.tscn" id="1_6eehl"]
 [ext_resource type="Script" uid="uid://dvttbistqecef" path="res://note_3d.gd" id="2_o2bde"]
 [ext_resource type="PackedScene" uid="uid://c1onusjh3iu6f" path="res://note_ui.tscn" id="2_psaa7"]
 
@@ -8,28 +7,29 @@
 resource_local_to_scene = true
 size = Vector2(0.2, 0.2)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_6eehl"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_b26f6"]
 viewport_path = NodePath("SubViewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_x07fe"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b26f6"]
 resource_local_to_scene = true
-albedo_texture = SubResource("ViewportTexture_6eehl")
+albedo_texture = SubResource("ViewportTexture_b26f6")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ygjor"]
 size = Vector3(0.2, 0.2, 0.01)
 
-[node name="PickableObject" instance=ExtResource("1_6eehl")]
-collision_mask = 24
-gravity_scale = 0.0
+[node name="XRToolsInteractableArea" type="Area3D"]
+collision_layer = 1048580
 script = ExtResource("2_o2bde")
+metadata/_custom_type_script = "uid://bgnwmkn54ch4j"
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." index="0"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("QuadMesh_e1omw")
-surface_material_override/0 = SubResource("StandardMaterial3D_x07fe")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_b26f6")
 
-[node name="CollisionShape3D" parent="." index="1"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_ygjor")
 
-[node name="SubViewport" type="SubViewport" parent="." index="2"]
+[node name="SubViewport" type="SubViewport" parent="."]
 
-[node name="Note_UI" parent="SubViewport" index="0" instance=ExtResource("2_psaa7")]
+[node name="Note_UI" parent="SubViewport" instance=ExtResource("2_psaa7")]
