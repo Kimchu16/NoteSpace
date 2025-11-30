@@ -1,6 +1,9 @@
-[gd_scene format=3 uid="uid://c1onusjh3iu6f"]
+[gd_scene load_steps=2 format=3 uid="uid://c1onusjh3iu6f"]
+
+[ext_resource type="Script" uid="uid://d3gp1nftxwr5m" path="res://note_ui.gd" id="1_dm76p"]
 
 [node name="Note_UI" type="CanvasLayer"]
+script = ExtResource("1_dm76p")
 
 [node name="Control" type="Control" parent="."]
 custom_minimum_size = Vector2(500, 500)
@@ -21,13 +24,7 @@ layout_mode = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Control/ColorRect/MarginContainer"]
+[node name="TextEdit" type="TextEdit" parent="Control/ColorRect/MarginContainer"]
 layout_mode = 2
-theme_override_font_sizes/normal_font_size = 30
-bbcode_enabled = true
-text = "[color=black]New Note. This is a test.
-
-- Point 1
-- Point 2
-
-This is supposed to be a very long paragraph in order to test what a long paragraph looks like in this note. I need more text for this paragraph but I am running out on what to say."
+theme_override_colors/font_outline_color = Color(0.45840502, 0.45840508, 0.45840502, 1)
+placeholder_text = "New Note."
