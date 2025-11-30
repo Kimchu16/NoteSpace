@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bhf7bu488y3xk"]
 
-[ext_resource type="Script" uid="uid://6px5kuty3uus" path="res://toolbar_ui.gd" id="1_kfg2y"]
+[ext_resource type="Script" uid="uid://dxtogk4mssxrr" path="res://scripts/ui/toolbar_ui.gd" id="1_kfg2y"]
 
 [node name="Toolbar_UI" type="CanvasLayer"]
 follow_viewport_enabled = true
