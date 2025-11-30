@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://byyxjpkgbecw2"]
 
-[ext_resource type="Script" uid="uid://c0d7n4dv0mg0e" path="res://main_interface_ui.gd" id="1_4i5p1"]
+[ext_resource type="Script" uid="uid://c0d7n4dv0mg0e" path="res://Scripts/UI/main_interface_ui.gd" id="1_4i5p1"]
 
 [node name="MainInterface_UI" type="CanvasLayer"]
 follow_viewport_enabled = true

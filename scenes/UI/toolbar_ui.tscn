@@ -1,0 +1,38 @@
+[gd_scene load_steps=2 format=3 uid="uid://bhf7bu488y3xk"]
+
+[ext_resource type="Script" uid="uid://6px5kuty3uus" path="res://Scripts/UI/toolbar_ui.gd" id="1_kfg2y"]
+
+[node name="Toolbar_UI" type="CanvasLayer"]
+follow_viewport_enabled = true
+script = ExtResource("1_kfg2y")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_right = 800.0
+offset_bottom = 200.0
+color = Color(0.38431373, 0.38431373, 0.38431373, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/ColorRect/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+alignment = 1
+
+[node name="Button" type="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "Edit Note"
+
+[connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button" to="." method="_on_edit_button_pressed"]

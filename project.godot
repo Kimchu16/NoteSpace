@@ -93,6 +93,7 @@ META_ENVIRONMENT_DEPTH_TO_CAMERA_PROJECTION_RIGHT={
 [xr]
 
 openxr/enabled=true
+openxr/default_action_map="res://Scripts/core/openxr_action_map.tres"
 openxr/reference_space=2
 openxr/environment_blend_mode=2
 openxr/extensions/hand_tracking=true

@@ -8,7 +8,7 @@ func _ready() -> void:
 	
 func _on_create_button_pressed() -> void:
 	# Create a new note
-	var note := preload("res://note3D.tscn").instantiate()
+	var note := preload("res://scenes/notes/note3D.tscn").instantiate()
 	
 	# Position the note in front of the HMD (Head-Mounted Display)
 	var hmd = XRServer.get_hmd_transform()

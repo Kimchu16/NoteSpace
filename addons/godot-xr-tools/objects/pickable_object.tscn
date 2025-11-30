@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://ddw8o4h4wa7h8"]
 
-[ext_resource type="PackedScene" uid="uid://c8afp62753414" path="res://note3D.tscn" id="1_gvid0"]
+[ext_resource type="PackedScene" uid="uid://c8afp62753414" path="res://scenes/notes/note3D.tscn" id="1_gvid0"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_lym6o"]
 resource_local_to_scene = true
