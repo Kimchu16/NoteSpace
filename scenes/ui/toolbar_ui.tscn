@@ -40,6 +40,3 @@ text = "Edit Note"
 layout_mode = 2
 theme_override_font_sizes/font_size = 60
 text = "Delete Note"
-
-[connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button" to="." method="_on_edit_button_pressed"]
-[connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button2" to="." method="_on_edit_button_pressed"]
