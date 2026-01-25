@@ -7,13 +7,10 @@ follow_viewport_enabled = true
 script = ExtResource("1_4i5p1")
 
 [node name="Control" type="Control" parent="."]
-custom_minimum_size = Vector2(100, 360)
 layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+anchors_preset = 0
+offset_right = 720.0
+offset_bottom = 1080.0
 
 [node name="ColorRect" type="ColorRect" parent="Control"]
 layout_mode = 1
