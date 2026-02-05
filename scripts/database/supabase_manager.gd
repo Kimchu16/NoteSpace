@@ -3,7 +3,6 @@ extends Node
 var supabase: SupabaseDatabase
 
 func _ready():
-	await get_tree().process_frame
 	supabase = Supabase.database
 	supabase.connect("selected", _on_selected)
 	print("Supabase initialized!")
@@ -13,11 +12,10 @@ func _ready():
 
 
 func test_connection():
-	print("Sending Supabase query...")
 	var query = SupabaseQuery.new().from("notes").select()
 	var task = supabase.query(query)
 	
-	await task.completed
+	await task.completed # Pauses this function until the database query finishes so the result is ready to use
 	
 	var result = task.data
 	print("Query result: ", result)
