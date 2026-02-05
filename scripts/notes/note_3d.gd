@@ -1,14 +1,60 @@
 extends Node3D
 
+var note_model: NoteModel = null
+var last_saved_position: Vector3 = Vector3.ZERO
+var position_update_timer: float = 0.0
+const POSITION_UPDATE_DELAY = 1.0  # Save position every 1 second when moved
+
 func _enter_tree():
 	var toolbar = $Toolbar
-	#print("Note3D connecting to Toolbar instance:", toolbar)
 	toolbar.connect("edit_button", _on_edit_button_pressed)
 	toolbar.connect("delete_button", _on_delete_button_pressed)
+
+func _process(delta: float) -> void:
+	# Auto-save position if it changed
+	if note_model and note_model.id != -1:
+		if global_position.distance_to(last_saved_position) > 0.01:
+			position_update_timer += delta
+			if position_update_timer >= POSITION_UPDATE_DELAY:
+				save_position()
+				position_update_timer = 0.0
+
+# Set the note data from database
+func set_note_data(model: NoteModel) -> void:
+	note_model = model
+	last_saved_position = global_position
+	
+	# Update UI with content
+	var note_ui = $SubViewport/Note_UI
+	note_ui.set_note_content(note_model.content)
+	
+	# Set color
+	$MeshInstance3D.material_override.albedo_color = note_model.get_godot_color()
+
+# Save position to database
+func save_position() -> void:
+	if not note_model or note_model.id == -1:
+		return
+	
+	await NotesService.update_note_position(note_model.id, global_position)
+	last_saved_position = global_position
+	print("Position saved for note ", note_model.id)
+
+# Save content when editing finishes
+func save_content(new_content: String) -> void:
+	if not note_model or note_model.id == -1:
+		return
+	
+	note_model.content = new_content
+	await NotesService.update_note_content(note_model.id, new_content)
+	print("Content saved for note ", note_model.id)
 
 func _on_edit_button_pressed() -> void:
 	$SubViewport/Note_UI._edit_note()
 
 func _on_delete_button_pressed() -> void:
+	# Delete from database first
+	if note_model and note_model.id != -1:
+		await NotesService.delete_note(note_model.id)
 	queue_free()
 	print("Note Deleted")
