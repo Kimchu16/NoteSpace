@@ -1,9 +1,9 @@
 [gd_scene load_steps=11 format=3 uid="uid://c8afp62753414"]
 
-[ext_resource type="Script" uid="uid://d1cvex0hhwu6w" path="res://Scripts/notes/note_3d.gd" id="2_o2bde"]
+[ext_resource type="Script" uid="uid://d1cvex0hhwu6w" path="res://scripts/notes/note_3d.gd" id="2_o2bde"]
 [ext_resource type="Script" uid="uid://cyqboteu80tf0" path="res://scripts/notes/note3d_area3D.gd" id="2_qtaf0"]
 [ext_resource type="Script" uid="uid://bai1r3mrhbvgw" path="res://scripts/ui/note_ui.gd" id="2_ug2s1"]
-[ext_resource type="Script" uid="uid://birtph774gbgr" path="res://Scripts/notes/toolbar.gd" id="3_geaw2"]
+[ext_resource type="Script" uid="uid://birtph774gbgr" path="res://scripts/notes/toolbar.gd" id="3_geaw2"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="3_o2bde"]
 [ext_resource type="PackedScene" uid="uid://bhf7bu488y3xk" path="res://scenes/ui/toolbar_ui.tscn" id="4_ymklu"]
 

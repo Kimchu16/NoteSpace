@@ -30,7 +30,7 @@ size = Vector2(0.4, 0.2)
 [sub_resource type="ViewportTexture" id="ViewportTexture_4c57u"]
 viewport_path = NodePath("Keyboard/Viewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_efxa6"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4c57u"]
 transparency = 1
 cull_mode = 2
 albedo_texture = SubResource("ViewportTexture_4c57u")
@@ -865,7 +865,7 @@ key_text = "?"
 
 [node name="Screen" type="MeshInstance3D" parent="Keyboard"]
 mesh = SubResource("QuadMesh_vivmo")
-surface_material_override/0 = SubResource("StandardMaterial3D_efxa6")
+surface_material_override/0 = SubResource("StandardMaterial3D_4c57u")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Keyboard"]
 collision_layer = 28
