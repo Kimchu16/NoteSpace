@@ -87,11 +87,10 @@ func build_query() -> String:
 				"select", "order":
 					if query_struct[key].is_empty(): continue
 					query += (key + "=" + ",".join(PackedStringArray(query_struct[key])))
-				"eq", "neq", "lt", "gt", "lte", "gte", "like", "ilike", "Is", "in", "fts", "plfts", "phfts", "wfts":
+				"eq", "neq", "lt", "gt", "lte", "gte", "like", "ilike", "Is", "In", "fts", "plfts", "phfts", "wfts":
 					query += "&".join(PackedStringArray(query_struct[key]))
 				"Or":
 					query += "or=(%s)"%[",".join(query_struct[key])]
-	print(query)
 	return query
 
 
@@ -168,7 +167,7 @@ func match_filter(filter : int) -> String:
 		Filters.EQUAL: filter_str = "eq"
 		Filters.FTS: filter_str = "fts"
 		Filters.ILIKE: filter_str = "ilike"
-		Filters.IN: filter_str = "in"
+		Filters.IN: filter_str = "In"
 		Filters.IS: filter_str = "Is"
 		Filters.GREATER_THAN: filter_str = "gt"
 		Filters.GREATER_THAN_OR_EQUAL: filter_str = "gte"
