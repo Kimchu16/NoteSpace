@@ -10,7 +10,6 @@ func _ready():
 	# Test connection by fetching notes
 	test_connection()
 
-
 func test_connection():
 	var query = SupabaseQuery.new().from("notes").select()
 	var task = supabase.query(query)

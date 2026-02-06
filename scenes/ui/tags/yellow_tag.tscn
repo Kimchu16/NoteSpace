@@ -1,0 +1,23 @@
+[gd_scene load_steps=2 format=3 uid="uid://cn1s5c0dfkt8g"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p5tte"]
+content_margin_left = 8.0
+content_margin_top = 5.0
+content_margin_right = 8.0
+content_margin_bottom = 5.0
+bg_color = Color(0.96, 0.8908799, 0.44159997, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="PanelContainer" type="PanelContainer"]
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_p5tte")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5758163, 0.5068219, 0.120225154, 1)
+theme_override_font_sizes/font_size = 20
+text = "#Tag"
