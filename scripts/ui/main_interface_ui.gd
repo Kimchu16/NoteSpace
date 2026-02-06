@@ -41,7 +41,7 @@ func _on_create_button_pressed() -> void:
 	
 	# Create in database first
 	var note_model = await NotesService.create_note(
-		"New note",  # Default content
+		"",  # Default content
 		spawn_position,
 		"yellow"  # Default color
 	)
