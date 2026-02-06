@@ -1,9 +1,8 @@
-[gd_scene load_steps=19 format=3 uid="uid://s0tsdods7k8r"]
+[gd_scene load_steps=18 format=3 uid="uid://s0tsdods7k8r"]
 
 [ext_resource type="Script" uid="uid://dyxns2by25fh7" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://byyxjpkgbecw2" path="res://scenes/ui/main_interface_ui.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="2_lquwl"]
-[ext_resource type="Script" uid="uid://dkyuey8b3kq1l" path="res://scripts/database/supabase_manager.gd" id="3_efxa6"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="4_7mycd"]
 [ext_resource type="Script" uid="uid://bfexqup2rhlxp" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.gd" id="5_4c57u"]
 [ext_resource type="PackedScene" uid="uid://lauwp8okd1vh" path="res://addons/godot-xr-tools/objects/keyboard/virtual_keyboard_2d.tscn" id="5_lquwl"]
@@ -31,7 +30,7 @@ size = Vector2(0.4, 0.2)
 [sub_resource type="ViewportTexture" id="ViewportTexture_4c57u"]
 viewport_path = NodePath("Keyboard/Viewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_efxa6"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4c57u"]
 transparency = 1
 cull_mode = 2
 albedo_texture = SubResource("ViewportTexture_4c57u")
@@ -115,9 +114,6 @@ collision_mask = 12
 collide_with_areas = true
 
 [node name="Managers" type="Node" parent="."]
-
-[node name="SupabaseManager" type="Node" parent="Managers"]
-script = ExtResource("3_efxa6")
 
 [node name="MainInterface" type="Node3D" parent="."]
 
@@ -869,7 +865,7 @@ key_text = "?"
 
 [node name="Screen" type="MeshInstance3D" parent="Keyboard"]
 mesh = SubResource("QuadMesh_vivmo")
-surface_material_override/0 = SubResource("StandardMaterial3D_efxa6")
+surface_material_override/0 = SubResource("StandardMaterial3D_4c57u")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Keyboard"]
 collision_layer = 28

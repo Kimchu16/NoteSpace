@@ -2,10 +2,10 @@
 
 [ext_resource type="Script" uid="uid://d1cvex0hhwu6w" path="res://scripts/notes/note_3d.gd" id="2_o2bde"]
 [ext_resource type="Script" uid="uid://cyqboteu80tf0" path="res://scripts/notes/note3d_area3D.gd" id="2_qtaf0"]
-[ext_resource type="Script" uid="uid://bai1r3mrhbvgw" path="res://scripts/ui/note_ui.gd" id="2_ug2s1"]
 [ext_resource type="Script" uid="uid://birtph774gbgr" path="res://scripts/notes/toolbar.gd" id="3_geaw2"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="3_o2bde"]
 [ext_resource type="PackedScene" uid="uid://bhf7bu488y3xk" path="res://scenes/ui/toolbar_ui.tscn" id="4_ymklu"]
+[ext_resource type="PackedScene" uid="uid://c1onusjh3iu6f" path="res://scenes/ui/note_ui.tscn" id="6_bvxdc"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_e1omw"]
 resource_local_to_scene = true
@@ -53,33 +53,7 @@ scene_properties_keys = PackedStringArray("toolbar_ui.gd")
 
 [node name="SubViewport" type="SubViewport" parent="."]
 
-[node name="Note_UI" type="CanvasLayer" parent="SubViewport"]
-script = ExtResource("2_ug2s1")
-
-[node name="Control" type="Control" parent="SubViewport/Note_UI"]
-custom_minimum_size = Vector2(500, 500)
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="ColorRect" type="ColorRect" parent="SubViewport/Note_UI/Control"]
-layout_mode = 0
-offset_right = 512.0
-offset_bottom = 512.0
-color = Color(1, 1, 0.5019608, 1)
-
-[node name="MarginContainer" type="MarginContainer" parent="SubViewport/Note_UI/Control/ColorRect"]
-custom_minimum_size = Vector2(500, 500)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="TextEdit" type="TextEdit" parent="SubViewport/Note_UI/Control/ColorRect/MarginContainer"]
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0.45840502, 0.45840508, 0.45840502, 1)
-placeholder_text = "New Note."
-virtual_keyboard_enabled = false
-virtual_keyboard_show_on_focus = false
+[node name="Note_UI" parent="SubViewport" instance=ExtResource("6_bvxdc")]
 
 [editable path="Toolbar/Viewport2Din3D/Toolbar_UI"]
+[editable path="SubViewport/Note_UI"]

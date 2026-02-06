@@ -22,6 +22,7 @@ func load_notes_from_database() -> void:
 func spawn_note(note_model: NoteModel) -> void:
 	var note_instance = note_scene.instantiate()
 	notes_root.add_child(note_instance)
+	print("Spawn note")
 	
 	# Set position
 	note_instance.global_position = note_model.position
@@ -48,3 +49,6 @@ func _on_create_button_pressed() -> void:
 	if note_model:
 		# Spawn in VR
 		spawn_note(note_model)
+		print(note_model)
+	else:
+		printerr("note model null")
