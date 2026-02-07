@@ -1,4 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://deqrlddx0ci8x"]
+[gd_scene load_steps=5 format=3 uid="uid://deqrlddx0ci8x"]
+
+[ext_resource type="Script" uid="uid://dwfkwililklhk" path="res://scenes/ui/main_interface_tag_container.gd" id="1_x2qlg"]
+[ext_resource type="PackedScene" uid="uid://bgh5id8xm4x1c" path="res://scenes/ui/tags/overflow_tag.tscn" id="2_oyyyo"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6mus5"]
 bg_color = Color(0.8819366, 0.8819366, 0.88193655, 1)
@@ -44,14 +47,94 @@ theme_override_font_sizes/font_size = 30
 text = "Welcome to NoteSpace! Pinch to select notes and move them around your space."
 autowrap_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+script = ExtResource("1_x2qlg")
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_8qwi5")
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/PanelContainer"]
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+theme_override_font_sizes/font_size = 20
+text = "#Tag1"
+
+[node name="PanelContainer2" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_8qwi5")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+theme_override_font_sizes/font_size = 20
+text = "#Tag2"
+
+[node name="PanelContainer3" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_8qwi5")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer3"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+theme_override_font_sizes/font_size = 20
+text = "#Tag3"
+
+[node name="PanelContainer4" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_8qwi5")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer4"]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
 theme_override_font_sizes/font_size = 20
 text = "#Tag"
+
+[node name="PanelContainer5" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_8qwi5")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer5"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+theme_override_font_sizes/font_size = 20
+text = "#Tag"
+
+[node name="PanelContainer6" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_8qwi5")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer6"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+theme_override_font_sizes/font_size = 20
+text = "#Tag"
+
+[node name="PanelContainer7" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_8qwi5")
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/PanelContainer7"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+theme_override_font_sizes/font_size = 20
+text = "#Tag"
+
+[node name="OverflowTag" parent="MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("2_oyyyo")]
+layout_mode = 2
