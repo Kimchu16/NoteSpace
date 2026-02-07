@@ -1,7 +1,10 @@
 extends CanvasLayer
 
 @export var notes_root: Node3D
+@onready var menu_notes:VBoxContainer = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer5/ScrollContainer/MenuNotes
+
 var note_scene = preload("res://scenes/notes/note3D.tscn")
+var menu_note_scene = preload("res://scenes/ui/note_main_interface.tscn")
 
 func _ready() -> void:
 	if notes_root == null:
@@ -16,11 +19,17 @@ func load_notes_from_database() -> void:
 	print("Loading ", notes.size(), " notes from database...")
 	
 	for note_model in notes:
-		spawn_note(note_model)
+		"if note_model.position != null:
+			#spawn_note(note_model)
+			pass
+		else:"
+		var menu_note_instance: MenuNote = menu_note_scene.instantiate()
+		menu_notes.add_child(menu_note_instance)
+		menu_note_instance.set_note_data(note_model)
 
 # Spawn a note in VR space
 func spawn_note(note_model: NoteModel) -> void:
-	var note_instance = note_scene.instantiate()
+	var note_instance: Note3D = note_scene.instantiate()
 	notes_root.add_child(note_instance)
 	print("Spawn note")
 	

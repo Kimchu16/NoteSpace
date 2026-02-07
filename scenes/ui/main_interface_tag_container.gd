@@ -1,6 +1,8 @@
 extends HBoxContainer
 
-# TODO: If tag is removed or shorted, listen if the size is < than max, if so add back cleared tag
+# TODO: Edge case: UI tags won't update back if all tags bar overflow tag are hidden
+#		so when a tag is modified or removed, emit a signal that this script will pick up
+#		and call queue_layout()
 
 @export var max_width: int = 600
 @onready var overflow_tag: PanelContainer = $OverflowTag
@@ -29,7 +31,7 @@ func queue_layout() -> void:
 func _recompute_layout() -> void:
 	_layout_dirty = false
 	
-	var available := max_width
+	var available := max_width # Remaining horizontal space available
 	var hidden_count:= 0
 	
 	# First pass: assume no overflow tag
@@ -51,7 +53,6 @@ func _recompute_layout() -> void:
 	# If tags hidden, resesrve space for overflow
 	if hidden_count > 0:
 		overflow_tag.visible = true
-		overflow_tag.set_hidden_count(hidden_count)
 		
 		var overflow_w := overflow_tag.get_combined_minimum_size().x
 		
@@ -63,3 +64,6 @@ func _recompute_layout() -> void:
 			if tags[i].visible:
 				tags[i].visible = false
 				available += tags[i].get_combined_minimum_size().x
+				hidden_count += 1
+				
+		overflow_tag.set_hidden_count(hidden_count)
