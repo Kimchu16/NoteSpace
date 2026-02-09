@@ -42,11 +42,11 @@ visible = false
 script = ExtResource("3_geaw2")
 
 [node name="Viewport2Din3D" parent="Toolbar" instance=ExtResource("3_o2bde")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
-screen_size = Vector2(0.2, 0.05)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0.001)
+screen_size = Vector2(0.25, 0.065)
 collision_layer = 24
 scene = ExtResource("4_ymklu")
-viewport_size = Vector2(800, 200)
+viewport_size = Vector2(1000, 250)
 scene_properties_keys = PackedStringArray("toolbar_ui.gd")
 
 [node name="Toolbar_UI" parent="Toolbar/Viewport2Din3D" instance=ExtResource("4_ymklu")]
@@ -54,6 +54,9 @@ scene_properties_keys = PackedStringArray("toolbar_ui.gd")
 [node name="SubViewport" type="SubViewport" parent="."]
 
 [node name="Note_UI" parent="SubViewport" instance=ExtResource("6_bvxdc")]
+
+[node name="TextEdit" parent="SubViewport/Note_UI/Control/ColorRect/MarginContainer" index="0"]
+placeholder_text = "New Note. "
 
 [editable path="Toolbar/Viewport2Din3D/Toolbar_UI"]
 [editable path="SubViewport/Note_UI"]

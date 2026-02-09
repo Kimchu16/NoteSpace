@@ -1,9 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://deqrlddx0ci8x"]
+[gd_scene load_steps=5 format=3 uid="uid://deqrlddx0ci8x"]
 
 [ext_resource type="Script" uid="uid://6fta47q0h736" path="res://scripts/ui/note_main_interface.gd" id="1_uxha5"]
 [ext_resource type="Script" uid="uid://dwfkwililklhk" path="res://scenes/ui/main_interface_tag_container.gd" id="1_x2qlg"]
 [ext_resource type="PackedScene" uid="uid://bgh5id8xm4x1c" path="res://scenes/ui/tags/overflow_tag.tscn" id="2_oyyyo"]
-[ext_resource type="Script" uid="uid://bb1oabyyw885b" path="res://scenes/ui/tag.gd" id="2_qawoj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6mus5"]
 bg_color = Color(0.8819366, 0.8819366, 0.88193655, 1)
@@ -13,17 +12,6 @@ corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8qwi5"]
-content_margin_left = 8.0
-content_margin_top = 5.0
-content_margin_right = 8.0
-content_margin_bottom = 5.0
-bg_color = Color(0.827451, 0.8392157, 0.87058824, 1)
-corner_radius_top_left = 16
-corner_radius_top_right = 16
-corner_radius_bottom_right = 16
-corner_radius_bottom_left = 16
 
 [node name="Note" type="Panel"]
 custom_minimum_size = Vector2(660, 200)
@@ -56,19 +44,6 @@ text_overrun_behavior = 5
 layout_mode = 2
 size_flags_horizontal = 0
 script = ExtResource("1_x2qlg")
-
-[node name="Tag" type="PanelContainer" parent="MarginContainer/VBoxContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_8qwi5")
-script = ExtResource("2_qawoj")
-
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer/Tag"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
-theme_override_font_sizes/font_size = 20
-text = "#Tag1"
 
 [node name="OverflowTag" parent="MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("2_oyyyo")]
 visible = false
