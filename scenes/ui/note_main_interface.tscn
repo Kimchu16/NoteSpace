@@ -43,12 +43,14 @@ layout_mode = 2
 theme_override_constants/separation = 20
 
 [node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(610, 0)
+custom_minimum_size = Vector2(610, 87)
 layout_mode = 2
+size_flags_vertical = 1
 theme_override_colors/font_color = Color(0.3553136, 0.35531354, 0.35531357, 1)
 theme_override_font_sizes/font_size = 30
 text = "Welcome to NoteSpace! Pinch to select notes and move them around your space."
 autowrap_mode = 2
+text_overrun_behavior = 5
 
 [node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
 layout_mode = 2
