@@ -1,4 +1,5 @@
 extends Node3D
+class_name Note3D
 
 var note_model: NoteModel = null
 var last_saved_position: Vector3 = Vector3.ZERO

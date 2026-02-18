@@ -1,0 +1,50 @@
+[gd_scene load_steps=5 format=3 uid="uid://deqrlddx0ci8x"]
+
+[ext_resource type="Script" uid="uid://6fta47q0h736" path="res://scripts/ui/note_main_interface.gd" id="1_uxha5"]
+[ext_resource type="Script" uid="uid://dwfkwililklhk" path="res://scenes/ui/main_interface_tag_container.gd" id="1_x2qlg"]
+[ext_resource type="PackedScene" uid="uid://bgh5id8xm4x1c" path="res://scenes/ui/tags/overflow_tag.tscn" id="2_oyyyo"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6mus5"]
+bg_color = Color(0.8819366, 0.8819366, 0.88193655, 1)
+border_width_left = 10
+border_color = Color(0.95, 0.85246664, 0.41799998, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[node name="Note" type="Panel"]
+custom_minimum_size = Vector2(660, 200)
+theme_override_styles/panel = SubResource("StyleBoxFlat_6mus5")
+script = ExtResource("1_uxha5")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(610, 87)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.3553136, 0.35531354, 0.35531357, 1)
+theme_override_font_sizes/font_size = 30
+text = "Welcome to NoteSpace! Pinch to select notes and move them around your space."
+autowrap_mode = 2
+text_overrun_behavior = 5
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+script = ExtResource("1_x2qlg")
+
+[node name="OverflowTag" parent="MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("2_oyyyo")]
+visible = false
+layout_mode = 2

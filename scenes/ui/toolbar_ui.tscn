@@ -1,20 +1,125 @@
-[gd_scene load_steps=2 format=3 uid="uid://bhf7bu488y3xk"]
+[gd_scene load_steps=16 format=3 uid="uid://bhf7bu488y3xk"]
 
 [ext_resource type="Script" uid="uid://dxtogk4mssxrr" path="res://scripts/ui/toolbar_ui.gd" id="1_kfg2y"]
+[ext_resource type="Texture2D" uid="uid://ckk312qicbbeu" path="res://resources/icons/edit.png" id="2_01n0y"]
+[ext_resource type="Texture2D" uid="uid://menk3ea5v127" path="res://resources/icons/edit_tag.png" id="3_gxikp"]
+[ext_resource type="Texture2D" uid="uid://jh4m62058wlq" path="res://resources/icons/delete.png" id="3_txj2h"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t253f"]
+bg_color = Color(0.11119679, 0.11119687, 0.11119679, 1)
+corner_radius_top_left = 100
+corner_radius_top_right = 100
+corner_radius_bottom_right = 100
+corner_radius_bottom_left = 100
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_01n0y"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+bg_color = Color(0.15487596, 0.154876, 0.15487587, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_txj2h"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+bg_color = Color(0.11858138, 0.11858139, 0.11858136, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gxikp"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+bg_color = Color(0.18359044, 0.18359047, 0.18359038, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3gflb"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+bg_color = Color(0.14901961, 0.14901961, 0.14901961, 0)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5m20g"]
+bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mlru0"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+bg_color = Color(0.22600916, 0.12201839, 0.09492437, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8f2k1"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+bg_color = Color(0.19975674, 0.10414573, 0.07935981, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wbto4"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+bg_color = Color(0.26284078, 0.14390114, 0.113060586, 1)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tsuse"]
+content_margin_left = 30.0
+content_margin_top = 30.0
+content_margin_right = 30.0
+content_margin_bottom = 30.0
+bg_color = Color(0.14901961, 0.14901961, 0.14901961, 0)
+corner_radius_top_left = 60
+corner_radius_top_right = 60
+corner_radius_bottom_right = 60
+corner_radius_bottom_left = 60
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2j0ms"]
+bg_color = Color(0.10980392, 0.10980392, 0.10980392, 1)
 
 [node name="Toolbar_UI" type="CanvasLayer"]
 follow_viewport_enabled = true
 script = ExtResource("1_kfg2y")
 
 [node name="Control" type="Control" parent="."]
+custom_minimum_size = Vector2(1000, 250)
 layout_mode = 3
 anchors_preset = 0
 
-[node name="ColorRect" type="ColorRect" parent="Control"]
+[node name="ColorRect" type="Panel" parent="Control"]
 layout_mode = 0
-offset_right = 800.0
+offset_right = 1000.0
 offset_bottom = 200.0
-color = Color(0.38431373, 0.38431373, 0.38431373, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_t253f")
 
 [node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect"]
 layout_mode = 1
@@ -28,15 +133,62 @@ grow_vertical = 2
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
-theme_override_constants/separation = 30
+theme_override_constants/separation = 80
 alignment = 1
 
 [node name="Button" type="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "Edit Note"
+tooltip_text = "Edit Note"
+theme_override_constants/icon_max_width = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_01n0y")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_txj2h")
+theme_override_styles/hover = SubResource("StyleBoxFlat_gxikp")
+theme_override_styles/focus = SubResource("StyleBoxFlat_3gflb")
+icon = ExtResource("2_01n0y")
+icon_alignment = 1
+
+[node name="Panel" type="Panel" parent="Control/ColorRect/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(5, 70)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_5m20g")
+
+[node name="Button3" type="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer"]
+layout_mode = 2
+tooltip_text = "Add/Delete Tags"
+theme_override_constants/icon_max_width = 80
+theme_override_styles/normal = SubResource("StyleBoxFlat_01n0y")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_txj2h")
+theme_override_styles/hover = SubResource("StyleBoxFlat_gxikp")
+theme_override_styles/focus = SubResource("StyleBoxFlat_3gflb")
+icon = ExtResource("3_gxikp")
+icon_alignment = 1
+
+[node name="Panel2" type="Panel" parent="Control/ColorRect/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(5, 70)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_5m20g")
 
 [node name="Button2" type="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer"]
 layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "Delete Note"
+tooltip_text = "Delete Note"
+theme_override_colors/icon_normal_color = Color(0.71, 0.15620002, 0.15620002, 1)
+theme_override_colors/icon_focus_color = Color(0.70980394, 0.15686275, 0.15686275, 1)
+theme_override_colors/icon_pressed_color = Color(0.608913, 0.12579525, 0.12681684, 1)
+theme_override_colors/icon_hover_color = Color(0.7845142, 0.1842112, 0.18210557, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_mlru0")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_8f2k1")
+theme_override_styles/hover = SubResource("StyleBoxFlat_wbto4")
+theme_override_styles/focus = SubResource("StyleBoxFlat_tsuse")
+icon = ExtResource("3_txj2h")
+
+[node name="Panel" type="Panel" parent="Control/ColorRect"]
+z_index = -1
+layout_mode = 0
+offset_left = 500.0
+offset_top = 150.0
+offset_right = 560.0
+offset_bottom = 210.0
+rotation = 0.7853982
+theme_override_styles/panel = SubResource("StyleBoxFlat_2j0ms")

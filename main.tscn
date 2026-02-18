@@ -116,13 +116,13 @@ collide_with_areas = true
 [node name="Managers" type="Node" parent="."]
 
 [node name="MainInterface" type="Node3D" parent="."]
+transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -0.291, 1.5, -0.424)
 
 [node name="Viewport2Din3D" parent="MainInterface" instance=ExtResource("4_7mycd")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 1, -0.7)
-screen_size = Vector2(0.2, 0.3)
+screen_size = Vector2(0.2, 0.311)
 collision_layer = 29
 scene = ExtResource("2_0xm2m")
-viewport_size = Vector2(720, 1080)
+viewport_size = Vector2(720, 1120)
 scene_properties_keys = PackedStringArray("main_interface_ui.gd", "notes_root")
 
 [node name="Keyboard" type="Node3D" parent="." groups=["Keyboard"]]

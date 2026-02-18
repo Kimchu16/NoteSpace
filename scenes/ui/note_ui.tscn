@@ -1,7 +1,6 @@
-[gd_scene load_steps=6 format=3 uid="uid://c1onusjh3iu6f"]
+[gd_scene load_steps=5 format=3 uid="uid://c1onusjh3iu6f"]
 
 [ext_resource type="Script" uid="uid://bai1r3mrhbvgw" path="res://scripts/ui/note_ui.gd" id="1_dm76p"]
-[ext_resource type="PackedScene" uid="uid://cn1s5c0dfkt8g" path="res://scenes/ui/tags/yellow_tag.tscn" id="2_qqjqn"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ugh2x"]
 bg_color = Color(0, 0, 0, 0)
@@ -63,6 +62,3 @@ offset_right = 501.0
 offset_bottom = 501.0
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
-
-[node name="PanelContainer" parent="Control/ColorRect/HFlowContainer" instance=ExtResource("2_qqjqn")]
-layout_mode = 2
