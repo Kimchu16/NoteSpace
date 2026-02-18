@@ -16,15 +16,6 @@ corner_radius_top_right = 30
 corner_radius_bottom_right = 30
 corner_radius_bottom_left = 30
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cgl7b"]
-border_width_left = 10
-border_width_top = 10
-border_width_right = 10
-border_width_bottom = 10
-border_color = Color(0.35156286, 0.35156295, 0.35156265, 1)
-corner_radius_top_left = 20
-corner_radius_top_right = 20
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s6oqo"]
 content_margin_left = 20.0
 content_margin_top = 5.0
@@ -343,6 +334,15 @@ corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cgl7b"]
+border_width_left = 10
+border_width_top = 10
+border_width_right = 10
+border_width_bottom = 10
+border_color = Color(0.35156286, 0.35156295, 0.35156265, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+
 [node name="MainInterface_UI" type="CanvasLayer"]
 follow_viewport_enabled = true
 script = ExtResource("1_4i5p1")
@@ -361,18 +361,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4g6uq")
-
-[node name="Panel" type="Panel" parent="Control/ColorRect"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -75.0
-offset_top = -39.0
-offset_right = 75.0
-offset_bottom = 31.0
-grow_horizontal = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_cgl7b")
 
 [node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect"]
 layout_mode = 1
@@ -579,5 +567,17 @@ layout_mode = 2
 [node name="MenuNotes" type="VBoxContainer" parent="Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer5/ScrollContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
+
+[node name="Panel" type="Panel" parent="Control"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -75.0
+offset_top = -39.0
+offset_right = 75.0
+offset_bottom = 31.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_cgl7b")
 
 [connection signal="pressed" from="Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer2/CreateBtn" to="." method="_on_create_button_pressed"]

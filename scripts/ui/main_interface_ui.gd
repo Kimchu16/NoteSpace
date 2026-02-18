@@ -46,7 +46,7 @@ func _on_create_button_pressed() -> void:
 	# Position the note in front of the HMD (Head-Mounted Display)
 	var hmd = XRServer.get_hmd_transform()
 	var forward = -hmd.basis.z
-	var spawn_position = hmd.origin + forward * 1.0
+	var spawn_position = hmd.origin + forward * 0.5
 	
 	# Create in database first
 	var note_model = await NotesService.create_note(
