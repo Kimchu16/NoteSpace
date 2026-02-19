@@ -11,6 +11,13 @@ var dragging_pointer = null
 var is_hovering = false
 var is_pressed = false
 
+enum PlacementState { FREE, SNAP_PREVIEW, SURFACE }
+var placement_state = PlacementState.FREE
+
+const SNAP_ENTER_DISTANCE = 0.25
+const SNAP_EXIT_DISTANCE = 0.28
+
+var snapped_surface: Node = null
 
 func _ready() -> void:
 	xr_controller_l = get_tree().get_first_node_in_group("LeftController")
@@ -66,6 +73,11 @@ func _on_pointer_event(event: XRToolsPointerEvent) -> void:
 				toolbar.visible = false
 
 func _update_free_drag() -> void:
+	var camera = get_viewport().get_camera_3d()
+	var note = get_parent()
+	var space_state = get_world_3d().direct_space_state
+	
+	# Depth Control ----------------------------------
 	var current_hand_position = xr_controller_r.global_position
 	var hand_delta = current_hand_position - previous_hand_position
 	
@@ -82,10 +94,51 @@ func _update_free_drag() -> void:
 	# Smooth movement
 	get_parent().global_position = get_parent().global_position.lerp(target_position, 0.2)
 	
-	# Billboard toward camera
-	var camera = get_viewport().get_camera_3d()
-	var note = get_parent()
+	# Snap Detection---------------------------------------------------
+	var note_forward = -note.global_transform.basis.z
+	var ray_origin = note.global_position
+	var ray_end = ray_origin + note_forward  * 0.3
 
+	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+	query.collision_mask = 1 << 5  # SceneSurfaces layer
+
+	var result = space_state.intersect_ray(query)
+	
+	var hit_position: Vector3
+	var hit_normal: Vector3
+	var candidate_surface: Node = null
+	var distance_to_surface: float = INF
+	
+	if result:
+		var collider = result.collider
+		if collider.is_in_group("valid_surfaces"):
+			hit_position = result.position
+			hit_normal = result.normal
+			candidate_surface = collider
+			
+			# Distance threshold check
+			distance_to_surface = note.global_position.distance_to(hit_position)
+
+	# State Update (Hysteresis) ---------------------------------------------------
+	if placement_state == PlacementState.FREE:
+		if candidate_surface and distance_to_surface < SNAP_ENTER_DISTANCE:
+			placement_state = PlacementState.SNAP_PREVIEW
+			snapped_surface = candidate_surface
+	
+	elif placement_state == PlacementState.SNAP_PREVIEW:
+		if not candidate_surface or distance_to_surface > SNAP_EXIT_DISTANCE:
+			placement_state = PlacementState.FREE
+			snapped_surface = null
+
+	# Apply Transform ----------------
+	if placement_state == PlacementState.SNAP_PREVIEW and snapped_surface:
+		_apply_surface_snap(hit_position, hit_normal)
+	else:
+		_apply_billboard(camera)
+
+func _apply_billboard(camera: Camera3D):
+	var note = get_parent()
+	
 	var to_camera = camera.global_position - note.global_position
 	var horizontal = Vector3(to_camera.x, 0, to_camera.z)
 
@@ -101,6 +154,28 @@ func _update_free_drag() -> void:
 
 	# Apply rotation (no roll)
 	note.rotation = Vector3(-pitch, yaw, 0)
+
+func _apply_surface_snap(hit_position: Vector3, normal: Vector3) -> void:
+	var note = get_parent()
+	
+	var offset = 0.02  # avoid z-fighting
+	var snap_position = hit_position + normal * offset
+	
+	note.global_position = note.global_position.lerp(snap_position, 0.3)
+	
+	# Align note to surface
+	var forward = normal
+	var up = Vector3.UP
+	
+	var reference = Vector3.UP
+	if abs(forward.dot(reference)) > 0.95: # Is forward almost parallel to reference?
+		reference = Vector3.FORWARD  # if surface is horizontal, use different axis (prevents y axis flickering)
+	
+	var right = reference.cross(forward).normalized()
+	up = forward.cross(right).normalized()
+	
+	var basis = Basis(right, up, forward)
+	note.global_transform.basis = basis
 
 func _process(delta: float) -> void:
 	if not is_dragged:
