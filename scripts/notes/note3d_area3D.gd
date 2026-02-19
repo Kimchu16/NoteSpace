@@ -15,7 +15,7 @@ enum PlacementState { FREE, SNAP_PREVIEW, SURFACE }
 var placement_state = PlacementState.FREE
 
 const SNAP_ENTER_DISTANCE = 0.25
-const SNAP_EXIT_DISTANCE = 0.28
+const SNAP_EXIT_DISTANCE = 0.251
 
 var snapped_surface: Node = null
 
