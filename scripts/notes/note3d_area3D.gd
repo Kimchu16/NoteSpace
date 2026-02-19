@@ -91,15 +91,34 @@ func _update_free_drag() -> void:
 	
 	var target_position = xr_controller_r.global_position + forward * drag_distance
 	
+	# Movement Collision Clamp ---------------------------------------
+	var motion = target_position - note.global_position
+	var ray_origin = note.global_position
+	var ray_end = note.global_position + motion
+
+	var clamp_query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+	clamp_query.collision_mask = 1 << 5  # SceneSurfaces only
+
+	var clamp_result = space_state.intersect_ray(clamp_query)
+
+	if clamp_result:
+		var collider = clamp_result.collider
+		if collider and collider.is_in_group("valid_surfaces"):
+			var hit_position = clamp_result.position
+			var normal = clamp_result.normal
+			
+			# Stop slightly before surface
+			target_position = hit_position + normal * 0.02
+
 	# Smooth movement
-	get_parent().global_position = get_parent().global_position.lerp(target_position, 0.2)
+	note.global_position = note.global_position.lerp(target_position, 0.2)
 	
 	# Snap Detection---------------------------------------------------
 	var note_forward = -note.global_transform.basis.z
-	var ray_origin = note.global_position
-	var ray_end = ray_origin + note_forward  * 0.3
-
-	var query = PhysicsRayQueryParameters3D.create(ray_origin, ray_end)
+	var snap_origin = note.global_position
+	var snap_end = snap_origin + note_forward * 0.4
+	
+	var query = PhysicsRayQueryParameters3D.create(snap_origin, snap_end)
 	query.collision_mask = 1 << 5  # SceneSurfaces layer
 
 	var result = space_state.intersect_ray(query)
