@@ -114,3 +114,4 @@ hybrid_app/enabled=true
 openxr/extensions/meta/hand_tracking_capsules=true
 openxr/extensions/meta/anchor_api=true
 openxr/extensions/meta/environment_depth=true
+openxr/extensions/meta/scene_api=true
