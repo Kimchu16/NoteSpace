@@ -3,6 +3,5 @@
 [ext_resource type="Script" uid="uid://btd45sqt3vvc4" path="res://scripts/spatial/spatial_entity.gd" id="1_se2dd"]
 
 [node name="StaticBody3D" type="StaticBody3D"]
+collision_layer = 32
 script = ExtResource("1_se2dd")
-
-[node name="Label3D" type="Label3D" parent="."]

@@ -32,7 +32,7 @@ size = Vector2(0.4, 0.2)
 [sub_resource type="ViewportTexture" id="ViewportTexture_dg77c"]
 viewport_path = NodePath("Keyboard/Viewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ycdy4"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dg77c"]
 transparency = 1
 cull_mode = 2
 albedo_texture = SubResource("ViewportTexture_dg77c")
@@ -104,7 +104,7 @@ hand_tracker = &"/user/hand_tracker/right"
 [node name="LeftController" type="XRController3D" parent="XROrigin3D" groups=["LeftController"]]
 tracker = &"/user/fbhandaim/left"
 
-[node name="RightController" type="XRController3D" parent="XROrigin3D"]
+[node name="RightController" type="XRController3D" parent="XROrigin3D" groups=["RightController"]]
 tracker = &"/user/fbhandaim/right"
 
 [node name="FunctionPointer" parent="XROrigin3D/RightController" groups=["Pointer"] instance=ExtResource("2_lquwl")]
@@ -112,7 +112,7 @@ show_laser = 2
 laser_length = 1
 show_target = true
 target_radius = 0.01
-collision_mask = 12
+collision_mask = 44
 collide_with_areas = true
 
 [node name="OpenXRFbSceneManager" type="OpenXRFbSceneManager" parent="XROrigin3D"]
@@ -873,7 +873,7 @@ key_text = "?"
 
 [node name="Screen" type="MeshInstance3D" parent="Keyboard"]
 mesh = SubResource("QuadMesh_vivmo")
-surface_material_override/0 = SubResource("StandardMaterial3D_ycdy4")
+surface_material_override/0 = SubResource("StandardMaterial3D_dg77c")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Keyboard"]
 collision_layer = 28
