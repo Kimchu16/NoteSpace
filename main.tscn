@@ -124,9 +124,10 @@ default_scene = ExtResource("3_dg77c")
 script = ExtResource("3_efxa6")
 
 [node name="MainInterface" type="Node3D" parent="."]
-transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -0.291, 1.5, -0.424)
+transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -0.291, 1.2372029, -0.424)
 
 [node name="Viewport2Din3D" parent="MainInterface" instance=ExtResource("4_7mycd")]
+transform = Transform3D(1.0000001, 0, 2.9802322e-08, 0, 1, 0, -2.9802322e-08, 0, 1.0000001, 0, -0.20614743, 0)
 screen_size = Vector2(0.2, 0.311)
 collision_layer = 29
 scene = ExtResource("2_0xm2m")
