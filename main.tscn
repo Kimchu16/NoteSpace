@@ -1,8 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://s0tsdods7k8r"]
+[gd_scene load_steps=20 format=3 uid="uid://s0tsdods7k8r"]
 
 [ext_resource type="Script" uid="uid://dyxns2by25fh7" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://byyxjpkgbecw2" path="res://scenes/ui/main_interface_ui.tscn" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="2_lquwl"]
+[ext_resource type="PackedScene" uid="uid://bjgcgnv1qk85y" path="res://scenes/spatial/spatial_entity.tscn" id="3_dg77c"]
+[ext_resource type="Script" uid="uid://dgrxlekct1whn" path="res://scripts/spatial/scene_controller.gd" id="3_efxa6"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="4_7mycd"]
 [ext_resource type="Script" uid="uid://bfexqup2rhlxp" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.gd" id="5_4c57u"]
 [ext_resource type="PackedScene" uid="uid://lauwp8okd1vh" path="res://addons/godot-xr-tools/objects/keyboard/virtual_keyboard_2d.tscn" id="5_lquwl"]
@@ -27,13 +29,13 @@ tonemap_mode = 2
 resource_local_to_scene = true
 size = Vector2(0.4, 0.2)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_4c57u"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_dg77c"]
 viewport_path = NodePath("Keyboard/Viewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4c57u"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dg77c"]
 transparency = 1
 cull_mode = 2
-albedo_texture = SubResource("ViewportTexture_4c57u")
+albedo_texture = SubResource("ViewportTexture_dg77c")
 texture_filter = 1
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_074og"]
@@ -102,7 +104,7 @@ hand_tracker = &"/user/hand_tracker/right"
 [node name="LeftController" type="XRController3D" parent="XROrigin3D" groups=["LeftController"]]
 tracker = &"/user/fbhandaim/left"
 
-[node name="RightController" type="XRController3D" parent="XROrigin3D"]
+[node name="RightController" type="XRController3D" parent="XROrigin3D" groups=["RightController"]]
 tracker = &"/user/fbhandaim/right"
 
 [node name="FunctionPointer" parent="XROrigin3D/RightController" groups=["Pointer"] instance=ExtResource("2_lquwl")]
@@ -110,15 +112,22 @@ show_laser = 2
 laser_length = 1
 show_target = true
 target_radius = 0.01
-collision_mask = 12
+collision_mask = 44
 collide_with_areas = true
+
+[node name="OpenXRFbSceneManager" type="OpenXRFbSceneManager" parent="XROrigin3D"]
+default_scene = ExtResource("3_dg77c")
 
 [node name="Managers" type="Node" parent="."]
 
+[node name="SceneController" type="Node" parent="Managers"]
+script = ExtResource("3_efxa6")
+
 [node name="MainInterface" type="Node3D" parent="."]
-transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -0.291, 1.5, -0.424)
+transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -0.291, 1.2372029, -0.424)
 
 [node name="Viewport2Din3D" parent="MainInterface" instance=ExtResource("4_7mycd")]
+transform = Transform3D(1.0000001, 0, 2.9802322e-08, 0, 1, 0, -2.9802322e-08, 0, 1.0000001, 0, -0.20614743, 0)
 screen_size = Vector2(0.2, 0.311)
 collision_layer = 29
 scene = ExtResource("2_0xm2m")
@@ -865,7 +874,7 @@ key_text = "?"
 
 [node name="Screen" type="MeshInstance3D" parent="Keyboard"]
 mesh = SubResource("QuadMesh_vivmo")
-surface_material_override/0 = SubResource("StandardMaterial3D_4c57u")
+surface_material_override/0 = SubResource("StandardMaterial3D_dg77c")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Keyboard"]
 collision_layer = 28
