@@ -39,7 +39,7 @@ func save_position() -> void:
 	
 	await NotesService.update_note_position(note_model.id, global_position)
 	last_saved_position = global_position
-	print("Position saved for note ", note_model.id)
+	#print("Position saved for note ", note_model.id)
 
 # Save content when editing finishes
 func save_content(new_content: String) -> void:

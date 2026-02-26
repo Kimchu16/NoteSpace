@@ -19,13 +19,12 @@ func load_notes_from_database() -> void:
 	print("Loading ", notes.size(), " notes from database...")
 	
 	for note_model in notes:
-		"if note_model.position != null:
-			#spawn_note(note_model)
-			pass
-		else:"
-		var menu_note_instance: MenuNote = menu_note_scene.instantiate()
-		menu_notes.add_child(menu_note_instance)
-		menu_note_instance.set_note_data(note_model)
+		if note_model.position != Vector3(0.0, 0.0, 0.0): # If note has a saved position
+			spawn_note(note_model)
+		else:
+			var menu_note_instance: MenuNote = menu_note_scene.instantiate()
+			menu_notes.add_child(menu_note_instance)
+			menu_note_instance.set_note_data(note_model)
 
 # Spawn a note in VR space
 func spawn_note(note_model: NoteModel) -> void:

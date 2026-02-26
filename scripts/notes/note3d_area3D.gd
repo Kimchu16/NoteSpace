@@ -18,6 +18,9 @@ const SNAP_ENTER_DISTANCE = 0.25
 const SNAP_EXIT_DISTANCE = 0.251
 
 var snapped_surface: Node = null
+var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
+
+var anchor_uuid : String = ""
 
 func _ready() -> void:
 	xr_controller_l = get_tree().get_first_node_in_group("LeftController")
@@ -25,6 +28,7 @@ func _ready() -> void:
 	toolbar = get_parent().get_node("Toolbar")
 	pointer_event.connect(_on_pointer_event)
 	xr_controller_l.connect("button_pressed", _on_left_hand_pressed)
+	spatial_anchor_manager = $XROrigin3D/OpenXRFbSpatialAnchorManager
 
 func _on_left_hand_pressed(name: String) -> void:
 	match name:

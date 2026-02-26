@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://s0tsdods7k8r"]
+[gd_scene load_steps=21 format=3 uid="uid://s0tsdods7k8r"]
 
 [ext_resource type="Script" uid="uid://dyxns2by25fh7" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://byyxjpkgbecw2" path="res://scenes/ui/main_interface_ui.tscn" id="2_0xm2m"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bjgcgnv1qk85y" path="res://scenes/spatial/spatial_entity.tscn" id="3_dg77c"]
 [ext_resource type="Script" uid="uid://dgrxlekct1whn" path="res://scripts/spatial/scene_controller.gd" id="3_efxa6"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="4_7mycd"]
+[ext_resource type="PackedScene" uid="uid://bc0yfcnodswwj" path="res://scenes/spatial/spatial_anchor.tscn" id="4_ycdy4"]
 [ext_resource type="Script" uid="uid://bfexqup2rhlxp" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.gd" id="5_4c57u"]
 [ext_resource type="PackedScene" uid="uid://lauwp8okd1vh" path="res://addons/godot-xr-tools/objects/keyboard/virtual_keyboard_2d.tscn" id="5_lquwl"]
 [ext_resource type="Script" uid="uid://dni3fmvjjsx6i" path="res://addons/godot-xr-tools/objects/keyboard/virtual_keyboard_2d.gd" id="7_efxa6"]
@@ -32,7 +33,7 @@ size = Vector2(0.4, 0.2)
 [sub_resource type="ViewportTexture" id="ViewportTexture_dg77c"]
 viewport_path = NodePath("Keyboard/Viewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dg77c"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ycdy4"]
 transparency = 1
 cull_mode = 2
 albedo_texture = SubResource("ViewportTexture_dg77c")
@@ -117,6 +118,9 @@ collide_with_areas = true
 
 [node name="OpenXRFbSceneManager" type="OpenXRFbSceneManager" parent="XROrigin3D"]
 default_scene = ExtResource("3_dg77c")
+
+[node name="OpenXRFbSpatialAnchorManager" type="OpenXRFbSpatialAnchorManager" parent="XROrigin3D"]
+scene = ExtResource("4_ycdy4")
 
 [node name="Managers" type="Node" parent="."]
 
@@ -874,7 +878,7 @@ key_text = "?"
 
 [node name="Screen" type="MeshInstance3D" parent="Keyboard"]
 mesh = SubResource("QuadMesh_vivmo")
-surface_material_override/0 = SubResource("StandardMaterial3D_dg77c")
+surface_material_override/0 = SubResource("StandardMaterial3D_ycdy4")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Keyboard"]
 collision_layer = 28
