@@ -11,7 +11,7 @@ var dragging_pointer = null
 var is_hovering = false
 var is_pressed = false
 
-enum PlacementState { FREE, SNAP_PREVIEW, SURFACE }
+enum PlacementState { FREE, SNAP_PREVIEW }
 var placement_state = PlacementState.FREE
 
 const SNAP_ENTER_DISTANCE = 0.25
@@ -21,6 +21,9 @@ var snapped_surface: Node = null
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 
 var anchor_uuid : String = ""
+var pending_note_for_anchor : Node3D = null
+var anchored : bool
+const SPATIAL_ANCHORS_FILE = "user://openxr_fb_spatial_anchors.json"
 
 func _ready() -> void:
 	xr_controller_l = get_tree().get_first_node_in_group("LeftController")
@@ -28,7 +31,8 @@ func _ready() -> void:
 	toolbar = get_parent().get_node("Toolbar")
 	pointer_event.connect(_on_pointer_event)
 	xr_controller_l.connect("button_pressed", _on_left_hand_pressed)
-	spatial_anchor_manager = $XROrigin3D/OpenXRFbSpatialAnchorManager
+	spatial_anchor_manager =  get_tree().get_nodes_in_group("Managers")[1]
+	spatial_anchor_manager.connect("openxr_fb_spatial_anchor_tracked", _on_anchor_tracked)
 
 func _on_left_hand_pressed(name: String) -> void:
 	match name:
@@ -61,16 +65,17 @@ func _on_pointer_event(event: XRToolsPointerEvent) -> void:
 			dragging_pointer = pointer
 			drag_distance = xr_controller_r.global_position.distance_to(get_parent().global_position)
 			previous_hand_position = xr_controller_r.global_position
-			#drag_offset = global_transform.origin - at # How far the note is from the hit point
 
 		XRToolsPointerEvent.Type.RELEASED:
 			#print("Pointer released Note")
 			is_dragged = false
 			dragging_pointer = null
+			
+			if placement_state == PlacementState.FREE or placement_state == PlacementState.SNAP_PREVIEW:
+				if anchored != true:
+					create_spatial_anchor_and_parent()
 
 		XRToolsPointerEvent.Type.MOVED:
-			#get_parent().global_transform.origin = at + drag_offset
-
 			if is_hovering and is_pressed:
 				toolbar.visible = true
 			elif is_hovering and !is_pressed:
@@ -154,7 +159,7 @@ func _update_free_drag() -> void:
 			snapped_surface = null
 
 	# Apply Transform ----------------
-	if placement_state == PlacementState.SNAP_PREVIEW and snapped_surface:
+	if placement_state == PlacementState.SNAP_PREVIEW  and snapped_surface:
 		_apply_surface_snap(hit_position, hit_normal)
 	else:
 		_apply_billboard(camera)
@@ -199,6 +204,61 @@ func _apply_surface_snap(hit_position: Vector3, normal: Vector3) -> void:
 	
 	var basis = Basis(right, up, forward)
 	note.global_transform.basis = basis
+
+func create_spatial_anchor_and_parent() -> void:
+	pending_note_for_anchor = get_parent()
+	var transform = pending_note_for_anchor.global_transform
+
+	# Create a new spatial anchor at the note's current position
+	var custom_data: Dictionary = {
+		"note_id": pending_note_for_anchor.name
+	}
+	spatial_anchor_manager.create_anchor(transform, custom_data)
+
+func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: bool) -> void:
+	if pending_note_for_anchor == null:
+		return  # Ignore anchors not created by this note
+		
+	var note = pending_note_for_anchor
+	pending_note_for_anchor = null
+	# This method is triggered when the anchor is successfully tracked
+	print("Anchor tracked successfully.")
+	
+	if is_new:
+		print("New anchor tracked.")
+
+	# Now, you can safely get the anchor and parent the note to the XRAnchor3D
+	if spatial_entity:
+		# Get the corresponding XRAnchor3D node for the spatial entity
+		anchor_node = spatial_anchor_manager.get_anchor_node(spatial_entity.uuid)  # Get the XRAnchor3D node
+		if anchor_node:
+			var global = note.global_transform
+			print("This note: ",note)
+			note.get_parent().remove_child(note)
+			anchor_node.add_child(note)  # Attach the note to the anchor node
+			note.global_transform = global
+			note.position = Vector3.ZERO
+			note.rotation = Vector3.ZERO
+			
+			anchor_uuid = spatial_entity.uuid  # Store the new anchor's UUID for reference
+			print("Anchor UUID: ", anchor_uuid)
+			anchored = true
+			
+			var file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.WRITE)
+			if not file:
+				print("ERROR: Unable to open file for writing: ", SPATIAL_ANCHORS_FILE)
+				return
+				
+			var json := JSON.new()
+			if json.parse(file.get_as_text()) != OK:
+				print("ERROR: Unable to parse ", SPATIAL_ANCHORS_FILE)
+				return
+			
+			var anchor_data: Array = json.data
+			anchor_data.append(anchor_uuid)
+			
+			file.store_string(JSON.stringify(anchor_data))
+			file.close()
 
 func _process(delta: float) -> void:
 	if not is_dragged:

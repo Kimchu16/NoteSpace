@@ -30,13 +30,13 @@ tonemap_mode = 2
 resource_local_to_scene = true
 size = Vector2(0.4, 0.2)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_dg77c"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_ycdy4"]
 viewport_path = NodePath("Keyboard/Viewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ycdy4"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w48qg"]
 transparency = 1
 cull_mode = 2
-albedo_texture = SubResource("ViewportTexture_dg77c")
+albedo_texture = SubResource("ViewportTexture_ycdy4")
 texture_filter = 1
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_074og"]
@@ -116,10 +116,10 @@ target_radius = 0.01
 collision_mask = 44
 collide_with_areas = true
 
-[node name="OpenXRFbSceneManager" type="OpenXRFbSceneManager" parent="XROrigin3D"]
+[node name="OpenXRFbSceneManager" type="OpenXRFbSceneManager" parent="XROrigin3D" groups=["Managers"]]
 default_scene = ExtResource("3_dg77c")
 
-[node name="OpenXRFbSpatialAnchorManager" type="OpenXRFbSpatialAnchorManager" parent="XROrigin3D"]
+[node name="OpenXRFbSpatialAnchorManager" type="OpenXRFbSpatialAnchorManager" parent="XROrigin3D" groups=["Managers"]]
 scene = ExtResource("4_ycdy4")
 
 [node name="Managers" type="Node" parent="."]
@@ -878,7 +878,7 @@ key_text = "?"
 
 [node name="Screen" type="MeshInstance3D" parent="Keyboard"]
 mesh = SubResource("QuadMesh_vivmo")
-surface_material_override/0 = SubResource("StandardMaterial3D_ycdy4")
+surface_material_override/0 = SubResource("StandardMaterial3D_w48qg")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Keyboard"]
 collision_layer = 28
