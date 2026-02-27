@@ -244,21 +244,27 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			print("Anchor UUID: ", anchor_uuid)
 			anchored = true
 			
-			var file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.WRITE)
+			
+			var file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ_WRITE)
 			if not file:
 				print("ERROR: Unable to open file for writing: ", SPATIAL_ANCHORS_FILE)
 				return
 				
 			var json := JSON.new()
+			var anchor_data: Array
 			if json.parse(file.get_as_text()) != OK:
 				print("ERROR: Unable to parse ", SPATIAL_ANCHORS_FILE)
-				return
-			
-			var anchor_data: Array = json.data
+				pass
+			else:
+				anchor_data = json.data
+				print("parsed json: ", JSON.stringify(anchor_data))
 			anchor_data.append(anchor_uuid)
 			
-			file.store_string(JSON.stringify(anchor_data))
+			var stringified_json = JSON.stringify(anchor_data)
+			file.store_string(stringified_json)
 			file.close()
+			
+			print("new stringified json: ", stringified_json)
 
 func _process(delta: float) -> void:
 	if not is_dragged:
