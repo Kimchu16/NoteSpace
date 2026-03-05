@@ -23,7 +23,7 @@ var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 var anchor_uuid : String = ""
 var pending_note_for_anchor : Node3D = null
 var anchored : bool
-const SPATIAL_ANCHORS_FILE = "user://openxr_fb_spatial_anchors.json"
+const SPATIAL_ANCHORS_FILE = "user://spatial_anchors.json"
 
 func _ready() -> void:
 	xr_controller_l = get_tree().get_first_node_in_group("LeftController")
@@ -202,67 +202,78 @@ func _apply_surface_snap(hit_position: Vector3, normal: Vector3) -> void:
 	var right = reference.cross(forward).normalized()
 	up = forward.cross(right).normalized()
 	
-	var basis = Basis(right, up, forward)
-	note.global_transform.basis = basis
+	var note_basis = Basis(right, up, forward)
+	note.global_transform.basis = note_basis
 
 func create_spatial_anchor_and_parent() -> void:
 	pending_note_for_anchor = get_parent()
-	var transform = pending_note_for_anchor.global_transform
+	var note_transform = pending_note_for_anchor.global_transform
 
 	# Create a new spatial anchor at the note's current position
 	var custom_data: Dictionary = {
-		"note_id": pending_note_for_anchor.name
+		"note_id": pending_note_for_anchor.note_model.id
 	}
-	spatial_anchor_manager.create_anchor(transform, custom_data)
+	spatial_anchor_manager.create_anchor(note_transform, custom_data)
 
+# Gets called after create_anchor (or load_anchor but this code block doesn't run for load)
 func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: bool) -> void:
-	if pending_note_for_anchor == null:
-		return  # Ignore anchors not created by this note
-		
-	var note = pending_note_for_anchor
-	pending_note_for_anchor = null
-	# This method is triggered when the anchor is successfully tracked
 	print("Anchor tracked successfully.")
+	var note: Note3D
 	
-	if is_new:
-		print("New anchor tracked.")
-
-	# Now, you can safely get the anchor and parent the note to the XRAnchor3D
 	if spatial_entity:
 		# Get the corresponding XRAnchor3D node for the spatial entity
 		anchor_node = spatial_anchor_manager.get_anchor_node(spatial_entity.uuid)  # Get the XRAnchor3D node
+		print("SE custom data: ",spatial_entity.get_custom_data())
+		
+	if is_new: # New anchored created
+		print("New anchor tracked.")
+		
+		if pending_note_for_anchor == null:
+			return  # Ignore anchors not created by this note
+		
+		note = pending_note_for_anchor
+		pending_note_for_anchor = null
+		
 		if anchor_node:
-			var global = note.global_transform
+			#var global = note.global_transform
 			print("This note: ",note)
 			note.get_parent().remove_child(note)
 			anchor_node.add_child(note)  # Attach the note to the anchor node
-			note.global_transform = global
+			#note.global_transform = global
 			note.position = Vector3.ZERO
 			note.rotation = Vector3.ZERO
-			
-			anchor_uuid = spatial_entity.uuid  # Store the new anchor's UUID for reference
-			print("Anchor UUID: ", anchor_uuid)
 			anchored = true
 			
+			var anchor_data: Dictionary
 			
-			var file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ_WRITE)
-			if not file:
+			# READ existing file if exists
+			if FileAccess.file_exists(SPATIAL_ANCHORS_FILE):
+				var read_file = FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ)
+				
+				var json := JSON.new()
+				if json.parse(read_file.get_as_text()) != OK:
+					print("ERROR: Unable to parse ", SPATIAL_ANCHORS_FILE)
+					pass
+				else:
+					anchor_data = json.data
+					print("parsed json: ", JSON.stringify(anchor_data))
+				
+				read_file.close()
+			
+			# UPDATE anchor data
+			for uuid in spatial_anchor_manager.get_anchor_uuids():
+				var entity = spatial_anchor_manager.get_spatial_entity(uuid)
+				anchor_data[uuid] = entity.get_custom_data()	
+			
+			# WRITE updated data
+			var write_file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.WRITE)
+			if not write_file:
 				print("ERROR: Unable to open file for writing: ", SPATIAL_ANCHORS_FILE)
 				return
-				
-			var json := JSON.new()
-			var anchor_data: Array
-			if json.parse(file.get_as_text()) != OK:
-				print("ERROR: Unable to parse ", SPATIAL_ANCHORS_FILE)
-				pass
-			else:
-				anchor_data = json.data
-				print("parsed json: ", JSON.stringify(anchor_data))
-			anchor_data.append(anchor_uuid)
 			
 			var stringified_json = JSON.stringify(anchor_data)
-			file.store_string(stringified_json)
-			file.close()
+			write_file.store_string(stringified_json)
+			write_file.close()
 			
 			print("new stringified json: ", stringified_json)
 

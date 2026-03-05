@@ -7,7 +7,6 @@ var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 
 var note_scene = preload("res://scenes/notes/note3D.tscn")
 var menu_note_scene = preload("res://scenes/ui/note_main_interface.tscn")
-const SPATIAL_ANCHORS_FILE = "user://openxr_fb_spatial_anchors.json"
 
 func _ready() -> void:
 	if notes_root == null:
@@ -32,14 +31,12 @@ func load_notes_from_database() -> void:
 			menu_notes.add_child(menu_note_instance)
 			menu_note_instance.set_note_data(note_model)
 
-
-
 		
 # Spawn a note in VR space
 func spawn_note(note_model: NoteModel) -> void:
 	var note_instance: Note3D = note_scene.instantiate()
 	notes_root.add_child(note_instance)
-	print("Spawn note")
+	print("Spawn note id: ", note_model.id, " | node name: ", note_instance.name)
 	
 	# Set position
 	note_instance.global_position = note_model.position

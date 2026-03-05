@@ -30,7 +30,7 @@ func set_note_data(model: NoteModel) -> void:
 	note_ui.set_note_content(note_model.content)
 	
 	# Set color
-	$SubViewport/Note_UI/Control/ColorRect.color = note_model.get_godot_color()
+	$SubViewport/Note_UI/Control/ColorRect.color = note_model.get_godot_colour()
 
 # Save position to database
 func save_position() -> void:

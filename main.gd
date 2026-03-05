@@ -6,7 +6,10 @@ var xr_interface: XRInterface
 @export var right_controller: XRController3D
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
-const SPATIAL_ANCHORS_FILE = "user://openxr_fb_spatial_anchors.json"
+const SPATIAL_ANCHORS_FILE = "user://spatial_anchors.json"
+var note_scene = preload("res://scenes/notes/note3D.tscn")
+
+var anchor_data: Dictionary
 
 func _ready():
 	xr_interface = XRServer.find_interface("OpenXR")
@@ -51,11 +54,13 @@ func _on_openxr_session_begun() -> void:
 
 func load_anchors_from_file() -> void:
 	var file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ)
+	print(ProjectSettings.globalize_path(SPATIAL_ANCHORS_FILE))
+
 	if not file:
+		print("No file to load in anchors.")
 		return
 	
 	var json := JSON.new()
-	var anchor_data: Array
 	if json.parse(file.get_as_text()) != OK:
 		print("ERROR: Unable to parse ", SPATIAL_ANCHORS_FILE)
 		pass
@@ -66,8 +71,29 @@ func load_anchors_from_file() -> void:
 	print("Anchor data size: ", anchor_data.size())
 	if anchor_data.size() > 0:
 		print("Anchor load")
-		for anchor in anchor_data:
-			spatial_anchor_manager.load_anchor(anchor)
+		for uuid in anchor_data.keys():
+			spatial_anchor_manager.load_anchor(uuid)
 
 func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: bool) -> void:
-	print("SE: ", spatial_entity)
+	if !is_new:
+		# Anchor reloaded
+		print("Anchor reload tracked successfully.")
+		var note: Note3D
+		
+		if spatial_entity:
+			# Get the corresponding XRAnchor3D node for the spatial entity
+			anchor_node = spatial_anchor_manager.get_anchor_node(spatial_entity.uuid)  # Get the XRAnchor3D node
+			#print("SE custom data: ", anchor_data[spatial_entity.uuid]["note_id"])
+			var note_id = anchor_data[spatial_entity.uuid]["note_id"]
+			var model = await NotesService.get_note_by_id(note_id)
+			
+			note = note_scene.instantiate()
+			anchor_node.add_child(note)
+		
+			# Set position
+			note.position = Vector3.ZERO
+			note.rotation = Vector3.ZERO
+			
+			# Set the note data
+			note.set_note_data(model)
+			print("Load note id: ", note.note_model.id, " | node name: ", note.name)

@@ -10,5 +10,5 @@ func set_note_data(model: NoteModel) -> void:
 	
 	note_stylebox = get_theme_stylebox("panel").duplicate()
 	note_label.text = note_model.content
-	note_stylebox.border_color = note_model.get_godot_color()
+	note_stylebox.border_color = note_model.get_godot_colour()
 	add_theme_stylebox_override("panel", note_stylebox)

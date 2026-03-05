@@ -4,7 +4,7 @@ extends RefCounted
 var id: int = -1  # -1 means not saved to database yet
 var content: String = ""
 var position: Vector3 = Vector3.ZERO
-var color: String = "yellow"
+var colour: String = "yellow"
 var created_at: String = ""
 var updated_at: String = ""
 
@@ -13,7 +13,7 @@ static func from_dict(data: Dictionary) -> NoteModel:
 	var note = NoteModel.new()
 	note.id = int(data.get("id", -1))
 	note.content = data.get("context", "")  # DB uses "context"
-	note.color = data.get("colour", "yellow")  # DB uses "colour"
+	note.colour = data.get("colour", "yellow")  # DB uses "colour"
 	
 	# Handle null positions
 	var x = data.get("pos_x")
@@ -37,11 +37,11 @@ func to_dict() -> Dictionary:
 		"pos_x": position.x,
 		"pos_y": position.y,
 		"pos_z": position.z,
-		"colour": color
+		"colour": colour
 	}
 
-func get_godot_color() -> Color:
-	match color.to_lower():
+func get_godot_colour() -> Color:
+	match colour.to_lower():
 		"yellow": return Color.YELLOW
 		"blue": return Color.BLUE
 		"green": return Color.GREEN
