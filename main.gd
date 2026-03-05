@@ -89,6 +89,7 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			
 			note = note_scene.instantiate()
 			anchor_node.add_child(note)
+			note.anchor_uuid = spatial_entity.uuid
 		
 			# Set position
 			note.position = Vector3.ZERO
@@ -97,3 +98,4 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			# Set the note data
 			note.set_note_data(model)
 			print("Load note id: ", note.note_model.id, " | node name: ", note.name)
+			note.anchored = true

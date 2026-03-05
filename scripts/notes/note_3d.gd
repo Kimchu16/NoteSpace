@@ -5,6 +5,8 @@ var note_model: NoteModel = null
 var last_saved_position: Vector3 = Vector3.ZERO
 var position_update_timer: float = 0.0
 const POSITION_UPDATE_DELAY = 1.0  # Save position every 1 second when moved
+var anchored: bool = false
+var anchor_uuid: String = ""
 
 func _enter_tree():
 	var toolbar = $Toolbar

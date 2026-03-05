@@ -10,6 +10,8 @@ var is_dragged = false
 var dragging_pointer = null
 var is_hovering = false
 var is_pressed = false
+var note: Note3D
+var notes_root: Node3D
 
 enum PlacementState { FREE, SNAP_PREVIEW }
 var placement_state = PlacementState.FREE
@@ -22,10 +24,11 @@ var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 
 var anchor_uuid : String = ""
 var pending_note_for_anchor : Node3D = null
-var anchored : bool
 const SPATIAL_ANCHORS_FILE = "user://spatial_anchors.json"
 
 func _ready() -> void:
+	note = get_parent()
+	notes_root = get_tree().get_first_node_in_group("Notes")
 	xr_controller_l = get_tree().get_first_node_in_group("LeftController")
 	xr_controller_r = get_tree().get_first_node_in_group("RightController")
 	toolbar = get_parent().get_node("Toolbar")
@@ -72,8 +75,8 @@ func _on_pointer_event(event: XRToolsPointerEvent) -> void:
 			dragging_pointer = null
 			
 			if placement_state == PlacementState.FREE or placement_state == PlacementState.SNAP_PREVIEW:
-				if anchored != true:
-					create_spatial_anchor_and_parent()
+				#if note.anchored != true:
+				create_spatial_anchor_and_parent()
 
 		XRToolsPointerEvent.Type.MOVED:
 			if is_hovering and is_pressed:
@@ -83,7 +86,6 @@ func _on_pointer_event(event: XRToolsPointerEvent) -> void:
 
 func _update_free_drag() -> void:
 	var camera = get_viewport().get_camera_3d()
-	var note = get_parent()
 	var space_state = get_world_3d().direct_space_state
 	
 	# Depth Control ----------------------------------
@@ -165,8 +167,6 @@ func _update_free_drag() -> void:
 		_apply_billboard(camera)
 
 func _apply_billboard(camera: Camera3D):
-	var note = get_parent()
-	
 	var to_camera = camera.global_position - note.global_position
 	var horizontal = Vector3(to_camera.x, 0, to_camera.z)
 
@@ -184,8 +184,6 @@ func _apply_billboard(camera: Camera3D):
 	note.rotation = Vector3(-pitch, yaw, 0)
 
 func _apply_surface_snap(hit_position: Vector3, normal: Vector3) -> void:
-	var note = get_parent()
-	
 	var offset = 0.02  # avoid z-fighting
 	var snap_position = hit_position + normal * offset
 	
@@ -205,6 +203,20 @@ func _apply_surface_snap(hit_position: Vector3, normal: Vector3) -> void:
 	var note_basis = Basis(right, up, forward)
 	note.global_transform.basis = note_basis
 
+func delete_spatial_anchor() -> void: #TODO: Delete anchor when deleting note
+	if note.anchor_uuid == "":
+		return
+	
+	var parent = note.get_parent()
+	if parent is XRAnchor3D:
+		parent.remove_child(note)
+		notes_root.add_child(note)
+		
+	print("Deleting anchor:", note.anchor_uuid)
+	spatial_anchor_manager.untrack_anchor(note.anchor_uuid)
+	note.anchored = false
+	note.anchor_uuid = ""
+
 func create_spatial_anchor_and_parent() -> void:
 	pending_note_for_anchor = get_parent()
 	var note_transform = pending_note_for_anchor.global_transform
@@ -218,12 +230,16 @@ func create_spatial_anchor_and_parent() -> void:
 # Gets called after create_anchor (or load_anchor but this code block doesn't run for load)
 func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: bool) -> void:
 	print("Anchor tracked successfully.")
-	var note: Note3D
+	
+	var old_anchor_uuid = note.anchor_uuid
+	print ("old anchor uuid: ", old_anchor_uuid)
 	
 	if spatial_entity:
 		# Get the corresponding XRAnchor3D node for the spatial entity
 		anchor_node = spatial_anchor_manager.get_anchor_node(spatial_entity.uuid)  # Get the XRAnchor3D node
 		print("SE custom data: ",spatial_entity.get_custom_data())
+		
+		note.anchor_uuid = spatial_entity.uuid
 		
 	if is_new: # New anchored created
 		print("New anchor tracked.")
@@ -242,7 +258,7 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			#note.global_transform = global
 			note.position = Vector3.ZERO
 			note.rotation = Vector3.ZERO
-			anchored = true
+			note.anchored = true
 			
 			var anchor_data: Dictionary
 			
@@ -261,10 +277,12 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 				read_file.close()
 			
 			# UPDATE anchor data
-			for uuid in spatial_anchor_manager.get_anchor_uuids():
-				var entity = spatial_anchor_manager.get_spatial_entity(uuid)
-				anchor_data[uuid] = entity.get_custom_data()	
+			anchor_data[note.anchor_uuid] = spatial_entity.get_custom_data()	
 			
+			if old_anchor_uuid != "":
+				spatial_anchor_manager.untrack_anchor(old_anchor_uuid)
+				anchor_data.erase(old_anchor_uuid)
+				
 			# WRITE updated data
 			var write_file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.WRITE)
 			if not write_file:
