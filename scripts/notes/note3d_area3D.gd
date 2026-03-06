@@ -27,7 +27,7 @@ var pending_note_for_anchor : Node3D = null
 const SPATIAL_ANCHORS_FILE = "user://spatial_anchors.json"
 
 func _ready() -> void:
-	note = get_parent()
+	note = get_parent().get_parent()
 	notes_root = get_tree().get_first_node_in_group("Notes")
 	xr_controller_l = get_tree().get_first_node_in_group("LeftController")
 	xr_controller_r = get_tree().get_first_node_in_group("RightController")
@@ -125,7 +125,7 @@ func _update_free_drag() -> void:
 	note.global_position = note.global_position.lerp(target_position, 0.2)
 	
 	# Snap Detection---------------------------------------------------
-	var note_forward = -note.global_transform.basis.z
+	var note_forward = -note.visual_root.global_transform.basis.z
 	var snap_origin = note.global_position
 	var snap_end = snap_origin + note_forward * 0.4
 	
@@ -176,12 +176,16 @@ func _apply_billboard(camera: Camera3D):
 	#PITCH (tilt forward/back)
 	var horizontal_distance = horizontal.length()
 	var pitch = atan2(to_camera.y, horizontal_distance)
-
+	
 	# Clamp tilt so it doesn’t over-rotate
 	pitch = clamp(pitch, deg_to_rad(-45), deg_to_rad(45))
 
 	# Apply rotation (no roll)
-	note.rotation = Vector3(-pitch, yaw, 0)
+	var desired_global_basis = Basis.from_euler(Vector3(-pitch, yaw, 0))
+	
+	# Convert WORLD basis -> LOCAL basis under Note3D
+	var parent_global_basis = note.global_transform.basis
+	note.visual_root.transform.basis = parent_global_basis.inverse() * desired_global_basis
 
 func _apply_surface_snap(hit_position: Vector3, normal: Vector3) -> void:
 	var offset = 0.02  # avoid z-fighting
@@ -190,27 +194,24 @@ func _apply_surface_snap(hit_position: Vector3, normal: Vector3) -> void:
 	note.global_position = note.global_position.lerp(snap_position, 0.3)
 	
 	# Align note to surface
-	var forward = normal
-	var up = Vector3.UP
-	
+	var forward = normal.normalized()
 	var reference = Vector3.UP
+	
 	if abs(forward.dot(reference)) > 0.95: # Is forward almost parallel to reference?
 		reference = Vector3.FORWARD  # if surface is horizontal, use different axis (prevents y axis flickering)
 	
 	var right = reference.cross(forward).normalized()
-	up = forward.cross(right).normalized()
+	var up = forward.cross(right).normalized()
 	
-	var note_basis = Basis(right, up, forward)
-	note.global_transform.basis = note_basis
+	var desired_global_basis = Basis(right, up, forward)
+	
+	# Convert WORLD basis -> LOCAL basis under Note3D
+	var parent_global_basis = note.global_transform.basis
+	note.visual_root.transform.basis = parent_global_basis.inverse() * desired_global_basis
 
 func delete_spatial_anchor() -> void: #TODO: Delete anchor when deleting note
 	if note.anchor_uuid == "":
 		return
-	
-	var parent = note.get_parent()
-	if parent is XRAnchor3D:
-		parent.remove_child(note)
-		notes_root.add_child(note)
 		
 	print("Deleting anchor:", note.anchor_uuid)
 	spatial_anchor_manager.untrack_anchor(note.anchor_uuid)
@@ -218,9 +219,16 @@ func delete_spatial_anchor() -> void: #TODO: Delete anchor when deleting note
 	note.anchor_uuid = ""
 
 func create_spatial_anchor_and_parent() -> void:
-	pending_note_for_anchor = get_parent()
+	pending_note_for_anchor = get_parent().get_parent()
+	
+	# Apply current visual root rotation
+	var visual_global_basis = pending_note_for_anchor.visual_root.global_transform.basis
+	var parent_basis = pending_note_for_anchor.get_parent().global_transform.basis
+	pending_note_for_anchor.transform.basis = parent_basis.inverse() * visual_global_basis
+	pending_note_for_anchor.visual_root.transform.basis = Basis.IDENTITY
+	
 	var note_transform = pending_note_for_anchor.global_transform
-
+	
 	# Create a new spatial anchor at the note's current position
 	var custom_data: Dictionary = {
 		"note_id": pending_note_for_anchor.note_model.id

@@ -1,6 +1,8 @@
 extends Node3D
 class_name Note3D
 
+@onready var visual_root: Node3D = $VisualRoot
+
 var note_model: NoteModel = null
 var last_saved_position: Vector3 = Vector3.ZERO
 var position_update_timer: float = 0.0
@@ -9,7 +11,7 @@ var anchored: bool = false
 var anchor_uuid: String = ""
 
 func _enter_tree():
-	var toolbar = $Toolbar
+	var toolbar = $VisualRoot/Toolbar
 	toolbar.connect("edit_button", _on_edit_button_pressed)
 	toolbar.connect("delete_button", _on_delete_button_pressed)
 
@@ -28,11 +30,11 @@ func set_note_data(model: NoteModel) -> void:
 	last_saved_position = global_position
 	
 	# Update UI with content
-	var note_ui = $SubViewport/Note_UI
+	var note_ui = $VisualRoot/SubViewport/Note_UI
 	note_ui.set_note_content(note_model.content)
 	
 	# Set color
-	$SubViewport/Note_UI/Control/ColorRect.color = note_model.get_godot_colour()
+	$VisualRoot/SubViewport/Note_UI/Control/ColorRect.color = note_model.get_godot_colour()
 
 # Save position to database
 func save_position() -> void:
@@ -53,7 +55,7 @@ func save_content(new_content: String) -> void:
 	print("Content saved for note ", note_model.id)
 
 func _on_edit_button_pressed() -> void:
-	$SubViewport/Note_UI._edit_note()
+	$VisualRoot/SubViewport/Note_UI._edit_note()
 
 func _on_delete_button_pressed() -> void:
 	# Delete from database first

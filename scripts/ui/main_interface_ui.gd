@@ -25,7 +25,8 @@ func load_notes_from_database() -> void:
 	
 	for note_model in notes:
 		if note_model.position != Vector3(0.0, 0.0, 0.0): # If note has a saved position
-			spawn_note(note_model)
+			#spawn_note(note_model)
+			pass
 		else:
 			var menu_note_instance: MenuNote = menu_note_scene.instantiate()
 			menu_notes.add_child(menu_note_instance)
