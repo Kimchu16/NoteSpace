@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var menu_notes:VBoxContainer = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer5/ScrollContainer/MenuNotes
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
+var opened_spawn_button: Button = null
 
 var note_scene = preload("res://scenes/notes/note3D.tscn")
 var menu_note_scene = preload("res://scenes/ui/note_main_interface.tscn")
@@ -17,7 +18,7 @@ func _ready() -> void:
 	#load_anchors_from_file()
 	# Load existing notes from database
 	load_notes_from_database()
-	
+
 # Load all notes from database on startup
 func load_notes_from_database() -> void:
 	var notes = await NotesService.get_all_notes()
@@ -31,24 +32,39 @@ func load_notes_from_database() -> void:
 			var menu_note_instance: MenuNote = menu_note_scene.instantiate()
 			menu_notes.add_child(menu_note_instance)
 			menu_note_instance.set_note_data(note_model)
+			menu_note_instance.spawn_note_button_pressed.connect(_on_spawn_note_requested)
 
-		
+func _on_spawn_note_requested(note_model: NoteModel) -> void:
+	spawn_note(note_model)
+
 # Spawn a note in VR space
 func spawn_note(note_model: NoteModel) -> void:
+	var hmd = XRServer.get_hmd_transform()
+	var forward = -hmd.basis.z
+	var spawn_position = hmd.origin + forward * 0.5
 	var note_instance: Note3D = note_scene.instantiate()
 	notes_root.add_child(note_instance)
 	print("Spawn note id: ", note_model.id, " | node name: ", note_instance.name)
 	
 	# Set position
-	note_instance.global_position = note_model.position
+	note_instance.global_position = hmd.origin + forward * 0.5
 	
 	# Set the note data
 	note_instance.set_note_data(note_model)
 
+func request_spawn_button(button: Button) -> void:
+	if opened_spawn_button == button:
+		button.visible = false
+		opened_spawn_button = null
+		return
+	
+	if opened_spawn_button:
+		opened_spawn_button.visible = false
+	
+	opened_spawn_button = button
+	button.visible = true
+
 func _on_create_button_pressed() -> void:
-	
-	#TODO: Preview note in main interface, then give option to spawn note in world space
-	
 	# Position the note in front of the HMD (Head-Mounted Display)
 	var hmd = XRServer.get_hmd_transform()
 	var forward = -hmd.basis.z
