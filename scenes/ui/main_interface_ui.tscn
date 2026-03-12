@@ -566,7 +566,7 @@ layout_mode = 2
 
 [node name="MenuNotes" type="VBoxContainer" parent="Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer5/ScrollContainer"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 80
 
 [node name="Panel" type="Panel" parent="Control"]
 layout_mode = 1
