@@ -34,8 +34,9 @@ func load_notes_from_database() -> void:
 			menu_note_instance.set_note_data(note_model)
 			menu_note_instance.spawn_note_button_pressed.connect(_on_spawn_note_requested)
 
-func _on_spawn_note_requested(note_model: NoteModel) -> void:
+func _on_spawn_note_requested(note_model: NoteModel, menu_note: MenuNote) -> void:
 	spawn_note(note_model)
+	menu_note.spawn_button.visible = false
 
 # Spawn a note in VR space
 func spawn_note(note_model: NoteModel) -> void:

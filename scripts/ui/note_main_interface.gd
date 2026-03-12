@@ -30,7 +30,7 @@ func set_note_data(model: NoteModel) -> void:
 	add_theme_stylebox_override("pressed", note_stylebox_pressed)
 
 func _on_spawn_button_pressed():
-	emit_signal("spawn_note_button_pressed", note_model)
+	emit_signal("spawn_note_button_pressed", note_model, self)
 
 func _on_pressed() -> void:
 	var mainUI = get_tree().get_first_node_in_group("MainInterfaceUI")
