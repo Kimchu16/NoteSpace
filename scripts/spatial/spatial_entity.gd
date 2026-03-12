@@ -2,7 +2,8 @@ extends StaticBody3D
 
 func setup_scene(entity: OpenXRFbSpatialEntity) -> void:
 	var labels: PackedStringArray = entity.get_semantic_labels()
-	print("Semantic labels:", labels)
+	#print("Setting up the scene with entity: ", entity)
+	#	print("Semantic labels:", labels)
 	# Only allow specific surface types
 	var allowed := false
 

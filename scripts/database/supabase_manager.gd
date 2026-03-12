@@ -8,7 +8,7 @@ func _ready():
 	print("Supabase initialized!")
 
 	# Test connection by fetching notes
-	test_connection()
+	#test_connection()
 
 func test_connection():
 	var query = SupabaseQuery.new().from("notes").select()

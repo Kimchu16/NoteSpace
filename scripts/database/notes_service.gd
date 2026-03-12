@@ -32,6 +32,20 @@ func get_all_notes() -> Array[NoteModel]:
 	
 	return notes
 
+func get_note_by_id(note_id: int) -> NoteModel:
+	var query = SupabaseQuery.new()\
+		.from("notes")\
+		.select()\
+		.eq("id", str(note_id))
+
+	var task = Supabase.database.query(query)
+	await task.completed
+
+	if task.data and task.data.size() > 0:
+		return NoteModel.from_dict(task.data[0]) # ID column
+
+	return null
+
 func update_note_position(note_id: int, new_position: Vector3) -> bool:
 	if note_id == -1:
 		return false  # Note not saved yet
