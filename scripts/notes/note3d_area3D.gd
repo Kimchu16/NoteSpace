@@ -220,6 +220,7 @@ func delete_spatial_anchor() -> void: #TODO: Delete anchor when deleting note
 
 func create_spatial_anchor_and_parent() -> void:
 	pending_note_for_anchor = get_parent().get_parent()
+	print("Pending_note_for_anchor: ", pending_note_for_anchor)
 	
 	# Apply current visual root rotation
 	var visual_global_basis = pending_note_for_anchor.visual_root.global_transform.basis
@@ -239,7 +240,12 @@ func create_spatial_anchor_and_parent() -> void:
 func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: bool) -> void:
 	print("Anchor tracked successfully.")
 	
+	print("Note: ", note, " || pending_note_for_anchor: ", pending_note_for_anchor)
+	if note != pending_note_for_anchor:
+		return
+	
 	var old_anchor_uuid = note.anchor_uuid
+	print("Note: ", note)
 	print ("old anchor uuid: ", old_anchor_uuid)
 	
 	if spatial_entity:
@@ -248,6 +254,7 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 		print("SE custom data: ",spatial_entity.get_custom_data())
 		
 		note.anchor_uuid = spatial_entity.uuid
+		print("Note: ", note, " with UUID: ", note.anchor_uuid)
 		
 	if is_new: # New anchored created
 		print("New anchor tracked.")
@@ -302,6 +309,7 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			write_file.close()
 			
 			print("new stringified json: ", stringified_json)
+			print("------------------------------------------------------------------------")
 
 func _process(delta: float) -> void:
 	if not is_dragged:
