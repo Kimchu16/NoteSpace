@@ -5,6 +5,7 @@ extends CanvasLayer
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 var opened_spawn_button: Button = null
+var notes_by_id: Dictionary
 
 var note_scene = preload("res://scenes/notes/note3D.tscn")
 var menu_note_scene = preload("res://scenes/ui/note_main_interface.tscn")
@@ -34,6 +35,18 @@ func load_notes_from_database() -> void:
 			menu_note_instance.is_note_placed = true
 		else:
 			menu_note_instance.is_note_placed = false
+			
+		menu_note_instance.highlight_note.connect(_on_highlight_note)
+
+func register_note(note_instance: Note3D):
+	notes_by_id[note_instance.note_model.id] = note_instance
+
+func unregister_note(note_instance: Note3D):
+	notes_by_id.erase(note_instance.note_model.id)
+
+func _on_highlight_note(note_model):
+	if notes_by_id.has(note_model.id):
+		notes_by_id[note_model.id].highlight()
 
 func _on_spawn_note_requested(note_model: NoteModel, menu_note: MenuNote) -> void:
 	spawn_note(note_model)
@@ -54,6 +67,7 @@ func spawn_note(note_model: NoteModel) -> void:
 	
 	# Set the note data
 	note_instance.set_note_data(note_model)
+	register_note(note_instance)
 
 func request_spawn_button(button: Button) -> void:
 	if opened_spawn_button == button:

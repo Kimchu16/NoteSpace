@@ -23,4 +23,4 @@ func _on_perma_del_pressed():
 func _send_to_main_interface():
 	print("Send back to main interface.")
 	emit_signal("send_to_main_interface")
-	print("Emitted from:", get_instance_id())
+	#print("Emitted from:", get_instance_id())

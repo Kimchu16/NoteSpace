@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://c8afp62753414"]
+[gd_scene load_steps=14 format=3 uid="uid://c8afp62753414"]
 
 [ext_resource type="Script" uid="uid://d1cvex0hhwu6w" path="res://scripts/notes/note_3d.gd" id="2_o2bde"]
 [ext_resource type="Script" uid="uid://cyqboteu80tf0" path="res://scripts/notes/note3d_area3D.gd" id="2_qtaf0"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="3_o2bde"]
 [ext_resource type="PackedScene" uid="uid://bhf7bu488y3xk" path="res://scenes/ui/toolbar_ui.tscn" id="4_ymklu"]
 [ext_resource type="PackedScene" uid="uid://c1onusjh3iu6f" path="res://scenes/ui/note_ui.tscn" id="6_bvxdc"]
+[ext_resource type="AudioStream" uid="uid://cdaeutlgf0c0o" path="res://resources/sounds/216634__timbre__synthetic-pings-light-bulb-indicator-[AudioTrimmer.com].mp3" id="7_s4ibr"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_e1omw"]
 resource_local_to_scene = true
@@ -77,6 +78,12 @@ placeholder_text = "New Note. "
 [node name="HighlightRing" type="MeshInstance3D" parent="VisualRoot"]
 visible = false
 mesh = SubResource("TorusMesh_s4ibr")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="VisualRoot/HighlightRing"]
+stream = ExtResource("7_s4ibr")
+attenuation_model = 2
+unit_size = 2.0
+max_db = 0.0
 
 [editable path="VisualRoot/Toolbar/Viewport2Din3D/Toolbar_UI"]
 [editable path="VisualRoot/SubViewport/Note_UI"]
