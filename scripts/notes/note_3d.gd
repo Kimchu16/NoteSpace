@@ -3,6 +3,8 @@ class_name Note3D
 
 @onready var visual_root: Node3D = $VisualRoot
 
+signal returned_to_main_interface
+
 var note_model: NoteModel = null
 var last_saved_position: Vector3 = Vector3.ZERO
 var position_update_timer: float = 0.0
@@ -10,10 +12,13 @@ const POSITION_UPDATE_DELAY = 1.0  # Save position every 1 second when moved
 var anchored: bool = false
 var anchor_uuid: String = ""
 
-func _enter_tree():
+func _ready() -> void:
 	var toolbar = $VisualRoot/Toolbar
+	var toolbar_ui = $VisualRoot/Toolbar/Viewport2Din3D/Viewport/Toolbar_UI
 	toolbar.connect("edit_button", _on_edit_button_pressed)
-	toolbar.connect("delete_button", _on_delete_button_pressed)
+	toolbar_ui.connect("delete_button", _on_delete_button_pressed)
+	toolbar_ui.connect("send_to_main_interface", _on_send_to_main)
+	print("Connected to:", toolbar_ui.get_instance_id())
 
 func _process(delta: float) -> void:
 	# Auto-save position if it changed
@@ -63,3 +68,7 @@ func _on_delete_button_pressed() -> void:
 		await NotesService.delete_note(note_model.id)
 	queue_free()
 	print("Note Deleted")
+
+func _on_send_to_main() -> void:
+	emit_signal("returned_to_main_interface", note_model)
+	call_deferred("queue_free") # Queue free after anchor and other procedures is done running

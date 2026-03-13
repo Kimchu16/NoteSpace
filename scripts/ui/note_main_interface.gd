@@ -7,6 +7,7 @@ var note_model: NoteModel = null
 var note_stylebox: StyleBoxFlat
 var note_stylebox_hover: StyleBoxFlat
 var note_stylebox_pressed: StyleBoxFlat
+var is_note_placed: bool = false
 
 signal spawn_note_button_pressed
 
@@ -33,5 +34,10 @@ func _on_spawn_button_pressed():
 	emit_signal("spawn_note_button_pressed", note_model, self)
 
 func _on_pressed() -> void:
-	var mainUI = get_tree().get_first_node_in_group("MainInterfaceUI")
-	mainUI.request_spawn_button(spawn_button)
+	print("is note placed: ", is_note_placed)
+	if is_note_placed == true:
+		print("Note already placed.")
+		#TODO: Highlight note location?
+	else: 
+		var mainUI = get_tree().get_first_node_in_group("MainInterfaceUI")
+		mainUI.request_spawn_button(spawn_button)

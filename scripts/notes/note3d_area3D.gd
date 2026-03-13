@@ -36,6 +36,7 @@ func _ready() -> void:
 	xr_controller_l.connect("button_pressed", _on_left_hand_pressed)
 	spatial_anchor_manager =  get_tree().get_nodes_in_group("Managers")[1]
 	spatial_anchor_manager.connect("openxr_fb_spatial_anchor_tracked", _on_anchor_tracked)
+	note.returned_to_main_interface.connect(_on_note_returned_to_main)
 
 func _on_left_hand_pressed(name: String) -> void:
 	match name:
@@ -215,8 +216,42 @@ func delete_spatial_anchor() -> void: #TODO: Delete anchor when deleting note
 		
 	print("Deleting anchor:", note.anchor_uuid)
 	spatial_anchor_manager.untrack_anchor(note.anchor_uuid)
+	
+	var anchor_data: Dictionary
+			
+	# READ existing file if exists
+	if FileAccess.file_exists(SPATIAL_ANCHORS_FILE):
+		var read_file = FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ)
+		
+		var json := JSON.new()
+		if json.parse(read_file.get_as_text()) != OK:
+			print("ERROR: Unable to parse ", SPATIAL_ANCHORS_FILE)
+			pass
+		else:
+			anchor_data = json.data
+			print("parsed json: ", JSON.stringify(anchor_data))
+		
+		read_file.close()
+	
+	# UPDATE anchor data
+	if anchor_data.has(note.anchor_uuid):
+		anchor_data.erase(note.anchor_uuid)
+		
+	# WRITE updated data
+	var write_file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.WRITE)
+	if not write_file:
+		print("ERROR: Unable to open file for writing: ", SPATIAL_ANCHORS_FILE)
+		return
+	
+	var stringified_json = JSON.stringify(anchor_data)
+	write_file.store_string(stringified_json)
+	write_file.close()
+	
 	note.anchored = false
 	note.anchor_uuid = ""
+	
+	print("new stringified json: ", stringified_json)
+	print("------------------------------------------------------------------------")
 
 func create_spatial_anchor_and_parent() -> void:
 	pending_note_for_anchor = get_parent().get_parent()
@@ -310,6 +345,9 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			
 			print("new stringified json: ", stringified_json)
 			print("------------------------------------------------------------------------")
+
+func _on_note_returned_to_main(note_model):
+	delete_spatial_anchor()
 
 func _process(delta: float) -> void:
 	if not is_dragged:

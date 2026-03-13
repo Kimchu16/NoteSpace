@@ -25,18 +25,20 @@ func load_notes_from_database() -> void:
 	print("Loading ", notes.size(), " notes from database...")
 	
 	for note_model in notes:
-		if note_model.position != Vector3(0.0, 0.0, 0.0): # If note has a saved position
-			#spawn_note(note_model)
-			pass
+		var menu_note_instance: MenuNote = menu_note_scene.instantiate()
+		menu_notes.add_child(menu_note_instance)
+		menu_note_instance.set_note_data(note_model)
+		menu_note_instance.spawn_note_button_pressed.connect(_on_spawn_note_requested)
+		
+		if note_model.position != Vector3(0.0, 0.0, 0.0): # If note is placed
+			menu_note_instance.is_note_placed = true
 		else:
-			var menu_note_instance: MenuNote = menu_note_scene.instantiate()
-			menu_notes.add_child(menu_note_instance)
-			menu_note_instance.set_note_data(note_model)
-			menu_note_instance.spawn_note_button_pressed.connect(_on_spawn_note_requested)
+			menu_note_instance.is_note_placed = false
 
 func _on_spawn_note_requested(note_model: NoteModel, menu_note: MenuNote) -> void:
 	spawn_note(note_model)
 	menu_note.spawn_button.visible = false
+	menu_note.is_note_placed = true
 
 # Spawn a note in VR space
 func spawn_note(note_model: NoteModel) -> void:
@@ -84,3 +86,9 @@ func _on_create_button_pressed() -> void:
 		print(note_model)
 	else:
 		printerr("note model null")
+
+func _on_note_returned_to_main_interface(note_model: NoteModel) -> void:
+	for child in menu_notes.get_children():
+		if child is MenuNote and child.note_model.id == note_model.id:
+			child.is_note_placed = false
+			break
