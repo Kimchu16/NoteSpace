@@ -32,13 +32,13 @@ glow_bloom = 0.3
 resource_local_to_scene = true
 size = Vector2(0.4, 0.2)
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_ycdy4"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_vivmo"]
 viewport_path = NodePath("Keyboard/Viewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ycdy4"]
 transparency = 1
 cull_mode = 2
-albedo_texture = SubResource("ViewportTexture_ycdy4")
+albedo_texture = SubResource("ViewportTexture_vivmo")
 texture_filter = 1
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_074og"]
