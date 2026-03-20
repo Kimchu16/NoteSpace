@@ -8,6 +8,7 @@ var xr_interface: XRInterface
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 const SPATIAL_ANCHORS_FILE = "user://spatial_anchors.json"
 var note_scene = preload("res://scenes/notes/note3D.tscn")
+var loaded_anchor_uuids: Array = []
 
 var anchor_data: Dictionary
 
@@ -15,6 +16,8 @@ func _ready():
 	xr_interface = XRServer.find_interface("OpenXR")
 	spatial_anchor_manager =  get_tree().get_nodes_in_group("Managers")[1]
 	spatial_anchor_manager.connect("openxr_fb_spatial_anchor_tracked", _on_anchor_tracked)
+	AuthManager.login_success.connect(_on_login_success)
+	AuthManager.logout_success.connect(_on_logout)
 	
 	if xr_interface and xr_interface.is_initialized():
 		print("OpenXR initialized successfully")
@@ -50,7 +53,8 @@ func enable_passthrough() -> bool:
 	return true
 
 func _on_openxr_session_begun() -> void:
-	load_anchors_from_file()
+	#load_anchors_from_file()
+	print("XR ready, waiting for auth...")
 
 func load_anchors_from_file() -> void:
 	var file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ)
@@ -73,6 +77,7 @@ func load_anchors_from_file() -> void:
 		print("Anchor load")
 		for uuid in anchor_data.keys():
 			spatial_anchor_manager.load_anchor(uuid)
+			loaded_anchor_uuids.append(uuid)
 
 func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: bool) -> void:
 	if !is_new:
@@ -108,3 +113,23 @@ func setup_note(note: Note3D) -> void:
 	var main_interface_UI = get_tree().get_first_node_in_group("MainInterfaceUI")
 	if main_interface_UI:
 		note.returned_to_main_interface.connect(main_interface_UI._on_note_returned_to_main_interface)
+
+func _on_login_success(user):
+	print("User logged in: ", user.email)
+	load_anchors_from_file()
+
+func _on_logout():
+	print("User logged out")
+	_clear_notes_and_anchors()
+
+func _clear_notes_and_anchors():
+	for child in get_children():
+		if child is Note3D:
+			child.queue_free()
+		
+	for uuid in loaded_anchor_uuids:
+		var anchor_node = spatial_anchor_manager.get_anchor_node(uuid)
+		if anchor_node:
+			anchor_node.queue_free()
+	
+	loaded_anchor_uuids.clear()
