@@ -343,7 +343,7 @@ border_color = Color(0.35156286, 0.35156295, 0.35156265, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 
-[node name="MainInterface_UI" type="CanvasLayer"]
+[node name="MainInterface_UI" type="CanvasLayer" groups=["MainInterfaceUI"]]
 follow_viewport_enabled = true
 script = ExtResource("1_4i5p1")
 

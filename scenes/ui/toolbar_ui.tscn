@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bhf7bu488y3xk"]
+[gd_scene load_steps=23 format=3 uid="uid://bhf7bu488y3xk"]
 
 [ext_resource type="Script" uid="uid://dxtogk4mssxrr" path="res://scripts/ui/toolbar_ui.gd" id="1_kfg2y"]
 [ext_resource type="Texture2D" uid="uid://ckk312qicbbeu" path="res://resources/icons/edit.png" id="2_01n0y"]
@@ -103,6 +103,63 @@ corner_radius_top_right = 60
 corner_radius_bottom_right = 60
 corner_radius_bottom_left = 60
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c277a"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2moln"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.10980392, 0.10980392, 0.10980392, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_707of"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.080783375, 0.08078333, 0.080783345, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g8h4b"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.16206557, 0.1620656, 0.16206557, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fem25"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.10980392, 0.10980392, 0.10980392, 1)
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pb6ib"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.080783375, 0.08078333, 0.080783345, 1)
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6fcej"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.16206557, 0.1620656, 0.16206557, 1)
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2j0ms"]
 bg_color = Color(0.10980392, 0.10980392, 0.10980392, 1)
 
@@ -111,7 +168,7 @@ follow_viewport_enabled = true
 script = ExtResource("1_kfg2y")
 
 [node name="Control" type="Control" parent="."]
-custom_minimum_size = Vector2(1000, 250)
+custom_minimum_size = Vector2(1000, 500)
 layout_mode = 3
 anchors_preset = 0
 
@@ -183,6 +240,39 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_wbto4")
 theme_override_styles/focus = SubResource("StyleBoxFlat_tsuse")
 icon = ExtResource("3_txj2h")
 
+[node name="PanelContainer" type="PanelContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button2"]
+visible = false
+layout_mode = 0
+offset_left = -520.0
+offset_top = 250.0
+offset_right = 67.0
+offset_bottom = 468.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_c277a")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="Button" type="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(0.60784316, 0.1254902, 0.1254902, 1)
+theme_override_colors/font_hover_color = Color(0.70980394, 0.15686275, 0.15686275, 1)
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_2moln")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_707of")
+theme_override_styles/hover = SubResource("StyleBoxFlat_g8h4b")
+text = "Delete Permanently"
+
+[node name="Button2" type="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_pressed_color = Color(0.60784316, 0.1254902, 0.1254902, 1)
+theme_override_colors/font_hover_color = Color(0.70980394, 0.15686275, 0.15686275, 1)
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxFlat_fem25")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_pb6ib")
+theme_override_styles/hover = SubResource("StyleBoxFlat_6fcej")
+text = "Send to Main Interface"
+
 [node name="Panel" type="Panel" parent="Control/ColorRect"]
 z_index = -1
 layout_mode = 0
@@ -192,3 +282,8 @@ offset_right = 560.0
 offset_bottom = 210.0
 rotation = 0.7853982
 theme_override_styles/panel = SubResource("StyleBoxFlat_2j0ms")
+
+[connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button2" to="." method="_on_del_btn_pressed"]
+[connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer/VBoxContainer/Button" to="." method="_on_perma_del_pressed"]
+[connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer/VBoxContainer/Button2" to="." method="_send_to_main_interface"]

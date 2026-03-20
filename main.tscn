@@ -25,6 +25,8 @@ sky_material = SubResource("ProceduralSkyMaterial_0xm2m")
 background_mode = 2
 sky = SubResource("Sky_h2yge")
 tonemap_mode = 2
+glow_intensity = 1.2
+glow_bloom = 0.3
 
 [sub_resource type="QuadMesh" id="QuadMesh_vivmo"]
 resource_local_to_scene = true

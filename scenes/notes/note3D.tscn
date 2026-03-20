@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c8afp62753414"]
+[gd_scene load_steps=14 format=3 uid="uid://c8afp62753414"]
 
 [ext_resource type="Script" uid="uid://d1cvex0hhwu6w" path="res://scripts/notes/note_3d.gd" id="2_o2bde"]
 [ext_resource type="Script" uid="uid://cyqboteu80tf0" path="res://scripts/notes/note3d_area3D.gd" id="2_qtaf0"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="3_o2bde"]
 [ext_resource type="PackedScene" uid="uid://bhf7bu488y3xk" path="res://scenes/ui/toolbar_ui.tscn" id="4_ymklu"]
 [ext_resource type="PackedScene" uid="uid://c1onusjh3iu6f" path="res://scenes/ui/note_ui.tscn" id="6_bvxdc"]
+[ext_resource type="AudioStream" uid="uid://cdaeutlgf0c0o" path="res://resources/sounds/216634__timbre__synthetic-pings-light-bulb-indicator-[AudioTrimmer.com].mp3" id="7_s4ibr"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_e1omw"]
 resource_local_to_scene = true
@@ -21,7 +22,18 @@ shading_mode = 0
 albedo_texture = SubResource("ViewportTexture_qtaf0")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ygjor"]
-size = Vector3(0.2, 0.2, 0.01)
+size = Vector3(0.2, 0.2, 0.001)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bvxdc"]
+albedo_color = Color(0.5609411, 0.7615267, 0.90448457, 1)
+emission_enabled = true
+emission = Color(0.37237388, 0.7307242, 0.875249, 1)
+emission_energy_multiplier = 5.0
+
+[sub_resource type="TorusMesh" id="TorusMesh_s4ibr"]
+material = SubResource("StandardMaterial3D_bvxdc")
+inner_radius = 0.12
+outer_radius = 0.125
 
 [node name="Note3D" type="Node3D"]
 script = ExtResource("2_o2bde")
@@ -46,11 +58,11 @@ visible = false
 script = ExtResource("3_geaw2")
 
 [node name="Viewport2Din3D" parent="VisualRoot/Toolbar" instance=ExtResource("3_o2bde")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 0.001)
-screen_size = Vector2(0.25, 0.065)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.09125427, 0.001)
+screen_size = Vector2(0.25, 0.125)
 collision_layer = 24
 scene = ExtResource("4_ymklu")
-viewport_size = Vector2(1000, 250)
+viewport_size = Vector2(1000, 500)
 unshaded = true
 scene_properties_keys = PackedStringArray("toolbar_ui.gd")
 
@@ -62,6 +74,16 @@ scene_properties_keys = PackedStringArray("toolbar_ui.gd")
 
 [node name="TextEdit" parent="VisualRoot/SubViewport/Note_UI/Control/ColorRect/MarginContainer" index="0"]
 placeholder_text = "New Note. "
+
+[node name="HighlightRing" type="MeshInstance3D" parent="VisualRoot"]
+visible = false
+mesh = SubResource("TorusMesh_s4ibr")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="VisualRoot/HighlightRing"]
+stream = ExtResource("7_s4ibr")
+attenuation_model = 2
+unit_size = 2.0
+max_db = 0.0
 
 [editable path="VisualRoot/Toolbar/Viewport2Din3D/Toolbar_UI"]
 [editable path="VisualRoot/SubViewport/Note_UI"]

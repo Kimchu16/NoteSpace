@@ -53,6 +53,8 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_ugh2x")
 theme_override_styles/focus = SubResource("StyleBoxFlat_qqjqn")
 theme_override_styles/read_only = SubResource("StyleBoxFlat_kt4o3")
 placeholder_text = "New Note."
+virtual_keyboard_enabled = false
+virtual_keyboard_show_on_focus = false
 
 [node name="HFlowContainer" type="HFlowContainer" parent="Control/ColorRect"]
 layout_mode = 0

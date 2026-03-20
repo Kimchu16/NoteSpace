@@ -1,10 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://deqrlddx0ci8x"]
+[gd_scene load_steps=10 format=3 uid="uid://deqrlddx0ci8x"]
 
 [ext_resource type="Script" uid="uid://6fta47q0h736" path="res://scripts/ui/note_main_interface.gd" id="1_uxha5"]
 [ext_resource type="Script" uid="uid://dwfkwililklhk" path="res://scenes/ui/main_interface_tag_container.gd" id="1_x2qlg"]
 [ext_resource type="PackedScene" uid="uid://bgh5id8xm4x1c" path="res://scenes/ui/tags/overflow_tag.tscn" id="2_oyyyo"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6mus5"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qawoj"]
 bg_color = Color(0.8819366, 0.8819366, 0.88193655, 1)
 border_width_left = 10
 border_color = Color(0.95, 0.85246664, 0.41799998, 1)
@@ -13,9 +13,58 @@ corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
-[node name="Note" type="Panel"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y7sk6"]
+bg_color = Color(0.78352344, 0.7835234, 0.7835234, 1)
+border_width_left = 10
+border_color = Color(0.95, 0.85246664, 0.41799998, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uxha5"]
+bg_color = Color(0.96035105, 0.96035105, 0.96035093, 1)
+border_width_left = 10
+border_color = Color(0.95, 0.85246664, 0.41799998, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oxilj"]
+content_margin_left = 50.0
+content_margin_top = 10.0
+content_margin_right = 50.0
+content_margin_bottom = 10.0
+bg_color = Color(0.7877587, 0.7877594, 0.7877589, 1)
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rcq6p"]
+content_margin_left = 50.0
+content_margin_top = 10.0
+content_margin_right = 50.0
+content_margin_bottom = 10.0
+bg_color = Color(0.69965345, 0.69965345, 0.69965345, 1)
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6klmy"]
+content_margin_left = 50.0
+content_margin_top = 10.0
+content_margin_right = 50.0
+content_margin_bottom = 10.0
+bg_color = Color(0.8474744, 0.84747446, 0.84747446, 1)
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[node name="Note" type="Button"]
 custom_minimum_size = Vector2(660, 200)
-theme_override_styles/panel = SubResource("StyleBoxFlat_6mus5")
+offset_right = 660.0
+offset_bottom = 200.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_qawoj")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_y7sk6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_uxha5")
 script = ExtResource("1_uxha5")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
@@ -48,3 +97,22 @@ script = ExtResource("1_x2qlg")
 [node name="OverflowTag" parent="MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("2_oyyyo")]
 visible = false
 layout_mode = 2
+
+[node name="Button" type="Button" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -86.5
+offset_right = 86.5
+offset_bottom = 103.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0.35686275, 0.35686275, 0.35686275, 1)
+theme_override_font_sizes/font_size = 60
+theme_override_styles/normal = SubResource("StyleBoxFlat_oxilj")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_rcq6p")
+theme_override_styles/hover = SubResource("StyleBoxFlat_6klmy")
+text = "Place"
+
+[connection signal="pressed" from="." to="." method="_on_pressed"]

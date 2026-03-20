@@ -1,15 +1,10 @@
 extends CanvasLayer
 
-@onready var edit_btn = $Control/ColorRect/MarginContainer/HBoxContainer/Button
-@onready var del_btn = $Control/ColorRect/MarginContainer/HBoxContainer/Button2
+@onready var delete_menu = $Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer
 
 signal edit_button
 signal delete_button
-
-func _ready():
-	edit_btn.pressed.connect(_on_button_pressed)
-	#print("Toolbar_UI instance ready:", self)
-	del_btn.pressed.connect(_on_del_btn_pressed)
+signal send_to_main_interface
 
 func _on_button_pressed():
 	#print("Edit button pressed in toolbar UI:", self)
@@ -20,4 +15,12 @@ func _on_button_pressed():
 	get_parent().get_parent().get_parent().emit_signal("edit_button")
 
 func _on_del_btn_pressed():
-	get_parent().get_parent().get_parent().emit_signal("delete_button")
+	delete_menu.visible = !delete_menu.visible
+
+func _on_perma_del_pressed():
+	emit_signal("delete_button")
+
+func _send_to_main_interface():
+	print("Send back to main interface.")
+	emit_signal("send_to_main_interface")
+	#print("Emitted from:", get_instance_id())

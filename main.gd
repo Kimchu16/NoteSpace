@@ -99,3 +99,12 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			note.set_note_data(model)
 			print("Load note id: ", note.note_model.id, " | node name: ", note.name)
 			note.anchored = true
+			setup_note(note)
+			
+			var main_interface_ui = get_tree().get_first_node_in_group("MainInterfaceUI")
+			main_interface_ui.register_note(note)
+
+func setup_note(note: Note3D) -> void:
+	var main_interface_UI = get_tree().get_first_node_in_group("MainInterfaceUI")
+	if main_interface_UI:
+		note.returned_to_main_interface.connect(main_interface_UI._on_note_returned_to_main_interface)
