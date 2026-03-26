@@ -67,6 +67,7 @@ func _save_session(user: SupabaseUser):
 
 func _try_restore_session():
 	if not FileAccess.file_exists("user://session.save"):
+		print("Emitting auth_checked now")
 		emit_signal("auth_checked", false)
 		return
 	
@@ -75,16 +76,24 @@ func _try_restore_session():
 	file.close()
 	
 	var data = JSON.parse_string(content)
-	if not data:
+	if data == null:
+		print("Invalid session data")
 		emit_signal("auth_checked", false)
 		return
+		
+	if not data.has("access_token"):
+		print("Session missing access_token")
+		emit_signal("auth_checked", false)
+		return
+	
+	print("Trying to restore session...")
 	
 	var task = Supabase.auth.user(data["access_token"])
 	task.completed.connect(_on_session_restored)
 
 func _on_session_restored(task):
 	if task.error:
-		print("Session restore failed")
+		print("Session restore failed: ", task.error)
 		_clear_session()
 		emit_signal("auth_checked", false)
 		return

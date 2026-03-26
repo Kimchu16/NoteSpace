@@ -16,12 +16,12 @@ var loaded_anchor_uuids: Array = []
 var anchor_data: Dictionary
 
 func _ready():
+	AuthManager.auth_checked.connect(_on_auth_checked)
+	AuthManager.login_success.connect(_on_login_success)
+	AuthManager.logout_success.connect(_on_logout)
 	xr_interface = XRServer.find_interface("OpenXR")
 	spatial_anchor_manager =  get_tree().get_nodes_in_group("Managers")[1]
 	spatial_anchor_manager.connect("openxr_fb_spatial_anchor_tracked", _on_anchor_tracked)
-	AuthManager.login_success.connect(_on_login_success)
-	AuthManager.logout_success.connect(_on_logout)
-	AuthManager.auth_checked.connect(_on_auth_checked)
 	
 	if xr_interface and xr_interface.is_initialized():
 		print("OpenXR initialized successfully")
@@ -35,6 +35,11 @@ func _ready():
 		enable_passthrough()
 	else:
 		print("OpenXR not initialized, please check if your headset is connected")
+	
+	if AuthManager.is_authenticated:
+		_on_auth_checked(true)
+	else:
+		_on_auth_checked(false)
 
 @onready var viewport : Viewport = get_viewport()
 @onready var environment : Environment = $WorldEnvironment.environment
@@ -143,6 +148,7 @@ func _clear_notes_and_anchors():
 	loaded_anchor_uuids.clear()
 
 func _on_auth_checked(is_logged_in: bool):
+	print("AUTH CHECKED SIGNAL FIRED →", is_logged_in)
 	if is_logged_in:
 		login_ui.visible = false
 		main_ui.visible = true
