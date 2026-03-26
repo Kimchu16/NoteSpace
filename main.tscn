@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://s0tsdods7k8r"]
+[gd_scene load_steps=22 format=3 uid="uid://s0tsdods7k8r"]
 
 [ext_resource type="Script" uid="uid://dyxns2by25fh7" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://byyxjpkgbecw2" path="res://scenes/ui/main_interface_ui.tscn" id="2_0xm2m"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://lauwp8okd1vh" path="res://addons/godot-xr-tools/objects/keyboard/virtual_keyboard_2d.tscn" id="5_lquwl"]
 [ext_resource type="Script" uid="uid://dni3fmvjjsx6i" path="res://addons/godot-xr-tools/objects/keyboard/virtual_keyboard_2d.gd" id="7_efxa6"]
 [ext_resource type="Script" uid="uid://vcts50w3ahbx" path="res://addons/godot-xr-tools/objects/keyboard/virtual_key_char.gd" id="8_dg77c"]
+[ext_resource type="PackedScene" uid="uid://lg0la6gumfyi" path="res://scenes/ui/login_ui.tscn" id="8_w48qg"]
 [ext_resource type="Script" uid="uid://qwolhhybfbde" path="res://addons/godot-xr-tools/objects/keyboard/virtual_key.gd" id="9_ycdy4"]
 [ext_resource type="Script" uid="uid://bv0kaf16jf76m" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d_body.gd" id="10_w48qg"]
 
@@ -35,7 +36,7 @@ size = Vector2(0.4, 0.2)
 [sub_resource type="ViewportTexture" id="ViewportTexture_vivmo"]
 viewport_path = NodePath("Keyboard/Viewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ycdy4"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w48qg"]
 transparency = 1
 cull_mode = 2
 albedo_texture = SubResource("ViewportTexture_vivmo")
@@ -131,6 +132,7 @@ script = ExtResource("3_efxa6")
 
 [node name="MainInterface" type="Node3D" parent="."]
 transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -0.291, 1.2372029, -0.424)
+visible = false
 
 [node name="Viewport2Din3D" parent="MainInterface" instance=ExtResource("4_7mycd")]
 transform = Transform3D(1.0000001, 0, 2.9802322e-08, 0, 1, 0, -2.9802322e-08, 0, 1.0000001, 0, -0.20614743, 0)
@@ -139,6 +141,17 @@ collision_layer = 29
 scene = ExtResource("2_0xm2m")
 viewport_size = Vector2(720, 1120)
 scene_properties_keys = PackedStringArray("main_interface_ui.gd", "notes_root")
+
+[node name="LoginUI" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0386147, -0.4041406)
+visible = false
+
+[node name="Viewport2Din3D" parent="LoginUI" instance=ExtResource("4_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.029908195, -0.0010373592, -0.0063636005)
+screen_size = Vector2(0.4, 0.3)
+collision_layer = 5242909
+scene = ExtResource("8_w48qg")
+viewport_size = Vector2(720, 540)
 
 [node name="Keyboard" type="Node3D" parent="." groups=["Keyboard"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -0.5)
@@ -880,7 +893,7 @@ key_text = "?"
 
 [node name="Screen" type="MeshInstance3D" parent="Keyboard"]
 mesh = SubResource("QuadMesh_vivmo")
-surface_material_override/0 = SubResource("StandardMaterial3D_ycdy4")
+surface_material_override/0 = SubResource("StandardMaterial3D_w48qg")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="Keyboard"]
 collision_layer = 28

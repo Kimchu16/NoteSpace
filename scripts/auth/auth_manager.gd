@@ -3,6 +3,7 @@ extends Node
 signal login_success(user)
 signal login_failed(error)
 signal logout_success()
+signal auth_checked(is_logged_in)
 
 var current_user : SupabaseUser = null
 var is_authenticated : bool = false
@@ -66,6 +67,7 @@ func _save_session(user: SupabaseUser):
 
 func _try_restore_session():
 	if not FileAccess.file_exists("user://session.save"):
+		emit_signal("auth_checked", false)
 		return
 	
 	var file = FileAccess.open("user://session.save", FileAccess.READ)
@@ -74,6 +76,7 @@ func _try_restore_session():
 	
 	var data = JSON.parse_string(content)
 	if not data:
+		emit_signal("auth_checked", false)
 		return
 	
 	var task = Supabase.auth.user(data["access_token"])
@@ -83,12 +86,14 @@ func _on_session_restored(task):
 	if task.error:
 		print("Session restore failed")
 		_clear_session()
+		emit_signal("auth_checked", false)
 		return
 	
 	current_user = task.user
 	is_authenticated = true
 	
 	print("Session restored: ", current_user.email)
+	emit_signal("auth_checked", true)
 	emit_signal("login_success", current_user)
 
 func _clear_session():
