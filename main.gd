@@ -5,6 +5,9 @@ var xr_interface: XRInterface
 @export var xr_origin: Node3D
 @export var right_controller: XRController3D
 
+@onready var login_ui = get_node("LoginUI")
+@onready var main_ui = get_node("MainInterface")
+
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 const SPATIAL_ANCHORS_FILE = "user://spatial_anchors.json"
 var note_scene = preload("res://scenes/notes/note3D.tscn")
@@ -18,6 +21,7 @@ func _ready():
 	spatial_anchor_manager.connect("openxr_fb_spatial_anchor_tracked", _on_anchor_tracked)
 	AuthManager.login_success.connect(_on_login_success)
 	AuthManager.logout_success.connect(_on_logout)
+	AuthManager.auth_checked.connect(_on_auth_checked)
 	
 	if xr_interface and xr_interface.is_initialized():
 		print("OpenXR initialized successfully")
@@ -116,10 +120,14 @@ func setup_note(note: Note3D) -> void:
 
 func _on_login_success(user):
 	print("User logged in: ", user.email)
+	login_ui.visible = false
+	main_ui.visible = true
 	load_anchors_from_file()
 
 func _on_logout():
 	print("User logged out")
+	login_ui.visible = true
+	main_ui.visible = false
 	_clear_notes_and_anchors()
 
 func _clear_notes_and_anchors():
@@ -133,3 +141,11 @@ func _clear_notes_and_anchors():
 			anchor_node.queue_free()
 	
 	loaded_anchor_uuids.clear()
+
+func _on_auth_checked(is_logged_in: bool):
+	if is_logged_in:
+		login_ui.visible = false
+		main_ui.visible = true
+	else:
+		login_ui.visible = true
+		main_ui.visible = false
