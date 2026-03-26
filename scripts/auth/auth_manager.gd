@@ -34,7 +34,7 @@ func login(email: String, password: String):
 
 func _on_login_completed(task):
 	if task.error:
-		print("Login failed: ", task.error.description)
+		print("Login failed: ", task.error)
 		emit_signal("login_failed", task.error)
 		return
 	

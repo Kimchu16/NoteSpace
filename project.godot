@@ -23,6 +23,7 @@ Supabase="*res://addons/supabase/Supabase/supabase.gd"
 SupabaseManager="*res://scripts/database/supabase_manager.gd"
 NotesService="*res://scripts/database/notes_service.gd"
 AuthManager="*res://scripts/auth/auth_manager.gd"
+KeyboardManager="*res://scripts/ui/keyboard_manager.gd"
 
 [editor_plugins]
 

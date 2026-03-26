@@ -1,4 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://lg0la6gumfyi"]
+[gd_scene load_steps=9 format=3 uid="uid://lg0la6gumfyi"]
+
+[ext_resource type="Script" uid="uid://212tnujp5lk0" path="res://scripts/ui/login_ui.gd" id="1_pafcc"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0osxj"]
 bg_color = Color(0.9340804, 0.9340805, 0.93408036, 1)
@@ -93,6 +95,7 @@ corner_radius_top_right = 20
 
 [node name="LoginUI" type="CanvasLayer"]
 follow_viewport_enabled = true
+script = ExtResource("1_pafcc")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -238,3 +241,10 @@ offset_right = 427.0
 offset_bottom = 30.0
 grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_rw6tv")
+
+[connection signal="focus_entered" from="Control/MarginContainer/VBoxContainer/VBoxContainer/LineEdit" to="." method="_on_email_focus"]
+[connection signal="focus_exited" from="Control/MarginContainer/VBoxContainer/VBoxContainer/LineEdit" to="." method="_unfocus"]
+[connection signal="gui_input" from="Control/MarginContainer/VBoxContainer/VBoxContainer/LineEdit" to="Control/MarginContainer/VBoxContainer/VBoxContainer/LineEdit" method="_gui_input"]
+[connection signal="focus_entered" from="Control/MarginContainer/VBoxContainer/VBoxContainer2/LineEdit" to="." method="_on_password_focus"]
+[connection signal="focus_exited" from="Control/MarginContainer/VBoxContainer/VBoxContainer2/LineEdit" to="." method="_unfocus"]
+[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/LoginButton" to="." method="_on_login_pressed"]
