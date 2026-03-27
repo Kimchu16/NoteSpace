@@ -14,17 +14,30 @@ var menu_note_scene = preload("res://scenes/ui/note_main_interface.tscn")
 
 func _ready() -> void:
 	AuthManager.login_success.connect(_on_user_logged_in)
+	AuthManager.auth_checked.connect(_on_auth_checked)
+	AuthManager.logout_success.connect(_on_user_logged_out)
 	if notes_root == null:
 		notes_root = get_tree().get_first_node_in_group("Notes")
 	
 	spatial_anchor_manager =  get_tree().get_nodes_in_group("Managers")[1]
-	
-	# Load existing notes from database
-	load_notes_from_database()
+
+func _on_auth_checked(is_logged_in):
+	if is_logged_in:
+		await load_notes_from_database()
 
 func _on_user_logged_in(user):
 	print("User authenticated -> loading notes...")
+	clear_menu_notes()
 	await load_notes_from_database()
+
+func _on_user_logged_out():
+	print("User logged out -> clearing notes")
+	clear_menu_notes()
+
+func clear_menu_notes():
+	print("Clearing menu notes...")
+	for child in menu_notes.get_children():
+		child.queue_free()
 
 func load_notes_from_database() -> void:#
 	var notes = await NotesService.get_user_notes()
