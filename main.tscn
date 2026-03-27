@@ -86,6 +86,14 @@ hand_tracker = &"/user/hand_tracker/right"
 [node name="LeftController" type="XRController3D" parent="XROrigin3D" groups=["LeftController"]]
 tracker = &"/user/fbhandaim/left"
 
+[node name="FunctionPointer" parent="XROrigin3D/LeftController" groups=["Pointer"] instance=ExtResource("2_lquwl")]
+show_laser = 2
+laser_length = 1
+show_target = true
+target_radius = 0.01
+collision_mask = 44
+collide_with_areas = true
+
 [node name="RightController" type="XRController3D" parent="XROrigin3D" groups=["RightController"]]
 tracker = &"/user/fbhandaim/right"
 

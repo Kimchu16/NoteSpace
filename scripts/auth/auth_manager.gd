@@ -5,7 +5,7 @@ signal login_failed(error)
 signal logout_success()
 signal auth_checked(is_logged_in)
 
-var current_user : SupabaseUser = null
+var current_user = null
 var is_authenticated : bool = false
 
 func _ready():
@@ -18,7 +18,7 @@ func signup(email: String, password: String):
 
 func _on_signup_completed(task):
 	if task.error:
-		print("Signup failed: ", task.error.description)
+		print("Signup failed: ", task.error)
 		emit_signal("login_failed", task.error)
 		return
 	
@@ -55,14 +55,10 @@ func _on_logout_completed(task):
 	_clear_session()
 	emit_signal("logout_success")
 
-func _save_session(user: SupabaseUser):
-	var data = {
-		"access_token": user.access_token,
-		"refresh_token": user.refresh_token
-	}
-	
+func _save_session(user_data):
+	print("Saving session...")
 	var file = FileAccess.open("user://session.save", FileAccess.WRITE)
-	file.store_string(JSON.stringify(data))
+	file.store_string(JSON.stringify(user_data))
 	file.close()
 
 func _try_restore_session():
@@ -88,24 +84,52 @@ func _try_restore_session():
 	
 	print("Trying to restore session...")
 	
-	var task = Supabase.auth.user(data["access_token"])
-	task.completed.connect(_on_session_restored)
-
-func _on_session_restored(task):
-	if task.error:
-		print("Session restore failed: ", task.error)
-		_clear_session()
+	if not data.has("refresh_token"):
+		print("No refresh token found")
 		emit_signal("auth_checked", false)
 		return
-	
-	current_user = task.user
-	is_authenticated = true
-	
-	print("Session restored: ", current_user.email)
-	emit_signal("auth_checked", true)
-	emit_signal("login_success", current_user)
+
+	refresh_session(data["refresh_token"])
 
 func _clear_session():
 	if FileAccess.file_exists("user://session.save"):
 		var err = DirAccess.remove_absolute("user://session.save")
 		print("Session file removed: ", err == OK)
+
+func refresh_session(refresh_token: String):
+	var http = HTTPRequest.new()
+	add_child(http)
+	
+	var url = "https://cpybzhdaszatwsxqurvh.supabase.co/auth/v1/token?grant_type=refresh_token"
+	
+	var headers = [
+		"apikey: sb_publishable_nlfXcUNf9FSP6qjg6qxGwA_-cygG-39",
+		"Content-Type: application/json"
+	]
+	
+	var body = JSON.stringify({
+		"refresh_token": refresh_token
+	})
+	
+	http.request(url, headers, HTTPClient.METHOD_POST, body)
+	http.request_completed.connect(_on_refresh_completed)
+
+func _on_refresh_completed(result, response_code, headers, body):
+	var data = JSON.parse_string(body.get_string_from_utf8())
+	
+	if response_code != 200:
+		print("Refresh failed:", data)
+		return
+	
+	print("Refresh success:", data)
+	
+	_save_session({
+		"access_token": data["access_token"],
+		"refresh_token": data["refresh_token"]
+	})
+	
+	current_user = data["user"]
+	is_authenticated = true
+	
+	emit_signal("auth_checked", true)
+	emit_signal("login_success", current_user)
