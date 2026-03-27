@@ -1,12 +1,15 @@
 extends Node
 
 func create_note(content: String, position: Vector3, color: String) -> NoteModel:
+	var user_id = AuthManager.current_user["id"]
+	
 	var note_data = {
 		"context": content,
 		"pos_x": position.x,
 		"pos_y": position.y,
 		"pos_z": position.z,
-		"colour": color
+		"colour": color,
+		"owner": user_id
 	}
 	
 	var query = SupabaseQuery.new().from("notes").insert([note_data])
@@ -20,7 +23,7 @@ func create_note(content: String, position: Vector3, color: String) -> NoteModel
 		push_error("Failed to create note in database")
 		return null
 
-func get_all_notes() -> Array[NoteModel]:
+func get_user_notes() -> Array[NoteModel]:
 	var query = SupabaseQuery.new().from("notes").select()
 	var task = Supabase.database.query(query)
 	await task.completed
@@ -40,6 +43,7 @@ func get_note_by_id(note_id: int) -> NoteModel:
 
 	var task = Supabase.database.query(query)
 	await task.completed
+	print("Query result:", task.data)
 
 	if task.data and task.data.size() > 0:
 		return NoteModel.from_dict(task.data[0]) # ID column

@@ -2,6 +2,8 @@ extends CanvasLayer
 
 @export var notes_root: Node3D
 @onready var menu_notes:VBoxContainer = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer5/ScrollContainer/MenuNotes
+@onready var settings_menu: MarginContainer = $Control/ColorRect/SettingsMenu
+@onready var main_menu: MarginContainer = $Control/ColorRect/MarginContainer
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 var opened_spawn_button: Button = null
@@ -11,18 +13,21 @@ var note_scene = preload("res://scenes/notes/note3D.tscn")
 var menu_note_scene = preload("res://scenes/ui/note_main_interface.tscn")
 
 func _ready() -> void:
+	AuthManager.login_success.connect(_on_user_logged_in)
 	if notes_root == null:
 		notes_root = get_tree().get_first_node_in_group("Notes")
 	
 	spatial_anchor_manager =  get_tree().get_nodes_in_group("Managers")[1]
 	
-	#load_anchors_from_file()
 	# Load existing notes from database
 	load_notes_from_database()
 
-# Load all notes from database on startup
-func load_notes_from_database() -> void:
-	var notes = await NotesService.get_all_notes()
+func _on_user_logged_in(user):
+	print("User authenticated -> loading notes...")
+	await load_notes_from_database()
+
+func load_notes_from_database() -> void:#
+	var notes = await NotesService.get_user_notes()
 	print("Loading ", notes.size(), " notes from database...")
 	
 	for note_model in notes:
@@ -106,3 +111,14 @@ func _on_note_returned_to_main_interface(note_model: NoteModel) -> void:
 		if child is MenuNote and child.note_model.id == note_model.id:
 			child.is_note_placed = false
 			break
+
+func _on_settings_btn_pressed() -> void:
+	main_menu.visible = false
+	settings_menu.visible = true
+
+func _on_back_btn_pressed() -> void:
+	main_menu.visible = true
+	settings_menu.visible = false
+
+func _on_logout_btn_pressed() -> void:
+	AuthManager.logout()

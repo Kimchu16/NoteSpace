@@ -10,6 +10,7 @@ var is_authenticated : bool = false
 
 func _ready():
 	print("AuthManager ready")
+	Supabase.auth.connect("signed_in", _on_signed_in)
 	_try_restore_session()
 
 func signup(email: String, password: String):
@@ -21,28 +22,30 @@ func _on_signup_completed(task):
 		print("Signup failed: ", task.error)
 		emit_signal("login_failed", task.error)
 		return
-	
+		
+	var data = task.data
 	current_user = task.user
 	is_authenticated = true
 	
-	_save_session(task.user)
+	_save_session({
+		"access_token": data["access_token"],
+		"refresh_token": data["refresh_token"]
+	})
+	emit_signal("login_success", current_user)
+
+func _on_signed_in(user: SupabaseUser):
+	print("SIGNED IN:", user)
+	
+	current_user = user
+	is_authenticated = true
+	_save_session({
+		"access_token": user.access_token,
+		"refresh_token": user.refresh_token
+	})
 	emit_signal("login_success", current_user)
 
 func login(email: String, password: String):
-	var task = Supabase.auth.sign_in(email, password)
-	task.completed.connect(_on_login_completed)
-
-func _on_login_completed(task):
-	if task.error:
-		print("Login failed: ", task.error)
-		emit_signal("login_failed", task.error)
-		return
-	
-	current_user = task.user
-	is_authenticated = true
-	
-	_save_session(task.user)
-	emit_signal("login_success", current_user)
+	Supabase.auth.sign_in(email, password)
 
 func logout():
 	var task = Supabase.auth.sign_out()
