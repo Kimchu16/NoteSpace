@@ -209,7 +209,7 @@ func _apply_surface_snap(hit_position: Vector3, normal: Vector3) -> void:
 	var parent_global_basis = note.global_transform.basis
 	note.visual_root.transform.basis = parent_global_basis.inverse() * desired_global_basis
 
-func delete_spatial_anchor() -> void: #TODO: Delete anchor when deleting note
+func delete_spatial_anchor() -> void:
 	if note.anchor_uuid == "":
 		return
 		
@@ -248,6 +248,7 @@ func delete_spatial_anchor() -> void: #TODO: Delete anchor when deleting note
 	
 	note.anchored = false
 	note.anchor_uuid = ""
+	note.save_anchor_state(false)
 	
 	print("new stringified json: ", stringified_json)
 	print("------------------------------------------------------------------------")
@@ -266,7 +267,8 @@ func create_spatial_anchor_and_parent() -> void:
 	
 	# Create a new spatial anchor at the note's current position
 	var custom_data: Dictionary = {
-		"note_id": pending_note_for_anchor.note_model.id
+		"note_id": pending_note_for_anchor.note_model.id,
+		"owner": AuthManager.current_user.id
 	}
 	spatial_anchor_manager.create_anchor(note_transform, custom_data)
 

@@ -5,7 +5,7 @@ class_name Note3D
 @onready var highlight_ring: MeshInstance3D = $VisualRoot/HighlightRing
 @onready var highlight_sound: AudioStreamPlayer3D = $VisualRoot/HighlightRing/AudioStreamPlayer3D
 
-signal returned_to_main_interface
+signal returned_to_main_interface(note_model: NoteModel)
 
 var note_model: NoteModel = null
 var anchored: bool = false
@@ -67,5 +67,10 @@ func _on_delete_button_pressed() -> void:
 	print("Note Deleted")
 
 func _on_send_to_main() -> void:
+	await save_anchor_state(false)
+	if note_model:
+		note_model.is_anchored = false
+	
+	main_interface_ui.unregister_note(self)
 	emit_signal("returned_to_main_interface", note_model)
 	call_deferred("queue_free") # Queue free after anchor and other procedures is done running

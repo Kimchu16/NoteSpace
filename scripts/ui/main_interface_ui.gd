@@ -33,6 +33,7 @@ func _on_user_logged_in(user):
 func _on_user_logged_out():
 	print("User logged out -> clearing notes")
 	clear_menu_notes()
+	notes_by_id.clear()
 
 func clear_menu_notes():
 	print("Clearing menu notes...")
@@ -70,6 +71,7 @@ func _on_spawn_note_requested(note_model: NoteModel, menu_note: MenuNote) -> voi
 	spawn_note(note_model)
 	menu_note.spawn_button.visible = false
 	menu_note.is_note_placed = true
+	note_model.is_anchored = true
 
 # Spawn a note in VR space
 func spawn_note(note_model: NoteModel) -> void:

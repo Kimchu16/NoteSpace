@@ -64,6 +64,7 @@ func _on_openxr_session_begun() -> void:
 
 func load_anchors_from_file() -> void:
 	var file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ)
+	var current_user_id = AuthManager.current_user.id
 	print(ProjectSettings.globalize_path(SPATIAL_ANCHORS_FILE))
 
 	if not file:
@@ -79,13 +80,27 @@ func load_anchors_from_file() -> void:
 	
 	print("Anchor data loading: ", anchor_data)
 	print("Anchor data size: ", anchor_data.size())
+	
 	if anchor_data.size() > 0:
 		print("Anchor load")
 		for uuid in anchor_data.keys():
-			spatial_anchor_manager.load_anchor(uuid)
-			loaded_anchor_uuids.append(uuid)
+			var data = anchor_data[uuid]
+			if not data.has("owner") or data["owner"] != current_user_id:
+				continue
+
+			print("Loading anchor for current user:", uuid)
+			var existing = spatial_anchor_manager.get_anchor_node(uuid)
+			
+			if existing:
+				print("Anchor already exists:", uuid)
+				_force_attach_note(uuid)
+			else:
+				print("Loading anchor:", uuid)
+				spatial_anchor_manager.load_anchor(uuid)
+				loaded_anchor_uuids.append(uuid)
 
 func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: bool) -> void:
+	print("TRACKED:", spatial_entity.uuid)
 	if !is_new:
 		# Anchor reloaded
 		print("Anchor reload tracked successfully.")
@@ -127,17 +142,31 @@ func _on_logout():
 	print("User logged out")
 	login_ui.visible = true
 	main_ui.visible = false
-	_clear_notes_and_anchors()
+	_clear_user_notes()
 
-func _clear_notes_and_anchors():
-	for child in get_children():
-		if child is Note3D:
-			child.queue_free()
-		
-	for uuid in loaded_anchor_uuids:
+func _clear_user_notes():
+	print("---- CLEAR USER NOTES START ----")
+	
+	if anchor_data == null:
+		print("anchor_data is NULL")
+		return
+	
+	print("Anchor data keys:", anchor_data.keys())
+	
+	for uuid in anchor_data.keys():
 		var anchor_node = spatial_anchor_manager.get_anchor_node(uuid)
-		if anchor_node:
-			anchor_node.queue_free()
+		
+		print("Anchor node found:", anchor_node.name)
+		print("Children count:", anchor_node.get_child_count())
+		
+		if not anchor_node:
+			print("No anchor node found for:", uuid)
+			continue
+			
+		for child in anchor_node.get_children():
+			if child is Note3D:
+				print("Removing Note3D:", child.name)
+				child.queue_free()
 	
 	loaded_anchor_uuids.clear()
 
@@ -147,6 +176,7 @@ func _on_auth_checked(is_logged_in: bool):
 		login_ui.visible = false
 		main_ui.visible = true
 		auth_ready = true
+		print("xr_ready: ", xr_ready, " || auth_ready: ", auth_ready)
 		_try_load()
 	else:
 		login_ui.visible = true
@@ -155,3 +185,48 @@ func _on_auth_checked(is_logged_in: bool):
 func _try_load():
 	if xr_ready and auth_ready:
 		load_anchors_from_file()
+
+func _force_attach_note(uuid):
+	await get_tree().create_timer(0.2).timeout
+	var anchor_node = spatial_anchor_manager.get_anchor_node(uuid)
+	
+	if not anchor_node:
+		print("Anchor not ready yet:", uuid)
+		return
+		
+	# Prevent duplicates
+	var has_note := false
+	
+	for child in anchor_node.get_children():
+		if child is Note3D:
+			has_note = true
+			break
+			
+	if has_note:
+		print("Note already exists on anchor, skipping:", uuid)
+		return
+	
+	var data = anchor_data.get(uuid, null)
+	if data == null:
+		print("No anchor data for:", uuid)
+		return
+	
+	var current_user_id = AuthManager.current_user.id
+	if data.get("owner", "") != current_user_id:
+		return
+	
+	var note_id = anchor_data[uuid]["note_id"]
+	var model = await NotesService.get_note_by_id(note_id)
+	
+	var note = note_scene.instantiate()
+	anchor_node.add_child(note)
+	
+	note.anchor_uuid = uuid
+	note.position = Vector3.ZERO
+	note.rotation = Vector3.ZERO
+	note.set_note_data(model)
+	note.anchored = true
+	
+	setup_note(note)
+	
+	print("FORCED ATTACH:", note.note_model.id)
