@@ -49,7 +49,7 @@ func load_notes_from_database() -> void:#
 		menu_note_instance.set_note_data(note_model)
 		menu_note_instance.spawn_note_button_pressed.connect(_on_spawn_note_requested)
 		
-		if note_model.position != Vector3(0.0, 0.0, 0.0): # If note is placed
+		if note_model.is_anchored: # If note is placed
 			menu_note_instance.is_note_placed = true
 		else:
 			menu_note_instance.is_note_placed = false

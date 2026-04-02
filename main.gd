@@ -12,8 +12,9 @@ var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 const SPATIAL_ANCHORS_FILE = "user://spatial_anchors.json"
 var note_scene = preload("res://scenes/notes/note3D.tscn")
 var loaded_anchor_uuids: Array = []
-
 var anchor_data: Dictionary
+var xr_ready = false
+var auth_ready = false
 
 func _ready():
 	AuthManager.auth_checked.connect(_on_auth_checked)
@@ -35,11 +36,6 @@ func _ready():
 		enable_passthrough()
 	else:
 		print("OpenXR not initialized, please check if your headset is connected")
-	
-	if AuthManager.is_authenticated:
-		_on_auth_checked(true)
-	else:
-		_on_auth_checked(false)
 
 @onready var viewport : Viewport = get_viewport()
 @onready var environment : Environment = $WorldEnvironment.environment
@@ -62,8 +58,9 @@ func enable_passthrough() -> bool:
 	return true
 
 func _on_openxr_session_begun() -> void:
-	#load_anchors_from_file()
 	print("XR ready, waiting for auth...")
+	xr_ready = true
+	_try_load()
 
 func load_anchors_from_file() -> void:
 	var file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ)
@@ -125,9 +122,6 @@ func setup_note(note: Note3D) -> void:
 
 func _on_login_success(user):
 	print("User logged in: ", user.email)
-	login_ui.visible = false
-	main_ui.visible = true
-	load_anchors_from_file()
 
 func _on_logout():
 	print("User logged out")
@@ -148,10 +142,16 @@ func _clear_notes_and_anchors():
 	loaded_anchor_uuids.clear()
 
 func _on_auth_checked(is_logged_in: bool):
-	print("AUTH CHECKED SIGNAL FIRED →", is_logged_in)
+	print("AUTH CHECKED SIGNAL FIRED ->", is_logged_in)
 	if is_logged_in:
 		login_ui.visible = false
 		main_ui.visible = true
+		auth_ready = true
+		_try_load()
 	else:
 		login_ui.visible = true
 		main_ui.visible = false
+
+func _try_load():
+	if xr_ready and auth_ready:
+		load_anchors_from_file()

@@ -3,8 +3,8 @@ extends RefCounted
 
 var id: int = -1  # -1 means not saved to database yet
 var content: String = ""
-var position: Vector3 = Vector3.ZERO
 var colour: String = "yellow"
+var is_anchored: bool = false
 var created_at: String = ""
 var updated_at: String = ""
 
@@ -12,18 +12,9 @@ var updated_at: String = ""
 static func from_dict(data: Dictionary) -> NoteModel:
 	var note = NoteModel.new()
 	note.id = int(data.get("id", -1))
-	note.content = data.get("context", "")  # DB uses "context"
-	note.colour = data.get("colour", "yellow")  # DB uses "colour"
-	
-	# Handle null positions
-	var x = data.get("pos_x")
-	var y = data.get("pos_y")
-	var z = data.get("pos_z")
-	note.position = Vector3(
-		x if x != null else 0.0,
-		y if y != null else 0.0,
-		z if z != null else 0.0
-	)
+	note.content = data.get("context", "")
+	note.colour = data.get("colour", "yellow")  
+	note.is_anchored = data.get("is_anchored", false)
 	
 	note.created_at = data.get("created_at", "")
 	note.updated_at = data.get("updated_at", "")
@@ -34,9 +25,6 @@ static func from_dict(data: Dictionary) -> NoteModel:
 func to_dict() -> Dictionary:
 	return {
 		"context": content,
-		"pos_x": position.x,
-		"pos_y": position.y,
-		"pos_z": position.z,
 		"colour": colour
 	}
 

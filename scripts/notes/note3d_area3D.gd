@@ -76,7 +76,6 @@ func _on_pointer_event(event: XRToolsPointerEvent) -> void:
 			dragging_pointer = null
 			
 			if placement_state == PlacementState.FREE or placement_state == PlacementState.SNAP_PREVIEW:
-				#if note.anchored != true:
 				create_spatial_anchor_and_parent()
 
 		XRToolsPointerEvent.Type.MOVED:
@@ -309,6 +308,7 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			note.position = Vector3.ZERO
 			note.rotation = Vector3.ZERO
 			note.anchored = true
+			note.save_anchor_state(true)
 			
 			var anchor_data: Dictionary
 			

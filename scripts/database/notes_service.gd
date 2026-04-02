@@ -1,13 +1,11 @@
 extends Node
 
-func create_note(content: String, position: Vector3, color: String) -> NoteModel:
+func create_note(content: String, is_anchored: bool, color: String) -> NoteModel:
 	var user_id = AuthManager.current_user["id"]
 	
 	var note_data = {
 		"context": content,
-		"pos_x": position.x,
-		"pos_y": position.y,
-		"pos_z": position.z,
+		"is_anchored": is_anchored,
 		"colour": color,
 		"owner": user_id
 	}
@@ -50,26 +48,6 @@ func get_note_by_id(note_id: int) -> NoteModel:
 
 	return null
 
-func update_note_position(note_id: int, new_position: Vector3) -> bool:
-	if note_id == -1:
-		return false  # Note not saved yet
-	
-	var update_data = {
-		"pos_x": new_position.x,
-		"pos_y": new_position.y,
-		"pos_z": new_position.z
-	}
-	
-	var query = SupabaseQuery.new()\
-		.from("notes")\
-		.update(update_data)\
-		.eq("id", str(note_id))
-	
-	var task = Supabase.database.query(query)
-	await task.completed
-	
-	return task.data != null
-
 func update_note_content(note_id: int, new_content: String) -> bool:
 	if note_id == -1:
 		return false
@@ -100,3 +78,17 @@ func delete_note(note_id: int) -> bool:
 		print("Note deleted from database")
 		return true
 	return false
+
+func update_anchored_state(note_id: int, state: bool):
+	if note_id == -1:
+		return false
+	
+	var query = SupabaseQuery.new()\
+		.from("notes")\
+		.update({"is_anchored": state})\
+		.eq("id", str(note_id))
+	
+	var task = Supabase.database.query(query)
+	await task.completed
+	
+	return task.data != null
