@@ -2,8 +2,11 @@ extends Node
 
 signal login_success(user)
 signal login_failed(error)
+signal signup_failed(error)
+signal signup_success(user)
 signal logout_success()
 signal auth_checked(is_logged_in)
+signal email_confirmation_required(email)
 
 var current_user = null
 var is_authenticated : bool = false
@@ -11,7 +14,7 @@ var is_authenticated : bool = false
 func _ready():
 	print("AuthManager ready")
 	Supabase.auth.connect("signed_in", _on_signed_in)
-	Supabase.auth.connect("signed_up", _on_signed_in)
+	Supabase.auth.connect("signed_up", _on_signed_up)
 	Supabase.auth.token_refreshed.connect(_on_token_restored)
 	Supabase.auth.error.connect(_on_auth_error)
 	_try_restore_session()
@@ -47,10 +50,19 @@ func _on_signed_in(user: SupabaseUser):
 	emit_signal("login_success", current_user)
 	emit_signal("auth_checked", true) 
 
+func _on_signed_up(user: SupabaseUser):
+	print("SIGNED UP:", user)
+	
+	if user.access_token == null:
+		print("Signup requires email confirmation")
+		emit_signal("email_confirmation_required", user.email)
+		return
+
 func _on_auth_error(err):
 	print("AUTH ERROR:", err)
 	
 	if not is_authenticated:
+		emit_signal("signup_failed", err)
 		print("Ignoring pre-login error")
 		emit_signal("auth_checked", false)
 		return

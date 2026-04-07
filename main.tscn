@@ -139,6 +139,16 @@ collision_layer = 5242909
 scene = ExtResource("8_w48qg")
 viewport_size = Vector2(720, 540)
 
+[node name="SignupUI" type="Node3D" parent="."]
+
+[node name="Viewport2Din3D" parent="SignupUI" groups=["SignupUI3D"] instance=ExtResource("4_7mycd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03, 1.1495086, -0.4041406)
+screen_size = Vector2(0.4, 0.3)
+collision_layer = 5242909
+scene = ExtResource("8_w48qg")
+viewport_size = Vector2(720, 540)
+scene_properties_keys = PackedStringArray("login_ui.gd")
+
 [node name="NotesContainer" type="Node3D" parent="." groups=["Notes"]]
 
 [node name="Keyboard" parent="." groups=["Keyboard"] instance=ExtResource("9_kek77")]
