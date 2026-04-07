@@ -8,11 +8,15 @@ extends CanvasLayer
 
 var current_focused_input: Control = null
 var ui_panel: Node3D
+var loginUI: Node3D
+var signupUI: Node3D
 
 func _ready():
 	AuthManager.signup_failed.connect(_on_signup_failed)
 	AuthManager.email_confirmation_required.connect(_on_email_confirmation)
 	ui_panel = get_tree().get_first_node_in_group("SignupUI3D")
+	loginUI = get_tree().get_first_node_in_group("LoginUI")
+	signupUI = get_tree().get_first_node_in_group("SignupUI")
 
 func _on_signup_pressed():
 	print("BUTTON CLICKED")
@@ -58,5 +62,7 @@ func _on_email_confirmation(email):
 	signup_panel.visible = false
 	email_confirmation.visible = true
 
-func _on_confirm_button_pressed():
-	pass # Link to login page
+func _switch_to_login():
+	print("Switch to login")
+	signupUI.visible = false
+	loginUI.visible = true

@@ -238,6 +238,7 @@ theme_override_font_sizes/font_size = 20
 text = "Login"
 
 [node name="EmailConfirmation" type="PanelContainer" parent="Control/MarginContainer"]
+visible = false
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_s71gv")
 
@@ -285,4 +286,5 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_rw6tv")
 [connection signal="focus_entered" from="Control/MarginContainer/VBoxContainer/VBoxContainer2/LineEdit" to="." method="_on_password_focus"]
 [connection signal="focus_exited" from="Control/MarginContainer/VBoxContainer/VBoxContainer2/LineEdit" to="." method="_unfocus"]
 [connection signal="pressed" from="Control/MarginContainer/VBoxContainer/SignupButton" to="." method="_on_signup_pressed"]
-[connection signal="pressed" from="Control/MarginContainer/EmailConfirmation/VBoxContainer/ConfirmButton" to="." method="_on_confirm_button_pressed"]
+[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/HBoxContainer/LinkButton" to="." method="_switch_to_login"]
+[connection signal="pressed" from="Control/MarginContainer/EmailConfirmation/VBoxContainer/ConfirmButton" to="." method="_switch_to_login"]

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://s0tsdods7k8r"]
+[gd_scene load_steps=14 format=3 uid="uid://s0tsdods7k8r"]
 
 [ext_resource type="Script" uid="uid://dyxns2by25fh7" path="res://main.gd" id="1_h2yge"]
 [ext_resource type="PackedScene" uid="uid://byyxjpkgbecw2" path="res://scenes/ui/main_interface_ui.tscn" id="2_0xm2m"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="4_7mycd"]
 [ext_resource type="PackedScene" uid="uid://bc0yfcnodswwj" path="res://scenes/spatial/spatial_anchor.tscn" id="4_ycdy4"]
 [ext_resource type="PackedScene" uid="uid://lg0la6gumfyi" path="res://scenes/ui/login_ui.tscn" id="8_w48qg"]
+[ext_resource type="PackedScene" uid="uid://dktunsg52chsy" path="res://scenes/ui/signup_ui.tscn" id="9_4c57u"]
 [ext_resource type="PackedScene" uid="uid://dgdb1texynduw" path="res://addons/godot-xr-tools/objects/virtual_keyboard.tscn" id="9_kek77"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
@@ -128,7 +129,7 @@ scene = ExtResource("2_0xm2m")
 viewport_size = Vector2(720, 1120)
 scene_properties_keys = PackedStringArray("main_interface_ui.gd", "notes_root")
 
-[node name="LoginUI" type="Node3D" parent="."]
+[node name="LoginUI" type="Node3D" parent="." groups=["LoginUI"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0386147, -0.4041406)
 visible = false
 
@@ -138,16 +139,18 @@ screen_size = Vector2(0.4, 0.3)
 collision_layer = 5242909
 scene = ExtResource("8_w48qg")
 viewport_size = Vector2(720, 540)
+scene_properties_keys = PackedStringArray("login_ui.gd")
 
-[node name="SignupUI" type="Node3D" parent="."]
+[node name="SignupUI" type="Node3D" parent="." groups=["SignupUI"]]
+visible = false
 
 [node name="Viewport2Din3D" parent="SignupUI" groups=["SignupUI3D"] instance=ExtResource("4_7mycd")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.03, 1.1495086, -0.4041406)
 screen_size = Vector2(0.4, 0.3)
 collision_layer = 5242909
-scene = ExtResource("8_w48qg")
+scene = ExtResource("9_4c57u")
 viewport_size = Vector2(720, 540)
-scene_properties_keys = PackedStringArray("login_ui.gd")
+scene_properties_keys = PackedStringArray("signup_ui.gd")
 
 [node name="NotesContainer" type="Node3D" parent="." groups=["Notes"]]
 

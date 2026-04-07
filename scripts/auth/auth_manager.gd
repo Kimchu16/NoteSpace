@@ -10,6 +10,8 @@ signal email_confirmation_required(email)
 
 var current_user = null
 var is_authenticated : bool = false
+var pending_email_confirmation := false
+var pending_email := ""
 
 func _ready():
 	print("AuthManager ready")
@@ -30,6 +32,8 @@ func logout():
 	Supabase.auth.sign_out()
 	current_user = null
 	is_authenticated = false
+	pending_email_confirmation = false
+	pending_email = ""
 	_clear_session()
 	
 	emit_signal("logout_success")
@@ -37,6 +41,8 @@ func logout():
 
 func _on_signed_in(user: SupabaseUser):
 	print("SIGNED IN:", user)
+	pending_email_confirmation = false
+	pending_email = ""
 	
 	current_user = user
 	is_authenticated = true
@@ -52,17 +58,15 @@ func _on_signed_in(user: SupabaseUser):
 
 func _on_signed_up(user: SupabaseUser):
 	print("SIGNED UP:", user)
+	pending_email_confirmation = true
+	pending_email = user.email
 	
-	if user.access_token == null:
-		print("Signup requires email confirmation")
-		emit_signal("email_confirmation_required", user.email)
-		return
+	emit_signal("email_confirmation_required", user.email)
 
 func _on_auth_error(err):
 	print("AUTH ERROR:", err)
 	
 	if not is_authenticated:
-		emit_signal("signup_failed", err)
 		print("Ignoring pre-login error")
 		emit_signal("auth_checked", false)
 		return
@@ -117,7 +121,7 @@ func _try_restore_session():
 	var data = JSON.parse_string(file.get_as_text())
 	file.close()
 	
-	if data == null or not data.has("refresh_token"):
+	if data == null or not data.has("refresh_token") or data["refresh_token"] == null:
 		print("Invalid session... fallback to SDK")
 		_check_existing_user()
 		return

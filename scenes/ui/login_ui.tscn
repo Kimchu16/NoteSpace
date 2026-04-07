@@ -248,3 +248,4 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_rw6tv")
 [connection signal="focus_entered" from="Control/MarginContainer/VBoxContainer/VBoxContainer2/LineEdit" to="." method="_on_password_focus"]
 [connection signal="focus_exited" from="Control/MarginContainer/VBoxContainer/VBoxContainer2/LineEdit" to="." method="_unfocus"]
 [connection signal="pressed" from="Control/MarginContainer/VBoxContainer/LoginButton" to="." method="_on_login_pressed"]
+[connection signal="pressed" from="Control/MarginContainer/VBoxContainer/HBoxContainer/LinkButton" to="." method="_on_link_button_pressed"]

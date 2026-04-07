@@ -6,10 +6,14 @@ extends CanvasLayer
 
 var current_focused_input: Control = null
 var ui_panel: Node3D
+var loginUI: Node3D
+var signupUI: Node3D
 
 func _ready():
 	AuthManager.login_failed.connect(_on_login_failed)
 	ui_panel = get_tree().get_first_node_in_group("LoginUI3D")
+	loginUI = get_tree().get_first_node_in_group("LoginUI")
+	signupUI = get_tree().get_first_node_in_group("SignupUI")
 
 func _on_login_pressed():
 	print("BUTTON CLICKED")
@@ -36,3 +40,7 @@ func _unfocus():
 func _on_password_focus():
 	print("on_password focus input")
 	KeyboardManager.focus_input(password_input, ui_panel)
+
+func _on_link_button_pressed():
+	signupUI.visible = true
+	loginUI.visible = false

@@ -179,8 +179,13 @@ func _on_auth_checked(is_logged_in: bool):
 		print("xr_ready: ", xr_ready, " || auth_ready: ", auth_ready)
 		_try_load()
 	else:
-		login_ui.visible = true
 		main_ui.visible = false
+		
+		if AuthManager.pending_email_confirmation:
+			print("Pending email confirmation -> do not force login UI reset")
+			return
+			
+		login_ui.visible = true
 
 func _try_load():
 	if xr_ready and auth_ready:
