@@ -19,9 +19,9 @@ func focus_note():
 		print("No keyboard found!")
 		return
 	
-	var keyboard_script := keyboard.get_node("Viewport/VirtualKeyboard2D2")
+	var keyboard_script := keyboard.get_node("Viewport/VirtualKeyboard2D")
 	if not keyboard_script:
-		print("Could not find VirtualKeyboard2D2 inside keyboard")
+		print("Could not find VirtualKeyboard2D inside keyboard")
 		return
 	
 	# Assign this note's SubViewport as the target

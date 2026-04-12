@@ -76,7 +76,6 @@ func _on_pointer_event(event: XRToolsPointerEvent) -> void:
 			dragging_pointer = null
 			
 			if placement_state == PlacementState.FREE or placement_state == PlacementState.SNAP_PREVIEW:
-				#if note.anchored != true:
 				create_spatial_anchor_and_parent()
 
 		XRToolsPointerEvent.Type.MOVED:
@@ -210,7 +209,7 @@ func _apply_surface_snap(hit_position: Vector3, normal: Vector3) -> void:
 	var parent_global_basis = note.global_transform.basis
 	note.visual_root.transform.basis = parent_global_basis.inverse() * desired_global_basis
 
-func delete_spatial_anchor() -> void: #TODO: Delete anchor when deleting note
+func delete_spatial_anchor() -> void:
 	if note.anchor_uuid == "":
 		return
 		
@@ -249,6 +248,7 @@ func delete_spatial_anchor() -> void: #TODO: Delete anchor when deleting note
 	
 	note.anchored = false
 	note.anchor_uuid = ""
+	note.save_anchor_state(false)
 	
 	print("new stringified json: ", stringified_json)
 	print("------------------------------------------------------------------------")
@@ -267,7 +267,8 @@ func create_spatial_anchor_and_parent() -> void:
 	
 	# Create a new spatial anchor at the note's current position
 	var custom_data: Dictionary = {
-		"note_id": pending_note_for_anchor.note_model.id
+		"note_id": pending_note_for_anchor.note_model.id,
+		"owner": AuthManager.current_user.id
 	}
 	spatial_anchor_manager.create_anchor(note_transform, custom_data)
 
@@ -309,6 +310,7 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			note.position = Vector3.ZERO
 			note.rotation = Vector3.ZERO
 			note.anchored = true
+			note.save_anchor_state(true)
 			
 			var anchor_data: Dictionary
 			

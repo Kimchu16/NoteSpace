@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://byyxjpkgbecw2"]
+[gd_scene load_steps=42 format=3 uid="uid://byyxjpkgbecw2"]
 
 [ext_resource type="Script" uid="uid://dr1cdtub4gbjt" path="res://scripts/ui/main_interface_ui.gd" id="1_4i5p1"]
 [ext_resource type="Texture2D" uid="uid://cjtjhogd8knmc" path="res://resources/icons/add.png" id="2_s6oqo"]
@@ -334,6 +334,57 @@ corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_22m50"]
+content_margin_left = 100.0
+content_margin_top = 10.0
+content_margin_right = 100.0
+content_margin_bottom = 10.0
+bg_color = Color(0.76862746, 0.19215687, 0.21176471, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.49019608, 0.49019608, 0.49019608, 0.23137255)
+border_blend = true
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k1xc4"]
+content_margin_left = 100.0
+content_margin_top = 10.0
+content_margin_right = 100.0
+content_margin_bottom = 10.0
+bg_color = Color(0.6594308, 0.15155092, 0.17146003, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.49019608, 0.49019608, 0.49019608, 0.23137255)
+border_blend = true
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kgtwf"]
+content_margin_left = 100.0
+content_margin_top = 10.0
+content_margin_right = 100.0
+content_margin_bottom = 10.0
+bg_color = Color(0.8641572, 0.24244079, 0.25698176, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.49019608, 0.49019608, 0.49019608, 0.23137255)
+border_blend = true
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cgl7b"]
 border_width_left = 10
 border_width_top = 10
@@ -568,6 +619,55 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 80
 
+[node name="SettingsMenu" type="MarginContainer" parent="Control/ColorRect"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 30
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control/ColorRect/SettingsMenu"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect/SettingsMenu/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 10
+
+[node name="BackBtn" type="Button" parent="Control/ColorRect/SettingsMenu/VBoxContainer/MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_colors/font_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+theme_override_colors/font_focus_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+theme_override_colors/font_pressed_color = Color(0.4117647, 0.4117647, 0.4117647, 1)
+theme_override_colors/font_hover_color = Color(0.49747366, 0.49747372, 0.49747354, 1)
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_s6oqo")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_iqo64")
+theme_override_styles/hover = SubResource("StyleBoxFlat_j1yq2")
+theme_override_styles/focus = SubResource("StyleBoxFlat_0sfym")
+text = "X"
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control/ColorRect/SettingsMenu/VBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 5
+
+[node name="LogoutBtn" type="Button" parent="Control/ColorRect/SettingsMenu/VBoxContainer/MarginContainer2"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_22m50")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_k1xc4")
+theme_override_styles/hover = SubResource("StyleBoxFlat_kgtwf")
+text = "Log Out"
+
 [node name="Panel" type="Panel" parent="Control"]
 layout_mode = 1
 anchors_preset = 5
@@ -581,3 +681,6 @@ grow_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_cgl7b")
 
 [connection signal="pressed" from="Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer2/CreateBtn" to="." method="_on_create_button_pressed"]
+[connection signal="pressed" from="Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer2/SettingsBtn" to="." method="_on_settings_btn_pressed"]
+[connection signal="pressed" from="Control/ColorRect/SettingsMenu/VBoxContainer/MarginContainer/BackBtn" to="." method="_on_back_btn_pressed"]
+[connection signal="pressed" from="Control/ColorRect/SettingsMenu/VBoxContainer/MarginContainer2/LogoutBtn" to="." method="_on_logout_btn_pressed"]

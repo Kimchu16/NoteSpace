@@ -265,8 +265,9 @@ func invite_user_by_email(email : String) -> AuthTask:
 
 # Refresh the access_token of the authenticated client using the refresh_token
 # No need to call this manually except specific needs, since the process will be handled automatically
-func refresh_token(refresh_token : String = client.refresh_token, expires_in : float = client.expires_in) -> AuthTask:
-	await get_tree().create_timer(expires_in - 10).timeout
+func refresh_token(refresh_token : String = client.refresh_token, expires_in : float = client.expires_in, skip_delay := false) -> AuthTask:
+	if not skip_delay:
+		await get_tree().create_timer(expires_in - 10).timeout
 	var payload : Dictionary = {refresh_token = refresh_token}
 	var auth_task : AuthTask = AuthTask.new()._setup(
 		AuthTask.Task.REFRESH,
