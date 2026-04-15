@@ -12,6 +12,8 @@ var notes_by_id: Dictionary
 var note_scene = preload("res://scenes/notes/note3D.tscn")
 var menu_note_scene = preload("res://scenes/ui/note_main_interface.tscn")
 
+var default_colour: String = "Yellow"
+
 func _ready() -> void:
 	AuthManager.login_success.connect(_on_user_logged_in)
 	AuthManager.auth_checked.connect(_on_auth_checked)
@@ -73,7 +75,6 @@ func _on_spawn_note_requested(note_model: NoteModel, menu_note: MenuNote) -> voi
 	menu_note.is_note_placed = true
 	note_model.is_anchored = true
 
-# Spawn a note in VR space
 func spawn_note(note_model: NoteModel) -> void:
 	var hmd = XRServer.get_hmd_transform()
 	var forward = -hmd.basis.z
@@ -85,7 +86,6 @@ func spawn_note(note_model: NoteModel) -> void:
 	# Set position
 	note_instance.global_position = hmd.origin + forward * 0.5
 	
-	# Set the note data
 	note_instance.set_note_data(note_model)
 	register_note(note_instance)
 
@@ -107,15 +107,14 @@ func _on_create_button_pressed() -> void:
 	var forward = -hmd.basis.z
 	var spawn_position = hmd.origin + forward * 0.5
 	
-	# Create in database first
+	# Create in database
 	var note_model = await NotesService.create_note(
 		"",  # Default content
 		spawn_position,
-		"yellow"  # Default color
+		default_colour  # Default colour #TODO: Change to current colour picked in UI 
 	)
 	
 	if note_model:
-		# Spawn in VR
 		spawn_note(note_model)
 		print(note_model)
 	else:
@@ -137,3 +136,9 @@ func _on_back_btn_pressed() -> void:
 
 func _on_logout_btn_pressed() -> void:
 	AuthManager.logout()
+
+func _on_color_btn_pressed() -> void:
+	pass # Replace with function body.
+
+func _on_tag_btn_pressed() -> void:
+	pass # Replace with function body.
