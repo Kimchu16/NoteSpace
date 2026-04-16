@@ -2,6 +2,7 @@ extends CanvasLayer
 
 @onready var note_label : TextEdit = $Control/Panel/MarginContainer/TextEdit
 @onready var sub_viewport : SubViewport
+@onready var tag_container: HFlowContainer = $Control/Panel/HFlowContainer
 
 var is_editing = false
 
@@ -51,3 +52,14 @@ func _edit_note():
 			note_3d.save_content(note_label.text)
 		else:
 			printerr("save_content not found.")
+
+func update_tags_for_note(note_id: int):
+	var tags = await NotesService.load_tags_for_note(note_id)
+	for child in tag_container.get_children():
+		child.queue_free()
+	
+	for tag in tags:
+		var tag_instance = load("res://scenes/ui/tags/menu_tag.tscn").instantiate()
+		var tag_label = tag_instance.get_node("Label")
+		tag_label.text = tag.tag_name
+		tag_container.add_child(tag_instance)

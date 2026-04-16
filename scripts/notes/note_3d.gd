@@ -75,3 +75,6 @@ func _on_send_to_main() -> void:
 	main_interface_ui.unregister_note(self)
 	emit_signal("returned_to_main_interface", note_model)
 	call_deferred("queue_free") # Queue free after anchor and other procedures is done running
+
+func update_tags_for_note(note_id: int):
+	$VisualRoot/SubViewport/Note_UI.update_tags_for_note(note_id)

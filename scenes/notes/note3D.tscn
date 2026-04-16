@@ -72,9 +72,6 @@ scene_properties_keys = PackedStringArray("toolbar_ui.gd")
 
 [node name="Note_UI" parent="VisualRoot/SubViewport" instance=ExtResource("6_bvxdc")]
 
-[node name="TextEdit" parent="VisualRoot/SubViewport/Note_UI/Control/ColorRect/MarginContainer" index="0"]
-placeholder_text = "New Note. "
-
 [node name="HighlightRing" type="MeshInstance3D" parent="VisualRoot"]
 visible = false
 mesh = SubResource("TorusMesh_s4ibr")

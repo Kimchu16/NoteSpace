@@ -3,6 +3,7 @@ class_name MenuNote
 
 @onready var note_label := $MarginContainer/VBoxContainer/Label
 @onready var spawn_button = $Button
+@onready var tag_container: HBoxContainer = $MarginContainer/VBoxContainer/HBoxContainer
 var note_model: NoteModel = null
 var note_stylebox: StyleBoxFlat
 var note_stylebox_hover: StyleBoxFlat
@@ -42,3 +43,14 @@ func _on_pressed() -> void:
 	else: 
 		var mainUI = get_tree().get_first_node_in_group("MainInterfaceUI")
 		mainUI.request_spawn_button(spawn_button)
+
+func update_tags_for_note(note_id: int):
+	var tags = await NotesService.load_tags_for_note(note_id)
+	for child in tag_container.get_children():
+		child.queue_free()
+	
+	for tag in tags:
+		var tag_instance = load("res://scenes/ui/tags/menu_tag.tscn").instantiate()
+		var tag_label = tag_instance.get_node("Label")
+		tag_label.text = tag.tag_name
+		tag_container.add_child(tag_instance)

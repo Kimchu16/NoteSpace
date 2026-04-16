@@ -92,3 +92,72 @@ func update_anchored_state(note_id: int, state: bool):
 	await task.completed
 	
 	return task.data != null
+
+func load_tags_for_note(note_id: int) -> Array[TagModel]:
+	# Fetch the tag_ids associated with the note from note_tags
+	var query = SupabaseQuery.new().from("note_tags")\
+		.select(["tag_id"])\
+		.eq("note_id", str(note_id))
+		
+	var task = Supabase.database.query(query)
+	await task.completed
+	
+	var tag_ids: Array = []
+	if task.data:
+		for tag_data in task.data:
+			tag_ids.append(tag_data["tag_id"])
+	
+	# Fetch the tags based on tag_ids
+	var tags: Array[TagModel] = []
+	for tag_id in tag_ids:
+		var tag_query = SupabaseQuery.new().from("tags")\
+		.select(["tag_name", "tag_id"])\
+		.eq("tag_id", tag_id)
+		
+		var tag_task = Supabase.database.query(tag_query)
+		await tag_task.completed
+		
+		if tag_task.data:
+			var tag_model = TagModel.from_dict(tag_task.data[0])
+			tags.append(tag_model)
+			
+	return tags
+
+func add_tags_to_note(note_id: int, tag_ids: Array) -> bool:
+	if note_id == -1 or tag_ids.size() == 0:
+		return false
+		
+	for tag_id in tag_ids:
+		var note_tag_data = {
+			"note_id": note_id,
+			"tag_id": tag_id,
+			}
+			
+		# Insert the relationship into note_tags table
+		var query = SupabaseQuery.new().from("note_tags").insert([note_tag_data])
+		var task = Supabase.database.query(query)
+		await task.completed
+		
+		if not task.data:
+			printerr("Failed to add tag relationship for note_id: ", note_id, " and tag_id: ", tag_id)
+			return false
+	
+	print("Tags successfully added to note.")
+	return true
+
+func remove_tag_from_note(note_id: int, tag_id: int) -> bool:
+	# Delete the tag-note relationship from the note_tags table
+	var query = SupabaseQuery.new().from("note_tags")\
+	.delete()\
+	.eq("note_id", str(note_id))\
+	.eq("tag_id", str(tag_id))
+	
+	var task = Supabase.database.query(query)
+	await task.completed
+	
+	if task.data:
+		print("Tag successfully removed from note.")
+		return true
+	else:
+		printerr("Failed to remove tag from note.")
+		return false

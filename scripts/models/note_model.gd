@@ -7,6 +7,7 @@ var colour: String = "yellow"
 var is_anchored: bool = false
 var created_at: String = ""
 var updated_at: String = ""
+var tags: Array = []
 
 # Create from database result
 static func from_dict(data: Dictionary) -> NoteModel:

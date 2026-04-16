@@ -65,6 +65,7 @@ func load_notes_from_database() -> void:#
 		var menu_note_instance: MenuNote = menu_note_scene.instantiate()
 		menu_notes.add_child(menu_note_instance)
 		menu_note_instance.set_note_data(note_model)
+		menu_note_instance.update_tags_for_note(note_model.id)
 		menu_note_instance.spawn_note_button_pressed.connect(_on_spawn_note_requested)
 		
 		if note_model.is_anchored: # If note is placed
@@ -115,6 +116,7 @@ func spawn_note(note_model: NoteModel) -> void:
 	note_instance.global_position = hmd.origin + forward * 0.5
 	
 	note_instance.set_note_data(note_model)
+	note_instance.update_tags_for_note(note_model.id)
 	register_note(note_instance)
 
 func request_spawn_button(button: Button) -> void:
@@ -130,15 +132,10 @@ func request_spawn_button(button: Button) -> void:
 	button.visible = true
 
 func _on_create_button_pressed() -> void:
-	# Position the note in front of the HMD (Head-Mounted Display)
-	var hmd = XRServer.get_hmd_transform()
-	var forward = -hmd.basis.z
-	var spawn_position = hmd.origin + forward * 0.5
-	
 	# Create in database
 	var note_model = await NotesService.create_note(
 		"",  # Default content
-		spawn_position,
+		true,
 		default_colour
 	)
 	
