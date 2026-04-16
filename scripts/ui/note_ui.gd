@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-@onready var note_label : TextEdit = $Control/ColorRect/MarginContainer/TextEdit
+@onready var note_label : TextEdit = $Control/Panel/MarginContainer/TextEdit
 @onready var sub_viewport : SubViewport
 
 var is_editing = false
@@ -36,9 +36,11 @@ func _edit_note():
 	if is_editing:
 		note_label.grab_focus()
 		focus_note()
+		$Control/Panel.border_color =  Color8(67, 194, 240)
 
 	else:
 		note_label.release_focus()
+		$Control/Panel.border_color =  Color8(255, 255, 128) 
 		var keyboard := get_tree().get_first_node_in_group("Keyboard")
 		if keyboard:
 			keyboard.visible = false

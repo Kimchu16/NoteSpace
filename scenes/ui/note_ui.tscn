@@ -1,6 +1,18 @@
-[gd_scene load_steps=5 format=3 uid="uid://c1onusjh3iu6f"]
+[gd_scene load_steps=6 format=3 uid="uid://c1onusjh3iu6f"]
 
 [ext_resource type="Script" uid="uid://bai1r3mrhbvgw" path="res://scripts/ui/note_ui.gd" id="1_dm76p"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3qaoh"]
+bg_color = Color(1, 1, 0.5019608, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 1, 0.5019608, 1)
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ugh2x"]
 bg_color = Color(0, 0, 0, 0)
@@ -25,14 +37,14 @@ anchor_bottom = 0.78900003
 offset_right = -471.48804
 offset_bottom = -471.27203
 
-[node name="ColorRect" type="ColorRect" parent="Control"]
+[node name="Panel" type="Panel" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.024
 anchor_bottom = 1.024
-color = Color(1, 1, 0.5019608, 1)
+theme_override_styles/panel = SubResource("StyleBoxFlat_3qaoh")
 
-[node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect"]
+[node name="MarginContainer" type="MarginContainer" parent="Control/Panel"]
 layout_mode = 0
 offset_right = 512.0
 offset_bottom = 427.0
@@ -41,7 +53,7 @@ theme_override_constants/margin_top = 20
 theme_override_constants/margin_right = 20
 theme_override_constants/margin_bottom = 5
 
-[node name="TextEdit" type="TextEdit" parent="Control/ColorRect/MarginContainer"]
+[node name="TextEdit" type="TextEdit" parent="Control/Panel/MarginContainer"]
 layout_mode = 2
 theme_override_colors/caret_color = Color(0.23753878, 0.23753935, 0.2375389, 1)
 theme_override_colors/font_color = Color(0.08468976, 0.08469, 0.08468983, 1)
@@ -56,7 +68,7 @@ placeholder_text = "New Note."
 virtual_keyboard_enabled = false
 virtual_keyboard_show_on_focus = false
 
-[node name="HFlowContainer" type="HFlowContainer" parent="Control/ColorRect"]
+[node name="HFlowContainer" type="HFlowContainer" parent="Control/Panel"]
 layout_mode = 0
 offset_left = 11.0
 offset_top = 427.0

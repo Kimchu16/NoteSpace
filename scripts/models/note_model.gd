@@ -31,7 +31,7 @@ func to_dict() -> Dictionary:
 func get_godot_colour() -> Color:
 	match colour.to_lower():
 		"yellow": return Color.YELLOW
-		"blue": return Color.BLUE
-		"green": return Color.GREEN
-		"purple": return Color.PURPLE
+		"blue": return Color.CORNFLOWER_BLUE
+		"green": return Color.LIGHT_GREEN
+		"purple": return Color.MEDIUM_PURPLE
 		_: return Color.YELLOW

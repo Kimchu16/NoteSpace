@@ -30,7 +30,8 @@ func set_note_data(model: NoteModel) -> void:
 	note_ui.set_note_content(note_model.content)
 	
 	# Set color
-	$VisualRoot/SubViewport/Note_UI/Control/ColorRect.color = note_model.get_godot_colour()
+	$VisualRoot/SubViewport/Note_UI/Control/Panel.bg_color = note_model.get_godot_colour()
+
 
 # Save anchor state to database
 func save_anchor_state(state: bool) -> void:

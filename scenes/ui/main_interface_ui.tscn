@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=3 uid="uid://byyxjpkgbecw2"]
+[gd_scene load_steps=53 format=3 uid="uid://byyxjpkgbecw2"]
 
 [ext_resource type="Script" uid="uid://dr1cdtub4gbjt" path="res://scripts/ui/main_interface_ui.gd" id="1_4i5p1"]
 [ext_resource type="Texture2D" uid="uid://cjtjhogd8knmc" path="res://resources/icons/add.png" id="2_s6oqo"]
@@ -74,7 +74,12 @@ corner_radius_bottom_left = 35
 content_margin_left = 20.0
 content_margin_top = 20.0
 content_margin_right = 20.0
-bg_color = Color(0.21555102, 0.3768281, 0.62053317, 1)
+bg_color = Color(0.49930567, 0.3165372, 0.7648389, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
 corner_radius_top_left = 35
 corner_radius_top_right = 35
 corner_radius_bottom_right = 35
@@ -84,7 +89,12 @@ corner_radius_bottom_left = 35
 content_margin_left = 20.0
 content_margin_top = 20.0
 content_margin_right = 20.0
-bg_color = Color(0.28545693, 0.46643573, 0.74026024, 1)
+bg_color = Color(0.48320925, 0.3016147, 0.7444629, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
 corner_radius_top_left = 35
 corner_radius_top_right = 35
 corner_radius_bottom_right = 35
@@ -385,6 +395,173 @@ corner_radius_top_right = 20
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0iqli"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.7607843, 0.79607844, 0.827451, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.49019608, 0.49019608, 0.49019608, 0.23137255)
+border_blend = true
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yb6of"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.34856123, 0.5313819, 0.80818653, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f8ruv"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.29535457, 0.47909594, 0.7524533, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0brmd"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.45093638, 0.6195223, 0.87065905, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_faags"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.9019608, 0.87058824, 0.4392157, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4vud0"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.557716, 0.38028994, 0.82725084, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bpr8x"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.49930567, 0.3165372, 0.7648389, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hcfwx"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.48320925, 0.3016147, 0.7444629, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3olup"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.35108614, 0.557199, 0.35223046, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qcl6n"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.4140568, 0.6437488, 0.4178838, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_evgbp"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.3160505, 0.5104287, 0.31987926, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cgl7b"]
 border_width_left = 10
 border_width_top = 10
@@ -668,6 +845,76 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_k1xc4")
 theme_override_styles/hover = SubResource("StyleBoxFlat_kgtwf")
 text = "Log Out"
 
+[node name="ColourExtension" type="PanelContainer" parent="Control/ColorRect"]
+visible = false
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -209.0
+offset_top = 300.0
+offset_right = 209.0
+offset_bottom = 420.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_0iqli")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/ColorRect/ColourExtension"]
+layout_mode = 2
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Blue" type="Button" parent="Control/ColorRect/ColourExtension/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "Create note"
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_yb6of")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_f8ruv")
+theme_override_styles/hover = SubResource("StyleBoxFlat_0brmd")
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Yellow" type="Button" parent="Control/ColorRect/ColourExtension/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "Create note"
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_faags")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_n6se1")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ybfup")
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Purple" type="Button" parent="Control/ColorRect/ColourExtension/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "Create note"
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_4vud0")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_bpr8x")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hcfwx")
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="Green" type="Button" parent="Control/ColorRect/ColourExtension/HBoxContainer"]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_horizontal = 4
+tooltip_text = "Create note"
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_3olup")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qcl6n")
+theme_override_styles/hover = SubResource("StyleBoxFlat_evgbp")
+icon_alignment = 1
+vertical_icon_alignment = 0
+
 [node name="Panel" type="Panel" parent="Control"]
 layout_mode = 1
 anchors_preset = 5
@@ -686,3 +933,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_cgl7b")
 [connection signal="pressed" from="Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer2/SettingsBtn" to="." method="_on_settings_btn_pressed"]
 [connection signal="pressed" from="Control/ColorRect/SettingsMenu/VBoxContainer/MarginContainer/BackBtn" to="." method="_on_back_btn_pressed"]
 [connection signal="pressed" from="Control/ColorRect/SettingsMenu/VBoxContainer/MarginContainer2/LogoutBtn" to="." method="_on_logout_btn_pressed"]
+[connection signal="pressed" from="Control/ColorRect/ColourExtension/HBoxContainer/Blue" to="." method="_on_colour_pick_pressed" binds= ["blue"]]
+[connection signal="pressed" from="Control/ColorRect/ColourExtension/HBoxContainer/Yellow" to="." method="_on_colour_pick_pressed" binds= ["yellow"]]
+[connection signal="pressed" from="Control/ColorRect/ColourExtension/HBoxContainer/Purple" to="." method="_on_colour_pick_pressed" binds= ["purple"]]
+[connection signal="pressed" from="Control/ColorRect/ColourExtension/HBoxContainer/Green" to="." method="_on_colour_pick_pressed" binds= ["green"]]

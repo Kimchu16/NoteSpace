@@ -4,6 +4,7 @@ extends CanvasLayer
 @onready var menu_notes:VBoxContainer = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer5/ScrollContainer/MenuNotes
 @onready var settings_menu: MarginContainer = $Control/ColorRect/SettingsMenu
 @onready var main_menu: MarginContainer = $Control/ColorRect/MarginContainer
+@onready var colour_chosen: Panel = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer2/ColorBtn/Panel
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 var opened_spawn_button: Button = null
@@ -111,7 +112,7 @@ func _on_create_button_pressed() -> void:
 	var note_model = await NotesService.create_note(
 		"",  # Default content
 		spawn_position,
-		default_colour  # Default colour #TODO: Change to current colour picked in UI 
+		default_colour
 	)
 	
 	if note_model:
@@ -138,7 +139,23 @@ func _on_logout_btn_pressed() -> void:
 	AuthManager.logout()
 
 func _on_color_btn_pressed() -> void:
-	pass # Replace with function body.
+	$Control/ColorRect/ColourExtension.visible = !$Control/ColorRect/ColourExtension.visible
 
 func _on_tag_btn_pressed() -> void:
 	pass # Replace with function body.
+
+func _on_colour_pick_pressed(colour: String) -> void:
+	if colour == "blue":
+		colour_chosen.bg_color = Color.CORNFLOWER_BLUE
+		default_colour = "blue"
+	elif colour == "yellow":
+		colour_chosen.bg_color = Color.YELLOW
+		default_colour = "yellow"
+	elif colour == "purple":
+		colour_chosen.bg_color = Color.MEDIUM_PURPLE
+		default_colour = "purple"
+	elif colour == "green":
+		colour_chosen.bg_color = Color.LIGHT_GREEN
+		default_colour = "green"
+	else:
+		printerr("Invalid colour picked")

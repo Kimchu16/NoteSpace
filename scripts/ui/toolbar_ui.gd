@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-@onready var delete_menu = $Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer
+@onready var delete_menu = $Control/Panel/MarginContainer/HBoxContainer/Button2/PanelContainer
 
 signal edit_button
 signal delete_button
