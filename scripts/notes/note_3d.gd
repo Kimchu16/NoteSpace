@@ -4,6 +4,7 @@ class_name Note3D
 @onready var visual_root: Node3D = $VisualRoot
 @onready var highlight_ring: MeshInstance3D = $VisualRoot/HighlightRing
 @onready var highlight_sound: AudioStreamPlayer3D = $VisualRoot/HighlightRing/AudioStreamPlayer3D
+@onready var ui: Panel = $VisualRoot/SubViewport/Note_UI/Control/Panel
 
 signal returned_to_main_interface(note_model: NoteModel)
 
@@ -30,8 +31,10 @@ func set_note_data(model: NoteModel) -> void:
 	note_ui.set_note_content(note_model.content)
 	
 	# Set color
-	$VisualRoot/SubViewport/Note_UI/Control/Panel.bg_color = note_model.get_godot_colour()
-
+	var style_box = ui.get_theme_stylebox("panel").duplicate()
+	style_box.bg_color = note_model.get_godot_colour()
+	style_box.border_color = note_model.get_godot_colour()
+	ui.add_theme_stylebox_override("panel", style_box)
 
 # Save anchor state to database
 func save_anchor_state(state: bool) -> void:

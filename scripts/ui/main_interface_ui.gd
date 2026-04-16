@@ -7,6 +7,7 @@ extends CanvasLayer
 @onready var colour_chosen: Panel = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer2/ColorBtn/Panel
 @onready var tag_menu: MarginContainer = $Control/ColorRect/TagMenu
 @onready var tag_editor: MarginContainer = $Control/ColorRect/TagEditor
+@onready var tag_container: VBoxContainer = $Control/ColorRect/TagMenu/VBoxContainer/MarginContainer6/ScrollContainer/Tags
 @onready var tag_scene = preload("res://scenes/ui/tags/menu_tag.tscn")
 @onready var tag_editor_name = $Control/ColorRect/TagEditor/VBoxContainer/Name/LineEdit
 @onready var tag_editor_desc = $Control/ColorRect/TagEditor/VBoxContainer/Desc/LineEdit
@@ -14,6 +15,8 @@ extends CanvasLayer
 @onready var tag_editor_del_btn = $Control/ColorRect/TagEditor/VBoxContainer/MarginContainer2/HBoxContainer2/DeleteBtn
 @onready var tag_count_label = $Control/ColorRect/TagMenu/VBoxContainer/MarginContainer3/GridContainer/HBoxContainer/Label2
 @onready var note_count_label = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer3/GridContainer/HBoxContainer/Label2
+@onready var tag_name_input = $Control/ColorRect/TagEditor/VBoxContainer/Name/LineEdit
+@onready var tag_desc_input = $Control/ColorRect/TagEditor/VBoxContainer/Desc/LineEdit
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 var opened_spawn_button: Button = null
@@ -26,6 +29,8 @@ var default_colour: String = "Yellow"
 var is_new_tag: bool = false
 var tag_count: int = 0
 var note_count: int = 0
+var ui_panel: Node3D
+var edit_tag_instance: MenuTag = null	
 
 func _ready() -> void:
 	AuthManager.login_success.connect(_on_user_logged_in)
@@ -35,19 +40,26 @@ func _ready() -> void:
 		notes_root = get_tree().get_first_node_in_group("Notes")
 	
 	spatial_anchor_manager =  get_tree().get_nodes_in_group("Managers")[1]
+	ui_panel = get_tree().get_first_node_in_group("MainUI3D")
 
 func _on_auth_checked(is_logged_in):
 	if is_logged_in:
-		await load_notes_from_database()
+		#await load_notes_from_database()
+		#await load_tags_from_database()
+		print("load notes on auth checked")
 
 func _on_user_logged_in(user):
 	print("User authenticated -> loading notes...")
 	clear_menu_notes()
+	clear_menu_tags()
 	await load_notes_from_database()
+	await load_tags_from_database()
+	print("load notes on user logged in")
 
 func _on_user_logged_out():
 	print("User logged out -> clearing notes")
 	clear_menu_notes()
+	clear_menu_tags()
 	notes_by_id.clear()
 
 func clear_menu_notes():
@@ -55,17 +67,22 @@ func clear_menu_notes():
 	for child in menu_notes.get_children():
 		child.queue_free()
 
-func load_notes_from_database() -> void:#
+func clear_menu_tags():
+	print("Clearing menu tags...")
+	for child in tag_container.get_children():
+		child.queue_free()
+
+func load_notes_from_database() -> void:
 	var notes = await NotesService.get_user_notes()
 	note_count = notes.size()
-	note_count_label.text = note_count
+	note_count_label.text = str(note_count)
 	print("Loading ", notes.size(), " notes from database...")
 	
 	for note_model in notes:
 		var menu_note_instance: MenuNote = menu_note_scene.instantiate()
 		menu_notes.add_child(menu_note_instance)
 		menu_note_instance.set_note_data(note_model)
-		menu_note_instance.update_tags_for_note(note_model.id)
+		await menu_note_instance.update_tags_for_note(note_model.id)
 		menu_note_instance.spawn_note_button_pressed.connect(_on_spawn_note_requested)
 		
 		if note_model.is_anchored: # If note is placed
@@ -78,12 +95,12 @@ func load_notes_from_database() -> void:#
 func load_tags_from_database() -> void:
 	var tags = await TagsService.get_user_tags()
 	tag_count = tags.size()
-	tag_count_label.text = tag_count
+	tag_count_label.text = str(tag_count)
 	print("Loading ", tags.size(), " tags from database...")
 	
 	for tag_model in tags:
 		var tag_instance: MenuTag = tag_scene.instantiate()
-		tag_menu.add_child(tag_instance)
+		tag_container.add_child(tag_instance)
 		tag_instance.set_tag_data(tag_model)
 		tag_instance.edit_note_button_pressed.connect(_on_tag_edit_requested)
 
@@ -178,50 +195,62 @@ func _on_tag_btn_pressed() -> void:
 	tag_menu.visible = true
 
 func _on_colour_pick_pressed(colour: String) -> void:
+	#var style_box = StyleBoxFlat.new()
+	var style_box = colour_chosen.get_theme_stylebox("panel").duplicate()
 	if colour == "blue":
-		colour_chosen.bg_color = Color.CORNFLOWER_BLUE
+		style_box.bg_color = Color.CORNFLOWER_BLUE
 		default_colour = "blue"
 	elif colour == "yellow":
-		colour_chosen.bg_color = Color.YELLOW
+		style_box.bg_color = Color.YELLOW
 		default_colour = "yellow"
 	elif colour == "purple":
-		colour_chosen.bg_color = Color.MEDIUM_PURPLE
+		style_box.bg_color = Color.MEDIUM_PURPLE
 		default_colour = "purple"
 	elif colour == "green":
-		colour_chosen.bg_color = Color.LIGHT_GREEN
+		style_box.bg_color = Color.LIGHT_GREEN
 		default_colour = "green"
 	else:
 		printerr("Invalid colour picked")
+	
+	colour_chosen.add_theme_stylebox_override("panel", style_box)
 
 func _on_tag_edit_requested(tag_instance: MenuTag) -> void:
+	print("edit tag pressed: ", tag_instance)
+	edit_tag_instance = tag_instance
 	tag_menu.visible = false
 	tag_editor.visible = true
 	tag_editor_name.text = tag_instance.tag_data.tag_name
 	tag_editor_desc.text = tag_instance.tag_data.description
-	tag_editor_save_btn.pressed.connect(_on_save_btn_pressed, [tag_instance])
-	tag_editor_del_btn.pressed.connect(_on_tag_delete_btn_pressed, [tag_instance])
+	tag_editor_save_btn.pressed.connect(_on_save_btn_pressed)
+	tag_editor_del_btn.pressed.connect(_on_tag_delete_btn_pressed)
 
-func _on_save_btn_pressed(tag_instance: MenuTag):
+func _on_save_btn_pressed():
+	print("button pressed: ", edit_tag_instance)
 	if is_new_tag != true:
-		if tag_editor_name != "":
-			var updated_tag = await TagsService.update_tag(tag_instance.tag_data.id, tag_editor_name, tag_editor_desc)
+		if tag_editor_name.text != "":
+			var updated_tag = await TagsService.update_tag(edit_tag_instance.tag_data.tag_id, tag_editor_name.text, tag_editor_desc.text)
 			if updated_tag:
 				print("Tag updated")
-				tag_instance.set_tag_data(updated_tag)
+				edit_tag_instance.set_tag_data(updated_tag)
 				_return_to_tag_menu()
 				_reset_tag_editor()
+				edit_tag_instance = null
 				return
 	
 	var tag_model = TagModel.new()
-	tag_model.tag_name = tag_editor_name
-	tag_model.description = tag_editor_desc
+	tag_model.tag_name = tag_editor_name.text
+	tag_model.description = tag_editor_desc.text
 	tag_model.owner = AuthManager.current_user["id"]
 	
-	# Save the tag in the database
+	# Save the tag in the database and add to menu list
 	var created_tag = await TagsService.create_tag(tag_model.tag_name, tag_model.description)
 	if created_tag:
 		print("Tag created: ", created_tag.tag_name)
 		_update_tag_count("plus")
+		var tag_instance: MenuTag = tag_scene.instantiate()
+		tag_container.add_child(tag_instance)
+		tag_instance.set_tag_data(tag_model)
+		tag_instance.edit_note_button_pressed.connect(_on_tag_edit_requested)
 	else:
 		print("Failed to create tag.")
 
@@ -263,3 +292,25 @@ func _on_tag_delete_btn_pressed(tag_instance: MenuTag) -> void:
 			print("Failed to delete tag.")
 	else:
 		print("Invalid tag ID.")
+
+
+func _on_blue_pressed() -> void:
+	_on_colour_pick_pressed("blue")
+
+func _on_yellow_pressed() -> void:
+	_on_colour_pick_pressed("yellow")
+
+func _on_purple_pressed() -> void:
+	_on_colour_pick_pressed("purple")
+
+func _on_green_pressed() -> void:
+	_on_colour_pick_pressed("green")
+
+func _on_line_edit_focus_entered() -> void:
+	KeyboardManager.focus_input(tag_name_input, ui_panel)
+
+func _on_desc_edit_focus_entered() -> void:
+	KeyboardManager.focus_input(tag_desc_input, ui_panel)
+
+func _on_line_edit_focus_exited() -> void:
+	KeyboardManager.unfocus_input()

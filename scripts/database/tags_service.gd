@@ -42,9 +42,9 @@ func get_tag_by_id(tag_id: int) -> TagModel:
 		return TagModel.from_dict(task.data[0])
 	return null
 
-func update_tag(tag_id: int, new_name: String, new_description: String) -> bool:
+func update_tag(tag_id: int, new_name: String, new_description: String) -> TagModel:
 	if tag_id == -1:
-		return false
+		return null
 
 	var query = SupabaseQuery.new()\
 		.from("tags")\
@@ -54,7 +54,11 @@ func update_tag(tag_id: int, new_name: String, new_description: String) -> bool:
 	var task = Supabase.database.query(query)
 	await task.completed
 
-	return task.data != null
+	if task.data and task.data.size() > 0:
+		return TagModel.from_dict(task.data[0])
+	else:
+		push_error("Failed to return TagModel")
+		return null
 
 func delete_tag(tag_id: int) -> bool:
 	if tag_id == -1:

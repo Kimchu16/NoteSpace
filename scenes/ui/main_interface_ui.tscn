@@ -1,4 +1,4 @@
-[gd_scene load_steps=64 format=3 uid="uid://byyxjpkgbecw2"]
+[gd_scene load_steps=65 format=3 uid="uid://byyxjpkgbecw2"]
 
 [ext_resource type="Script" uid="uid://dr1cdtub4gbjt" path="res://scripts/ui/main_interface_ui.gd" id="1_4i5p1"]
 [ext_resource type="Texture2D" uid="uid://cjtjhogd8knmc" path="res://resources/icons/add.png" id="2_s6oqo"]
@@ -8,7 +8,6 @@
 [ext_resource type="Texture2D" uid="uid://blq4wdcyb4dll" path="res://resources/icons/sticky-note.png" id="6_tjey1"]
 [ext_resource type="Texture2D" uid="uid://caaae2n8a1lqn" path="res://resources/icons/search.png" id="7_bjdjc"]
 [ext_resource type="Texture2D" uid="uid://nw805np4hqtq" path="res://resources/icons/filter.png" id="8_2fxfp"]
-[ext_resource type="PackedScene" uid="uid://dfm6q0mi3k0pg" path="res://scenes/ui/tags/menu_tag.tscn" id="9_d46ak"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4g6uq"]
 bg_color = Color(0.9340804, 0.9340805, 0.93408036, 1)
@@ -466,22 +465,26 @@ corner_radius_top_right = 35
 corner_radius_bottom_right = 35
 corner_radius_bottom_left = 35
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n6se1"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x8hgo"]
 content_margin_left = 20.0
 content_margin_top = 20.0
 content_margin_right = 20.0
-bg_color = Color(0.19964579, 0.3540795, 0.5873825, 1)
+bg_color = Color(0.8177518, 0.7815986, 0.29939893, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
 border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
 corner_radius_top_left = 35
 corner_radius_top_right = 35
 corner_radius_bottom_right = 35
 corner_radius_bottom_left = 35
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ybfup"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tkkdu"]
 content_margin_left = 20.0
 content_margin_top = 20.0
 content_margin_right = 20.0
-bg_color = Color(0.48320925, 0.3016147, 0.7444629, 1)
+bg_color = Color(0.92620283, 0.90115094, 0.53648776, 1)
 border_width_left = 3
 border_width_top = 3
 border_width_right = 3
@@ -635,6 +638,32 @@ corner_radius_top_right = 35
 corner_radius_bottom_right = 35
 corner_radius_bottom_left = 35
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n6se1"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.19964579, 0.3540795, 0.5873825, 1)
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ybfup"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.48320925, 0.3016147, 0.7444629, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hf2jx"]
 content_margin_left = 100.0
 content_margin_top = 0.0
@@ -697,6 +726,7 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4g6uq")
 
 [node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -990,8 +1020,8 @@ tooltip_text = "Create note"
 theme_override_constants/icon_max_width = 50
 theme_override_font_sizes/font_size = 30
 theme_override_styles/normal = SubResource("StyleBoxFlat_faags")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_n6se1")
-theme_override_styles/hover = SubResource("StyleBoxFlat_ybfup")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_x8hgo")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tkkdu")
 icon_alignment = 1
 vertical_icon_alignment = 0
 
@@ -1147,11 +1177,7 @@ layout_mode = 2
 layout_mode = 2
 theme_override_constants/separation = 80
 
-[node name="Tag" parent="Control/ColorRect/TagMenu/VBoxContainer/MarginContainer6/ScrollContainer/Tags" instance=ExtResource("9_d46ak")]
-layout_mode = 2
-
 [node name="TagEditor" type="MarginContainer" parent="Control/ColorRect"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1282,6 +1308,14 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_cgl7b")
 [connection signal="pressed" from="Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer2/SettingsBtn" to="." method="_on_settings_btn_pressed"]
 [connection signal="pressed" from="Control/ColorRect/SettingsMenu/VBoxContainer/MarginContainer/BackBtn" to="." method="_on_back_btn_pressed"]
 [connection signal="pressed" from="Control/ColorRect/SettingsMenu/VBoxContainer/MarginContainer2/LogoutBtn" to="." method="_on_logout_btn_pressed"]
+[connection signal="pressed" from="Control/ColorRect/ColourExtension/HBoxContainer/Blue" to="." method="_on_blue_pressed"]
+[connection signal="pressed" from="Control/ColorRect/ColourExtension/HBoxContainer/Yellow" to="." method="_on_yellow_pressed"]
+[connection signal="pressed" from="Control/ColorRect/ColourExtension/HBoxContainer/Purple" to="." method="_on_purple_pressed"]
+[connection signal="pressed" from="Control/ColorRect/ColourExtension/HBoxContainer/Green" to="." method="_on_green_pressed"]
 [connection signal="pressed" from="Control/ColorRect/TagMenu/VBoxContainer/MarginContainer/TagMenuBackBtn" to="." method="_on_back_btn_pressed"]
 [connection signal="pressed" from="Control/ColorRect/TagMenu/VBoxContainer/MarginContainer2/HBoxContainer2/CreateNewTagBtn" to="." method="_on_create_new_tag_btn_pressed"]
 [connection signal="pressed" from="Control/ColorRect/TagEditor/VBoxContainer/MarginContainer/TagEditorBackBtn" to="." method="_return_to_tag_menu"]
+[connection signal="focus_entered" from="Control/ColorRect/TagEditor/VBoxContainer/Name/LineEdit" to="." method="_on_line_edit_focus_entered"]
+[connection signal="focus_exited" from="Control/ColorRect/TagEditor/VBoxContainer/Name/LineEdit" to="." method="_on_line_edit_focus_exited"]
+[connection signal="focus_entered" from="Control/ColorRect/TagEditor/VBoxContainer/Desc/LineEdit" to="." method="_on_desc_edit_focus_entered"]
+[connection signal="focus_exited" from="Control/ColorRect/TagEditor/VBoxContainer/Desc/LineEdit" to="." method="_on_line_edit_focus_exited"]

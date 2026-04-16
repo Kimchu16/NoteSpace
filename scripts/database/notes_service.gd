@@ -112,7 +112,7 @@ func load_tags_for_note(note_id: int) -> Array[TagModel]:
 	for tag_id in tag_ids:
 		var tag_query = SupabaseQuery.new().from("tags")\
 		.select(["tag_name", "tag_id"])\
-		.eq("tag_id", tag_id)
+		.eq("tag_id", str(tag_id))
 		
 		var tag_task = Supabase.database.query(tag_query)
 		await tag_task.completed
