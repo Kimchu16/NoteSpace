@@ -5,6 +5,14 @@ extends CanvasLayer
 @onready var settings_menu: MarginContainer = $Control/ColorRect/SettingsMenu
 @onready var main_menu: MarginContainer = $Control/ColorRect/MarginContainer
 @onready var colour_chosen: Panel = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer2/HBoxContainer2/ColorBtn/Panel
+@onready var tag_menu: MarginContainer = $Control/ColorRect/TagMenu
+@onready var tag_editor: MarginContainer = $Control/ColorRect/TagEditor
+@onready var tag_scene = preload("res://scenes/ui/tags/menu_tag.tscn")
+@onready var tag_editor_name = $Control/ColorRect/TagEditor/VBoxContainer/Name/LineEdit
+@onready var tag_editor_desc = $Control/ColorRect/TagEditor/VBoxContainer/Desc/LineEdit
+@onready var tag_editor_save_btn = $Control/ColorRect/TagEditor/VBoxContainer/MarginContainer2/HBoxContainer2/SaveBtn
+@onready var tag_count_label = $Control/ColorRect/TagMenu/VBoxContainer/MarginContainer3/GridContainer/HBoxContainer/Label2
+@onready var note_count_label = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer3/GridContainer/HBoxContainer/Label2
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 var opened_spawn_button: Button = null
@@ -14,6 +22,9 @@ var note_scene = preload("res://scenes/notes/note3D.tscn")
 var menu_note_scene = preload("res://scenes/ui/note_main_interface.tscn")
 
 var default_colour: String = "Yellow"
+var is_new_tag: bool = false
+var tag_count: int = 0
+var note_count: int = 0
 
 func _ready() -> void:
 	AuthManager.login_success.connect(_on_user_logged_in)
@@ -45,6 +56,8 @@ func clear_menu_notes():
 
 func load_notes_from_database() -> void:#
 	var notes = await NotesService.get_user_notes()
+	note_count = notes.size()
+	note_count_label.text = note_count
 	print("Loading ", notes.size(), " notes from database...")
 	
 	for note_model in notes:
@@ -59,6 +72,18 @@ func load_notes_from_database() -> void:#
 			menu_note_instance.is_note_placed = false
 			
 		menu_note_instance.highlight_note.connect(_on_highlight_note)
+
+func load_tags_from_database() -> void:
+	var tags = await TagsService.get_user_tags()
+	tag_count = tags.size()
+	tag_count_label.text = tag_count
+	print("Loading ", tags.size(), " tags from database...")
+	
+	for tag_model in tags:
+		var tag_instance: MenuTag = tag_scene.instantiate()
+		tag_menu.add_child(tag_instance)
+		tag_instance.set_tag_data(tag_model)
+		tag_instance.edit_note_button_pressed.connect(_on_tag_edit_requested)
 
 func register_note(note_instance: Note3D):
 	notes_by_id[note_instance.note_model.id] = note_instance
@@ -120,6 +145,8 @@ func _on_create_button_pressed() -> void:
 		print(note_model)
 	else:
 		printerr("note model null")
+	
+	_update_note_count("plus")
 
 func _on_note_returned_to_main_interface(note_model: NoteModel) -> void:
 	for child in menu_notes.get_children():
@@ -134,6 +161,12 @@ func _on_settings_btn_pressed() -> void:
 func _on_back_btn_pressed() -> void:
 	main_menu.visible = true
 	settings_menu.visible = false
+	tag_menu.visible = false
+
+func _return_to_tag_menu() -> void:
+	tag_editor.visible = false
+	tag_menu.visible = true
+	_reset_tag_editor()
 
 func _on_logout_btn_pressed() -> void:
 	AuthManager.logout()
@@ -142,7 +175,8 @@ func _on_color_btn_pressed() -> void:
 	$Control/ColorRect/ColourExtension.visible = !$Control/ColorRect/ColourExtension.visible
 
 func _on_tag_btn_pressed() -> void:
-	pass # Replace with function body.
+	main_menu.visible = false
+	tag_menu.visible = true
 
 func _on_colour_pick_pressed(colour: String) -> void:
 	if colour == "blue":
@@ -159,3 +193,59 @@ func _on_colour_pick_pressed(colour: String) -> void:
 		default_colour = "green"
 	else:
 		printerr("Invalid colour picked")
+
+func _on_tag_edit_requested(tag_instance: MenuTag) -> void:
+	tag_menu.visible = false
+	tag_editor.visible = true
+	tag_editor_name.text = tag_instance.tag_data.tag_name
+	tag_editor_desc.text = tag_instance.tag_data.description
+	tag_editor_save_btn.pressed.connect(_on_save_btn_pressed, [tag_instance])
+
+func _on_save_btn_pressed(tag_instance: MenuTag):
+	if is_new_tag != true:
+		if tag_editor_name != "":
+			var updated_tag = await TagsService.update_tag(tag_instance.tag_data.id, tag_editor_name, tag_editor_desc)
+			if updated_tag:
+				print("Tag updated")
+				tag_instance.set_tag_data(updated_tag)
+				_return_to_tag_menu()
+				_reset_tag_editor()
+				return
+	
+	var tag_model = TagModel.new()
+	tag_model.tag_name = tag_editor_name
+	tag_model.description = tag_editor_desc
+	tag_model.owner = AuthManager.current_user["id"]
+	
+	# Save the tag in the database
+	var created_tag = await TagsService.create_tag(tag_model.tag_name, tag_model.description)
+	if created_tag:
+		print("Tag created: ", created_tag.tag_name)
+		_update_tag_count("plus")
+	else:
+		print("Failed to create tag.")
+
+func _reset_tag_editor() -> void:
+	tag_editor_name.text = ""
+	tag_editor_desc.text = ""
+
+func _on_create_new_tag_btn_pressed() -> void:
+	tag_editor.visible = true
+	tag_menu.visible = false
+	is_new_tag = true	
+
+func _update_tag_count(operation: String):
+	if operation == "plus":
+		tag_count = tag_count + 1
+		tag_count_label.text = tag_count
+	if operation == "minus":
+		tag_count = tag_count - 1
+		tag_count_label.text = tag_count
+
+func _update_note_count(operation: String):
+	if operation == "plus":
+		note_count = note_count + 1
+		note_count_label.text = note_count
+	if operation == "minus":
+		note_count = note_count - 1
+		note_count_label.text = note_count

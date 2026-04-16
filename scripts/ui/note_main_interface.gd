@@ -38,7 +38,6 @@ func _on_pressed() -> void:
 	print("is note placed: ", is_note_placed)
 	if is_note_placed == true:
 		print("Note already placed.")
-		#TODO: Highlight note location?
 		emit_signal("highlight_note", note_model)
 	else: 
 		var mainUI = get_tree().get_first_node_in_group("MainInterfaceUI")
