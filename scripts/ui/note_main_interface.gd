@@ -51,7 +51,8 @@ func update_tags_for_note(note_id: int):
 		child.queue_free()
 	
 	for tag in tags:
-		var tag_instance = load("res://scenes/ui/tags/menu_tag.tscn").instantiate()
+		var tag_instance = load("res://scenes/ui/tags/tag.tscn").instantiate()
+		print("Tag instance children: ", tag_instance.get_children())
 		var tag_label = tag_instance.get_node("Label")
 		tag_label.text = tag.tag_name
 		tag_container.add_child(tag_instance)

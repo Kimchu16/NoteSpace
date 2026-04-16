@@ -95,20 +95,24 @@ func update_anchored_state(note_id: int, state: bool):
 
 func load_tags_for_note(note_id: int) -> Array[TagModel]:
 	# Fetch the tag_ids associated with the note from note_tags
+	print("Fetching tag_ids for note_id:", note_id)
 	var query = SupabaseQuery.new().from("note_tags")\
 		.select(["tag_id"])\
 		.eq("note_id", str(note_id))
 		
 	var task = Supabase.database.query(query)
 	await task.completed
+	print("Task completed, task data:", task.data)
 	
 	var tag_ids: Array = []
 	if task.data:
 		for tag_data in task.data:
-			tag_ids.append(tag_data["tag_id"])
+			print("Found tag_id:", str(tag_data["tag_id"]))
+			tag_ids.append(int(tag_data["tag_id"]))
 	
 	# Fetch the tags based on tag_ids
 	var tags: Array[TagModel] = []
+	print("Fetching tags for tag_ids:", tag_ids)
 	for tag_id in tag_ids:
 		var tag_query = SupabaseQuery.new().from("tags")\
 		.select(["tag_name", "tag_id"])\
@@ -116,11 +120,16 @@ func load_tags_for_note(note_id: int) -> Array[TagModel]:
 		
 		var tag_task = Supabase.database.query(tag_query)
 		await tag_task.completed
+		print("Tag fetch completed, task data:", tag_task.data)
 		
 		if tag_task.data:
 			var tag_model = TagModel.from_dict(tag_task.data[0])
+			print("Created tag model:", tag_model)
 			tags.append(tag_model)
-			
+		else:
+			print("No data found for tag_id:", tag_id)
+		
+	print("Returning tags:", tags)
 	return tags
 
 func add_tags_to_note(note_id: int, tag_ids: Array) -> bool:

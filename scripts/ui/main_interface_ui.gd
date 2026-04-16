@@ -82,6 +82,7 @@ func load_notes_from_database() -> void:
 		var menu_note_instance: MenuNote = menu_note_scene.instantiate()
 		menu_notes.add_child(menu_note_instance)
 		menu_note_instance.set_note_data(note_model)
+		print("note model id: ", note_model.id)
 		await menu_note_instance.update_tags_for_note(note_model.id)
 		menu_note_instance.spawn_note_button_pressed.connect(_on_spawn_note_requested)
 		
