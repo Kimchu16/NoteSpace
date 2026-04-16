@@ -697,6 +697,7 @@ grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_4g6uq")
 
 [node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1151,7 +1152,6 @@ theme_override_constants/separation = 80
 layout_mode = 2
 
 [node name="TagEditor" type="MarginContainer" parent="Control/ColorRect"]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -1285,4 +1285,3 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_cgl7b")
 [connection signal="pressed" from="Control/ColorRect/TagMenu/VBoxContainer/MarginContainer/TagMenuBackBtn" to="." method="_on_back_btn_pressed"]
 [connection signal="pressed" from="Control/ColorRect/TagMenu/VBoxContainer/MarginContainer2/HBoxContainer2/CreateNewTagBtn" to="." method="_on_create_new_tag_btn_pressed"]
 [connection signal="pressed" from="Control/ColorRect/TagEditor/VBoxContainer/MarginContainer/TagEditorBackBtn" to="." method="_return_to_tag_menu"]
-[connection signal="pressed" from="Control/ColorRect/TagEditor/VBoxContainer/MarginContainer2/HBoxContainer2/SaveBtn" to="." method="_on_save_btn_pressed"]

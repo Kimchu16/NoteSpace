@@ -11,6 +11,7 @@ extends CanvasLayer
 @onready var tag_editor_name = $Control/ColorRect/TagEditor/VBoxContainer/Name/LineEdit
 @onready var tag_editor_desc = $Control/ColorRect/TagEditor/VBoxContainer/Desc/LineEdit
 @onready var tag_editor_save_btn = $Control/ColorRect/TagEditor/VBoxContainer/MarginContainer2/HBoxContainer2/SaveBtn
+@onready var tag_editor_del_btn = $Control/ColorRect/TagEditor/VBoxContainer/MarginContainer2/HBoxContainer2/DeleteBtn
 @onready var tag_count_label = $Control/ColorRect/TagMenu/VBoxContainer/MarginContainer3/GridContainer/HBoxContainer/Label2
 @onready var note_count_label = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer3/GridContainer/HBoxContainer/Label2
 
@@ -90,6 +91,7 @@ func register_note(note_instance: Note3D):
 
 func unregister_note(note_instance: Note3D):
 	notes_by_id.erase(note_instance.note_model.id)
+	_update_note_count("minus")
 
 func _on_highlight_note(note_model):
 	if notes_by_id.has(note_model.id):
@@ -200,6 +202,7 @@ func _on_tag_edit_requested(tag_instance: MenuTag) -> void:
 	tag_editor_name.text = tag_instance.tag_data.tag_name
 	tag_editor_desc.text = tag_instance.tag_data.description
 	tag_editor_save_btn.pressed.connect(_on_save_btn_pressed, [tag_instance])
+	tag_editor_del_btn.pressed.connect(_on_tag_delete_btn_pressed, [tag_instance])
 
 func _on_save_btn_pressed(tag_instance: MenuTag):
 	if is_new_tag != true:
@@ -249,3 +252,17 @@ func _update_note_count(operation: String):
 	if operation == "minus":
 		note_count = note_count - 1
 		note_count_label.text = note_count
+
+func _on_tag_delete_btn_pressed(tag_instance: MenuTag) -> void:
+	var tag_id = tag_instance.tag_data.tag_id
+	
+	if tag_id != -1:
+		var success = await TagsService.delete_tag(tag_id)
+		if success:
+			tag_instance.queue_free()
+			print("Tag deleted from UI and database.")
+			_update_tag_count("minus")
+		else:
+			print("Failed to delete tag.")
+	else:
+		print("Invalid tag ID.")
