@@ -17,6 +17,8 @@ extends CanvasLayer
 @onready var note_count_label = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer3/GridContainer/HBoxContainer/Label2
 @onready var tag_name_input = $Control/ColorRect/TagEditor/VBoxContainer/Name/LineEdit
 @onready var tag_desc_input = $Control/ColorRect/TagEditor/VBoxContainer/Desc/LineEdit
+@onready var notes_search_input: LineEdit = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer4/VBoxContainer/Searchbar
+@onready var tags_search_input: LineEdit = $Control/ColorRect/TagMenu/VBoxContainer/MarginContainer5/Searchbar
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 var opened_spawn_button: Button = null
@@ -41,6 +43,7 @@ func _ready() -> void:
 	
 	spatial_anchor_manager =  get_tree().get_nodes_in_group("Managers")[1]
 	ui_panel = get_tree().get_first_node_in_group("MainUI3D")
+	_connect_search_inputs()
 
 func _on_auth_checked(is_logged_in):
 	if is_logged_in:
@@ -92,6 +95,8 @@ func load_notes_from_database() -> void:
 			menu_note_instance.is_note_placed = false
 			
 		menu_note_instance.highlight_note.connect(_on_highlight_note)
+	
+	_apply_notes_filter(notes_search_input.text)
 
 func load_tags_from_database() -> void:
 	var tags = await TagsService.get_user_tags()
@@ -104,6 +109,8 @@ func load_tags_from_database() -> void:
 		tag_container.add_child(tag_instance)
 		tag_instance.set_tag_data(tag_model)
 		tag_instance.edit_note_button_pressed.connect(_on_tag_edit_requested)
+	
+	_apply_tags_filter(tags_search_input.text)
 
 func register_note(note_instance: Note3D):
 	notes_by_id[note_instance.note_model.id] = note_instance
@@ -240,6 +247,7 @@ func _on_save_btn_pressed():
 			if updated_tag:
 				print("Tag updated")
 				edit_tag_instance.set_tag_data(updated_tag)
+				_apply_tags_filter(tags_search_input.text)
 				_return_to_tag_menu()
 				_reset_tag_editor()
 				edit_tag_instance = null
@@ -259,6 +267,7 @@ func _on_save_btn_pressed():
 		tag_container.add_child(tag_instance)
 		tag_instance.set_tag_data(tag_model)
 		tag_instance.edit_note_button_pressed.connect(_on_tag_edit_requested)
+		_apply_tags_filter(tags_search_input.text)
 	else:
 		print("Failed to create tag.")
 
@@ -296,6 +305,7 @@ func _on_tag_delete_btn_pressed(tag_instance: MenuTag) -> void:
 			tag_instance.queue_free()
 			print("Tag deleted from UI and database.")
 			_update_tag_count("minus")
+			_apply_tags_filter(tags_search_input.text)
 		else:
 			print("Failed to delete tag.")
 	else:
@@ -322,3 +332,67 @@ func _on_desc_edit_focus_entered() -> void:
 
 func _on_line_edit_focus_exited() -> void:
 	KeyboardManager.unfocus_input()
+
+func _connect_search_inputs() -> void:
+	if not notes_search_input.text_changed.is_connected(_on_notes_search_text_changed):
+		notes_search_input.text_changed.connect(_on_notes_search_text_changed)
+	if not notes_search_input.focus_entered.is_connected(_on_notes_search_focus_entered):
+		notes_search_input.focus_entered.connect(_on_notes_search_focus_entered)
+	if not notes_search_input.focus_exited.is_connected(_on_search_focus_exited):
+		notes_search_input.focus_exited.connect(_on_search_focus_exited)
+	
+	if not tags_search_input.text_changed.is_connected(_on_tags_search_text_changed):
+		tags_search_input.text_changed.connect(_on_tags_search_text_changed)
+	if not tags_search_input.focus_entered.is_connected(_on_tags_search_focus_entered):
+		tags_search_input.focus_entered.connect(_on_tags_search_focus_entered)
+	if not tags_search_input.focus_exited.is_connected(_on_search_focus_exited):
+		tags_search_input.focus_exited.connect(_on_search_focus_exited)
+
+func _on_notes_search_text_changed(new_text: String) -> void:
+	_apply_notes_filter(new_text)
+
+func _on_tags_search_text_changed(new_text: String) -> void:
+	_apply_tags_filter(new_text)
+
+func _on_notes_search_focus_entered() -> void:
+	KeyboardManager.focus_input(notes_search_input, ui_panel)
+
+func _on_tags_search_focus_entered() -> void:
+	KeyboardManager.focus_input(tags_search_input, ui_panel)
+
+func _on_search_focus_exited() -> void:
+	KeyboardManager.unfocus_input()
+
+func _apply_notes_filter(raw_query: String) -> void:
+	var query := raw_query.strip_edges().to_lower()
+	
+	for child in menu_notes.get_children():
+		if child is not MenuNote:
+			continue
+		
+		if query.is_empty():
+			child.visible = true
+			continue
+		
+		var note_text: String = ""
+		if child.note_model != null:
+			note_text = child.note_model.content.to_lower()
+		child.visible = note_text.contains(query)
+
+func _apply_tags_filter(raw_query: String) -> void:
+	var query := raw_query.strip_edges().to_lower()
+	
+	for child in tag_container.get_children():
+		if child is not MenuTag:
+			continue
+		
+		if query.is_empty():
+			child.visible = true
+			continue
+		
+		var tag_name: String = ""
+		var tag_description: String = ""
+		if child.tag_data != null:
+			tag_name = child.tag_data.tag_name.to_lower()
+			tag_description = child.tag_data.description.to_lower()
+		child.visible = tag_name.contains(query) or tag_description.contains(query)
