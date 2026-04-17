@@ -7,6 +7,7 @@ var colour: String = "yellow"
 var is_anchored: bool = false
 var created_at: String = ""
 var updated_at: String = ""
+var tags: Array = []
 
 # Create from database result
 static func from_dict(data: Dictionary) -> NoteModel:
@@ -31,7 +32,7 @@ func to_dict() -> Dictionary:
 func get_godot_colour() -> Color:
 	match colour.to_lower():
 		"yellow": return Color.YELLOW
-		"blue": return Color.BLUE
-		"green": return Color.GREEN
-		"purple": return Color.PURPLE
+		"blue": return Color.CORNFLOWER_BLUE
+		"green": return Color.LIGHT_GREEN
+		"purple": return Color.MEDIUM_PURPLE
 		_: return Color.YELLOW

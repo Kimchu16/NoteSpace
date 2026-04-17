@@ -1,0 +1,132 @@
+[gd_scene load_steps=9 format=3 uid="uid://dg77ppnt4t077"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dmgyh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ce24w"]
+content_margin_left = 20.0
+content_margin_top = 0.0
+content_margin_right = 20.0
+content_margin_bottom = 0.0
+bg_color = Color(0.76862746, 0.19215687, 0.21176471, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g4f6e"]
+content_margin_left = 20.0
+content_margin_top = 0.0
+content_margin_right = 20.0
+bg_color = Color(0.6780793, 0.15781596, 0.17791381, 1)
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y0826"]
+content_margin_left = 20.0
+content_margin_top = 0.0
+content_margin_right = 20.0
+bg_color = Color(0.89649296, 0.26595297, 0.27698445, 1)
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dmgyh"]
+content_margin_left = 20.0
+content_margin_top = 0.0
+content_margin_right = 20.0
+content_margin_bottom = 0.0
+bg_color = Color(0.23344272, 0.40359566, 0.66012436, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_48hy8"]
+content_margin_left = 20.0
+content_margin_top = 0.0
+content_margin_right = 20.0
+bg_color = Color(0.19964579, 0.3540795, 0.5873825, 1)
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p3s72"]
+content_margin_left = 20.0
+content_margin_top = 0.0
+content_margin_right = 20.0
+bg_color = Color(0.30326796, 0.4864664, 0.7637247, 1)
+border_color = Color(0.63529414, 0.64705884, 0.6627451, 1)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8k5xk"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+bg_color = Color(0.23137255, 0.40392157, 0.65882355, 0)
+corner_radius_top_left = 35
+corner_radius_top_right = 35
+corner_radius_bottom_right = 35
+corner_radius_bottom_left = 35
+
+[node name="Button" type="Button"]
+theme_override_colors/font_hover_color = Color(0.73719275, 0.7371929, 0.73719364, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.4506483, 0.4506483, 0.45064825, 1)
+theme_override_font_sizes/font_size = 50
+theme_override_styles/normal = SubResource("StyleBoxEmpty_dmgyh")
+text = "Tag"
+
+[node name="DeleteBtn" type="Button" parent="."]
+visible = false
+custom_minimum_size = Vector2(156, 0)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -82.5
+offset_right = 82.5
+offset_bottom = 110.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_ce24w")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_g4f6e")
+theme_override_styles/hover = SubResource("StyleBoxFlat_y0826")
+text = "Delete"
+icon_alignment = 1
+vertical_icon_alignment = 0
+
+[node name="CreateBtn" type="Button" parent="."]
+visible = false
+custom_minimum_size = Vector2(156, 0)
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -78.0
+offset_right = 78.0
+offset_bottom = 110.0
+grow_horizontal = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+tooltip_text = "Create note"
+theme_override_constants/icon_max_width = 50
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_dmgyh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_48hy8")
+theme_override_styles/hover = SubResource("StyleBoxFlat_p3s72")
+theme_override_styles/focus = SubResource("StyleBoxFlat_8k5xk")
+text = "Add"
+icon_alignment = 1
+vertical_icon_alignment = 0

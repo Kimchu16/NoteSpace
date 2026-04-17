@@ -1,13 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://deqrlddx0ci8x"]
+[gd_scene load_steps=8 format=3 uid="uid://dfm6q0mi3k0pg"]
 
-[ext_resource type="Script" uid="uid://6fta47q0h736" path="res://scripts/ui/note_main_interface.gd" id="1_uxha5"]
-[ext_resource type="Script" uid="uid://dwfkwililklhk" path="res://scripts/ui/main_interface_tag_container.gd" id="1_x2qlg"]
-[ext_resource type="PackedScene" uid="uid://bgh5id8xm4x1c" path="res://scenes/ui/tags/overflow_tag.tscn" id="2_oyyyo"]
+[ext_resource type="Script" uid="uid://ck571ro28m8to" path="res://scripts/ui/menu_tag.gd" id="1_t8pd5"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qawoj"]
 bg_color = Color(0.8819366, 0.8819366, 0.88193655, 1)
-border_width_left = 10
-border_color = Color(0.95, 0.85246664, 0.41799998, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -15,8 +11,6 @@ corner_radius_bottom_left = 20
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y7sk6"]
 bg_color = Color(0.78352344, 0.7835234, 0.7835234, 1)
-border_width_left = 10
-border_color = Color(0.95, 0.85246664, 0.41799998, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -24,8 +18,6 @@ corner_radius_bottom_left = 20
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uxha5"]
 bg_color = Color(0.96035105, 0.96035105, 0.96035093, 1)
-border_width_left = 10
-border_color = Color(0.95, 0.85246664, 0.41799998, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 corner_radius_bottom_right = 20
@@ -58,47 +50,53 @@ bg_color = Color(0.8474744, 0.84747446, 0.84747446, 1)
 corner_radius_bottom_right = 20
 corner_radius_bottom_left = 20
 
-[node name="Note" type="Button"]
+[node name="Tag" type="Button"]
 custom_minimum_size = Vector2(660, 200)
-offset_right = 660.0
-offset_bottom = 200.0
 theme_override_styles/normal = SubResource("StyleBoxFlat_qawoj")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_y7sk6")
 theme_override_styles/hover = SubResource("StyleBoxFlat_uxha5")
-script = ExtResource("1_uxha5")
+script = ExtResource("1_t8pd5")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-theme_override_constants/margin_left = 30
-theme_override_constants/margin_top = 20
-theme_override_constants/margin_right = 30
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 10
 
 [node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 20
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer"]
+[node name="Name" type="Label" parent="MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(610, 87)
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_colors/font_color = Color(0.3553136, 0.35531354, 0.35531357, 1)
+theme_override_font_sizes/font_size = 40
+text = "Test tag"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+text_overrun_behavior = 5
+
+[node name="Desc" type="Label" parent="MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(610, 87)
 layout_mode = 2
 size_flags_vertical = 1
 theme_override_colors/font_color = Color(0.3553136, 0.35531354, 0.35531357, 1)
 theme_override_font_sizes/font_size = 30
-text = "Welcome to NoteSpace! Pinch to select notes and move them around your space."
+text = "Testing what should I write idk so i need to increase word count so i can see the limits to this thing, yeah yap yap"
+horizontal_alignment = 1
+vertical_alignment = 1
 autowrap_mode = 2
-text_overrun_behavior = 5
+text_overrun_behavior = 6
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 0
-script = ExtResource("1_x2qlg")
-
-[node name="OverflowTag" parent="MarginContainer/VBoxContainer/HBoxContainer" instance=ExtResource("2_oyyyo")]
-visible = false
-layout_mode = 2
-
-[node name="Button" type="Button" parent="."]
+[node name="EditBtn" type="Button" parent="."]
 visible = false
 layout_mode = 1
 anchors_preset = 5
@@ -113,6 +111,8 @@ theme_override_font_sizes/font_size = 60
 theme_override_styles/normal = SubResource("StyleBoxFlat_oxilj")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_rcq6p")
 theme_override_styles/hover = SubResource("StyleBoxFlat_6klmy")
-text = "Place"
+text = "Edit
+"
 
 [connection signal="pressed" from="." to="." method="_on_pressed"]
+[connection signal="pressed" from="EditBtn" to="." method="_on_edit_btn_pressed"]

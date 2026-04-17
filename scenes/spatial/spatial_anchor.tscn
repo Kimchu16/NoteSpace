@@ -16,4 +16,5 @@ height = 0.05
 script = ExtResource("1_iq2c0")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+visible = false
 mesh = SubResource("CylinderMesh_smfql")
