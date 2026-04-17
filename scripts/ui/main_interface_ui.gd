@@ -283,18 +283,18 @@ func _on_create_new_tag_btn_pressed() -> void:
 func _update_tag_count(operation: String):
 	if operation == "plus":
 		tag_count = tag_count + 1
-		tag_count_label.text = tag_count
+		tag_count_label.text = str(tag_count)
 	if operation == "minus":
 		tag_count = tag_count - 1
-		tag_count_label.text = tag_count
+		tag_count_label.text = str(tag_count)
 
 func _update_note_count(operation: String):
 	if operation == "plus":
 		note_count = note_count + 1
-		note_count_label.text = note_count
+		note_count_label.text = str(note_count)
 	if operation == "minus":
 		note_count = note_count - 1
-		note_count_label.text = note_count
+		note_count_label.text = str(note_count)
 
 func _on_tag_delete_btn_pressed(tag_instance: MenuTag) -> void:
 	var tag_id = tag_instance.tag_data.tag_id

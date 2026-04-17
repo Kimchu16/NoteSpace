@@ -21,12 +21,16 @@ func focus_input(target_control: Control, ui_panel: Node3D):
 		print("Could not find VirtualKeyboard2D")
 		return
 	
-	keyboard_script.target_viewport = target_control.get_viewport()
+	keyboard_script.target_viewport = _resolve_target_viewport(target_control)
 	
 	if ui_panel:
-		var offset_down = Vector3(0, -0.25, 0)
-		keyboard.global_transform.origin = ui_panel.global_transform.origin + offset_down
-		keyboard.global_transform.basis = ui_panel.global_transform.basis
+		var panel_transform := ui_panel.global_transform
+		var panel_basis := panel_transform.basis.orthonormalized()
+		var offset_down := -panel_basis.y * 0.3
+		var offset_forward := panel_basis.z * 0.08
+		keyboard.global_transform.origin = panel_transform.origin + offset_down + offset_forward
+		keyboard.global_transform.basis = panel_basis
+		print("Keyboard positioned at: ", keyboard.global_transform.origin, " using ui_panel: ", ui_panel.name)
 	
 	keyboard.visible = true
 
@@ -36,3 +40,12 @@ func unfocus_input():
 		keyboard.visible = false
 	
 	current_focused_input = null
+
+func _resolve_target_viewport(target_control: Control) -> Viewport:
+	var current: Node = target_control
+	while current != null:
+		if current is SubViewport:
+			return current as Viewport
+		current = current.get_parent()
+	
+	return target_control.get_viewport()

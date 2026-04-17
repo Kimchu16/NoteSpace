@@ -246,6 +246,7 @@ icon = ExtResource("3_gxikp")
 icon_alignment = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3"]
+visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
