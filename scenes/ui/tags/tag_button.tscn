@@ -1,0 +1,50 @@
+[gd_scene load_steps=4 format=3 uid="uid://ctd26dwkwkqlg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_whkst"]
+content_margin_left = 8.0
+content_margin_top = 5.0
+content_margin_right = 8.0
+content_margin_bottom = 5.0
+bg_color = Color(0.646765, 0.6996919, 0.7855368, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qb6so"]
+content_margin_left = 8.0
+content_margin_top = 5.0
+content_margin_right = 8.0
+content_margin_bottom = 5.0
+bg_color = Color(0.5417132, 0.6009513, 0.7014213, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.12156863, 0.7058824, 0.9019608, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cbl4v"]
+content_margin_left = 8.0
+content_margin_top = 5.0
+content_margin_right = 8.0
+content_margin_bottom = 5.0
+bg_color = Color(0.72855604, 0.7698766, 0.83971393, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="TagButton" type="Button"]
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.30323246, 0.30323303, 0.3032326, 1)
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxFlat_whkst")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qb6so")
+theme_override_styles/hover = SubResource("StyleBoxFlat_cbl4v")
+toggle_mode = true
+text = "#Tag"

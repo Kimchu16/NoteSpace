@@ -19,6 +19,8 @@ extends CanvasLayer
 @onready var tag_desc_input = $Control/ColorRect/TagEditor/VBoxContainer/Desc/LineEdit
 @onready var notes_search_input: LineEdit = $Control/ColorRect/MarginContainer/VBoxContainer/MarginContainer4/VBoxContainer/Searchbar
 @onready var tags_search_input: LineEdit = $Control/ColorRect/TagMenu/VBoxContainer/MarginContainer5/Searchbar
+@onready var filter_extension: PanelContainer = $Control/ColorRect/FilterExtension
+@onready var filter_tags_container: HFlowContainer = $Control/ColorRect/FilterExtension/MarginContainer/VBoxContainer/MarginContainer4/HFlowContainer
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 var opened_spawn_button: Button = null
@@ -26,13 +28,16 @@ var notes_by_id: Dictionary
 
 var note_scene = preload("res://scenes/notes/note3D.tscn")
 var menu_note_scene = preload("res://scenes/ui/note_main_interface.tscn")
+var filter_tag_scene = preload("res://scenes/ui/tags/tag_button.tscn")
 
 var default_colour: String = "Yellow"
 var is_new_tag: bool = false
 var tag_count: int = 0
 var note_count: int = 0
 var ui_panel: Node3D
-var edit_tag_instance: MenuTag = null	
+var edit_tag_instance: MenuTag = null
+var selected_note_colours: Dictionary = {}
+var selected_filter_tag_ids: Dictionary = {}
 
 func _ready() -> void:
 	AuthManager.login_success.connect(_on_user_logged_in)
@@ -74,6 +79,8 @@ func clear_menu_tags():
 	print("Clearing menu tags...")
 	for child in tag_container.get_children():
 		child.queue_free()
+	_clear_filter_tag_buttons()
+	selected_filter_tag_ids.clear()
 
 func load_notes_from_database() -> void:
 	var notes = await NotesService.get_user_notes()
@@ -110,6 +117,7 @@ func load_tags_from_database() -> void:
 		tag_instance.set_tag_data(tag_model)
 		tag_instance.edit_note_button_pressed.connect(_on_tag_edit_requested)
 	
+	_rebuild_filter_tag_buttons(tags)
 	_apply_tags_filter(tags_search_input.text)
 
 func register_note(note_instance: Note3D):
@@ -127,6 +135,7 @@ func refresh_note_tags(note_id: int) -> void:
 	for child in menu_notes.get_children():
 		if child is MenuNote and child.note_model.id == note_id:
 			await child.update_tags_for_note(note_id)
+			_apply_notes_filter(notes_search_input.text)
 			return
 
 func _on_spawn_note_requested(note_model: NoteModel, menu_note: MenuNote) -> void:
@@ -247,6 +256,7 @@ func _on_save_btn_pressed():
 			if updated_tag:
 				print("Tag updated")
 				edit_tag_instance.set_tag_data(updated_tag)
+				await _refresh_filter_tag_buttons()
 				_apply_tags_filter(tags_search_input.text)
 				_return_to_tag_menu()
 				_reset_tag_editor()
@@ -265,8 +275,9 @@ func _on_save_btn_pressed():
 		_update_tag_count("plus")
 		var tag_instance: MenuTag = tag_scene.instantiate()
 		tag_container.add_child(tag_instance)
-		tag_instance.set_tag_data(tag_model)
+		tag_instance.set_tag_data(created_tag)
 		tag_instance.edit_note_button_pressed.connect(_on_tag_edit_requested)
+		await _refresh_filter_tag_buttons()
 		_apply_tags_filter(tags_search_input.text)
 	else:
 		print("Failed to create tag.")
@@ -302,9 +313,11 @@ func _on_tag_delete_btn_pressed(tag_instance: MenuTag) -> void:
 	if tag_id != -1:
 		var success = await TagsService.delete_tag(tag_id)
 		if success:
+			tag_container.remove_child(tag_instance)
 			tag_instance.queue_free()
 			print("Tag deleted from UI and database.")
 			_update_tag_count("minus")
+			await _refresh_filter_tag_buttons()
 			_apply_tags_filter(tags_search_input.text)
 		else:
 			print("Failed to delete tag.")
@@ -369,15 +382,19 @@ func _apply_notes_filter(raw_query: String) -> void:
 	for child in menu_notes.get_children():
 		if child is not MenuNote:
 			continue
-		
-		if query.is_empty():
-			child.visible = true
-			continue
-		
+
 		var note_text: String = ""
+		var note_colour: String = ""
+		var note_tags: Array = []
 		if child.note_model != null:
 			note_text = child.note_model.content.to_lower()
-		child.visible = note_text.contains(query)
+			note_colour = child.note_model.colour.to_lower()
+			note_tags = child.note_model.tags
+		
+		var matches_search = query.is_empty() or note_text.contains(query)
+		var matches_colour = selected_note_colours.is_empty() or selected_note_colours.has(note_colour)
+		var matches_tags = _note_matches_selected_tags(note_tags)
+		child.visible = matches_search and matches_colour and matches_tags
 
 func _apply_tags_filter(raw_query: String) -> void:
 	var query := raw_query.strip_edges().to_lower()
@@ -396,3 +413,84 @@ func _apply_tags_filter(raw_query: String) -> void:
 			tag_name = child.tag_data.tag_name.to_lower()
 			tag_description = child.tag_data.description.to_lower()
 		child.visible = tag_name.contains(query) or tag_description.contains(query)
+
+
+func _on_filter_pressed() -> void:
+	filter_extension.visible = !filter_extension.visible
+	if filter_extension.visible and filter_tags_container.get_child_count() == 0:
+		_rebuild_filter_tag_buttons(_collect_loaded_menu_tags())
+
+func _on_blue_filter_pressed(toggled_on: bool) -> void:
+	_set_note_colour_filter("blue", toggled_on)
+
+func _on_yellow_filter_pressed(toggled_on: bool) -> void:
+	_set_note_colour_filter("yellow", toggled_on)
+
+func _on_purple_filter_pressed(toggled_on: bool) -> void:
+	_set_note_colour_filter("purple", toggled_on)
+
+func _on_green_filter_pressed(toggled_on: bool) -> void:
+	_set_note_colour_filter("green", toggled_on)
+
+func _set_note_colour_filter(colour: String, toggled_on: bool) -> void:
+	var normalized_colour := colour.to_lower()
+	if toggled_on:
+		selected_note_colours[normalized_colour] = true
+	else:
+		selected_note_colours.erase(normalized_colour)
+	_apply_notes_filter(notes_search_input.text)
+
+func _refresh_filter_tag_buttons() -> void:
+	var tags = await TagsService.get_user_tags()
+	_rebuild_filter_tag_buttons(tags)
+
+func _rebuild_filter_tag_buttons(tags: Array) -> void:
+	_clear_filter_tag_buttons()
+	
+	var valid_tag_ids: Dictionary = {}
+	for tag_model in tags:
+		if tag_model == null or tag_model.tag_id == -1:
+			continue
+		
+		valid_tag_ids[tag_model.tag_id] = true
+		var tag_button: Button = filter_tag_scene.instantiate()
+		tag_button.text = tag_model.tag_name
+		tag_button.tooltip_text = tag_model.description
+		tag_button.button_pressed = selected_filter_tag_ids.has(tag_model.tag_id)
+		tag_button.toggled.connect(_on_filter_tag_toggled.bind(tag_model.tag_id))
+		filter_tags_container.add_child(tag_button)
+	
+	for tag_id in selected_filter_tag_ids.keys():
+		if not valid_tag_ids.has(tag_id):
+			selected_filter_tag_ids.erase(tag_id)
+	
+	_apply_notes_filter(notes_search_input.text)
+
+func _clear_filter_tag_buttons() -> void:
+	for child in filter_tags_container.get_children():
+		filter_tags_container.remove_child(child)
+		child.queue_free()
+
+func _collect_loaded_menu_tags() -> Array:
+	var loaded_tags: Array = []
+	for child in tag_container.get_children():
+		if child is MenuTag and child.tag_data != null:
+			loaded_tags.append(child.tag_data)
+	return loaded_tags
+
+func _on_filter_tag_toggled(toggled_on: bool, tag_id: int) -> void:
+	if toggled_on:
+		selected_filter_tag_ids[tag_id] = true
+	else:
+		selected_filter_tag_ids.erase(tag_id)
+	_apply_notes_filter(notes_search_input.text)
+
+func _note_matches_selected_tags(note_tags: Array) -> bool:
+	if selected_filter_tag_ids.is_empty():
+		return true
+	
+	for tag in note_tags:
+		if tag != null and selected_filter_tag_ids.has(tag.tag_id):
+			return true
+	
+	return false

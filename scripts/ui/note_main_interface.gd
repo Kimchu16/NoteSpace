@@ -46,6 +46,8 @@ func _on_pressed() -> void:
 
 func update_tags_for_note(note_id: int):
 	var tags = await NotesService.load_tags_for_note(note_id)
+	if note_model != null:
+		note_model.tags = tags
 	print("Update tags for note:" ,tags)
 	for child in tag_container.get_children():
 		if child.name == "OverflowTag":
