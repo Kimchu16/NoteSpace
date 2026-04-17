@@ -54,12 +54,15 @@ func _edit_note():
 			printerr("save_content not found.")
 
 func update_tags_for_note(note_id: int):
+	print("update tags for note 3d called")
 	var tags = await NotesService.load_tags_for_note(note_id)
 	for child in tag_container.get_children():
 		child.queue_free()
 	
 	for tag in tags:
-		var tag_instance = load("res://scenes/ui/tags/menu_tag.tscn").instantiate()
+		var tag_instance = load("res://scenes/ui/tags/tag.tscn").instantiate()
+		print("3d Tag instance children: ", tag_instance.get_children())
 		var tag_label = tag_instance.get_node("Label")
 		tag_label.text = tag.tag_name
 		tag_container.add_child(tag_instance)
+		print("Loaded tags for 3d note ", note_id, ": ", tags)

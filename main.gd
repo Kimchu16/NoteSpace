@@ -123,6 +123,7 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			
 			# Set the note data
 			note.set_note_data(model)
+			note.update_tags_for_note(model.id)
 			print("Load note id: ", note.note_model.id, " | node name: ", note.name)
 			note.anchored = true
 			setup_note(note)

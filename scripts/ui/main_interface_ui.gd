@@ -134,6 +134,7 @@ func spawn_note(note_model: NoteModel) -> void:
 	note_instance.global_position = hmd.origin + forward * 0.5
 	
 	note_instance.set_note_data(note_model)
+	print("CALLED NOTE3D TAGS FOR NOTE: ", note_model.id)
 	note_instance.update_tags_for_note(note_model.id)
 	register_note(note_instance)
 
