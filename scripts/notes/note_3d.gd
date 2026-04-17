@@ -13,9 +13,12 @@ var anchored: bool = false
 var anchor_uuid: String = ""
 var main_interface_ui: CanvasLayer
 
+func _get_toolbar_ui() -> CanvasLayer:
+	return $VisualRoot/Toolbar/Viewport2Din3D/Viewport/Toolbar_UI
+
 func _ready() -> void:
 	var toolbar = $VisualRoot/Toolbar
-	var toolbar_ui = $VisualRoot/Toolbar/Viewport2Din3D/Viewport/Toolbar_UI
+	var toolbar_ui = _get_toolbar_ui()
 	main_interface_ui = get_tree().get_first_node_in_group("MainInterfaceUI")
 	toolbar.connect("edit_button", _on_edit_button_pressed)
 	toolbar_ui.connect("delete_button", _on_delete_button_pressed)
@@ -29,6 +32,7 @@ func set_note_data(model: NoteModel) -> void:
 	# Update UI with content
 	var note_ui = $VisualRoot/SubViewport/Note_UI
 	note_ui.set_note_content(note_model.content)
+	_get_toolbar_ui().get_note_id(note_model.id)
 	
 	# Set color
 	var style_box = ui.get_theme_stylebox("panel").duplicate()
@@ -81,4 +85,4 @@ func _on_send_to_main() -> void:
 
 func update_tags_for_note(note_id: int):
 	$VisualRoot/SubViewport/Note_UI.update_tags_for_note(note_id)
-	$VisualRoot/Toolbar/Viewport2Din3D/Toolbar_UI.get_note_id(note_id)
+	_get_toolbar_ui().get_note_id(note_id)

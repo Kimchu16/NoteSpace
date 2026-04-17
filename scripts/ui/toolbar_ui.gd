@@ -9,7 +9,7 @@ signal edit_button
 signal delete_button
 signal send_to_main_interface
 
-var note_id: int
+var note_id: int = -1
 
 func _on_button_pressed():
 	#print("Edit button pressed in toolbar UI:", self)
@@ -34,14 +34,34 @@ func _on_edit_tags_pressed() -> void:
 	edit_tags_menu.visible = !edit_tags_menu.visible
 	
 	if edit_tags_menu.visible == true:
+		var id = _resolve_note_id()
+		if id == -1:
+			printerr("Toolbar_UI could not resolve note_id.")
+			return
+		note_id = id
 		update_tags_for_note(note_id)
 
 func get_note_id(id: int) -> void:
 	note_id = id
-	print("note id obtained: ", id, "|| saved note_id: ", note_id)
+	print("note id obtained: ", id, "|| saved note_id: ", note_id, " || toolbar ui id: ", get_instance_id())
+
+func _resolve_note_id() -> int:
+	if note_id != -1:
+		return note_id
+
+	var current: Node = self
+	while current != null:
+		if current is Note3D:
+			var owner_note: Note3D = current
+			if owner_note.note_model:
+				return owner_note.note_model.id
+			return -1
+		current = current.get_parent()
+
+	return -1
 
 func update_tags_for_note(id: int):
-	print("update tags for note 3d MANAGEMENT called: ", id, " || Saved note_id: ", note_id)
+	print("update tags for note 3d MANAGEMENT called: ", id, " || Saved note_id: ", note_id, " || toolbar ui id: ", get_instance_id())
 	# Add Tags list --------------------------------------------
 	var tags = await NotesService.load_tags_for_note(id)
 	for child in add_tags_list.get_children():
