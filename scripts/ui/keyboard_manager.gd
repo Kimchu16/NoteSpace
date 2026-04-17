@@ -29,7 +29,7 @@ func focus_input(target_control: Control, ui_panel: Node3D):
 		var offset_down := -panel_basis.y * 0.3
 		var offset_forward := panel_basis.z * 0.08
 		keyboard.global_transform.origin = panel_transform.origin + offset_down + offset_forward
-		keyboard.global_transform.basis = panel_basis
+		_orient_keyboard_towards_user(keyboard)
 		print("Keyboard positioned at: ", keyboard.global_transform.origin, " using ui_panel: ", ui_panel.name)
 	
 	keyboard.visible = true
@@ -49,3 +49,17 @@ func _resolve_target_viewport(target_control: Control) -> Viewport:
 		current = current.get_parent()
 	
 	return target_control.get_viewport()
+
+func _orient_keyboard_towards_user(keyboard: Node3D) -> void:
+	var camera := get_tree().root.get_camera_3d()
+	if camera == null:
+		return
+	
+	var keyboard_position := keyboard.global_position
+	var camera_position := camera.global_position
+	var look_target := Vector3(camera_position.x, keyboard_position.y, camera_position.z)
+	
+	if keyboard_position.distance_to(look_target) <= 0.001:
+		return
+	
+	keyboard.look_at(look_target, Vector3.UP, true)
