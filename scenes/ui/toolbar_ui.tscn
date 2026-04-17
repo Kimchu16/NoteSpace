@@ -1,9 +1,10 @@
-[gd_scene load_steps=23 format=3 uid="uid://bhf7bu488y3xk"]
+[gd_scene load_steps=27 format=3 uid="uid://bhf7bu488y3xk"]
 
 [ext_resource type="Script" uid="uid://dxtogk4mssxrr" path="res://scripts/ui/toolbar_ui.gd" id="1_kfg2y"]
 [ext_resource type="Texture2D" uid="uid://ckk312qicbbeu" path="res://resources/icons/edit.png" id="2_01n0y"]
 [ext_resource type="Texture2D" uid="uid://menk3ea5v127" path="res://resources/icons/edit_tag.png" id="3_gxikp"]
 [ext_resource type="Texture2D" uid="uid://jh4m62058wlq" path="res://resources/icons/delete.png" id="3_txj2h"]
+[ext_resource type="PackedScene" uid="uid://dg77ppnt4t077" path="res://scenes/ui/tags/note_tag.tscn" id="4_3gflb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t253f"]
 bg_color = Color(0.11119679, 0.11119687, 0.11119679, 1)
@@ -58,6 +59,28 @@ corner_radius_bottom_left = 60
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5m20g"]
 bg_color = Color(0.16862746, 0.16862746, 0.16862746, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ndant"]
+content_margin_left = 20.0
+content_margin_top = 20.0
+content_margin_right = 20.0
+content_margin_bottom = 20.0
+bg_color = Color(0.10980392, 0.10980392, 0.10980392, 1)
+corner_radius_top_left = 30
+corner_radius_top_right = 30
+corner_radius_bottom_right = 30
+corner_radius_bottom_left = 30
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0nufk"]
+content_margin_bottom = 20.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_bottom = 5
+border_color = Color(0.28118682, 0.2811869, 0.2811867, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d02rc"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_right = 3
+border_color = Color(0.28235295, 0.28235295, 0.28235295, 1)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mlru0"]
 content_margin_left = 30.0
@@ -171,6 +194,8 @@ script = ExtResource("1_kfg2y")
 custom_minimum_size = Vector2(1000, 500)
 layout_mode = 3
 anchors_preset = 0
+offset_right = 1000.0
+offset_bottom = 1050.0
 
 [node name="ColorRect" type="Panel" parent="Control"]
 layout_mode = 0
@@ -220,6 +245,91 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_gxikp")
 theme_override_styles/focus = SubResource("StyleBoxFlat_3gflb")
 icon = ExtResource("3_gxikp")
 icon_alignment = 1
+
+[node name="PanelContainer" type="PanelContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -450.0
+offset_top = 200.0
+offset_right = 450.0
+offset_bottom = 1000.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ndant")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="AddList" type="VBoxContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/AddList"]
+layout_mode = 2
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 20
+
+[node name="Label" type="Label" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/AddList/MarginContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_0nufk")
+text = "Add Tags"
+horizontal_alignment = 1
+
+[node name="MarginContainer5" type="MarginContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/AddList"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/AddList/MarginContainer5"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_d02rc")
+
+[node name="TagList" type="VBoxContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/AddList/MarginContainer5/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 80
+
+[node name="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/AddList/MarginContainer5/ScrollContainer/TagList" instance=ExtResource("4_3gflb")]
+layout_mode = 2
+
+[node name="RemoveList" type="VBoxContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/RemoveList"]
+layout_mode = 2
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_bottom = 20
+
+[node name="Label" type="Label" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/RemoveList/MarginContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+theme_override_styles/normal = SubResource("StyleBoxFlat_0nufk")
+text = "Remove Tags"
+horizontal_alignment = 1
+
+[node name="MarginContainer5" type="MarginContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/RemoveList"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_bottom = 5
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/RemoveList/MarginContainer5"]
+custom_minimum_size = Vector2(420, 0)
+layout_mode = 2
+
+[node name="TagList" type="VBoxContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/RemoveList/MarginContainer5/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 80
+
+[node name="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/RemoveList/MarginContainer5/ScrollContainer/TagList" instance=ExtResource("4_3gflb")]
+layout_mode = 2
 
 [node name="Panel2" type="Panel" parent="Control/ColorRect/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(5, 70)
@@ -284,6 +394,7 @@ rotation = 0.7853982
 theme_override_styles/panel = SubResource("StyleBoxFlat_2j0ms")
 
 [connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button3" to="." method="_on_edit_tags_pressed"]
 [connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button2" to="." method="_on_del_btn_pressed"]
 [connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer/VBoxContainer/Button" to="." method="_on_perma_del_pressed"]
 [connection signal="pressed" from="Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer/VBoxContainer/Button2" to="." method="_send_to_main_interface"]

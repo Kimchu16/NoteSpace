@@ -1,6 +1,7 @@
 extends CanvasLayer
 
 @onready var delete_menu = $Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer
+@onready var edit_tags_menu = $Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer
 
 signal edit_button
 signal delete_button
@@ -24,3 +25,6 @@ func _send_to_main_interface():
 	print("Send back to main interface.")
 	emit_signal("send_to_main_interface")
 	#print("Emitted from:", get_instance_id())
+
+func _on_edit_tags_pressed() -> void:
+	edit_tags_menu.visible = !edit_tags_menu.visible
