@@ -67,11 +67,23 @@ func update_tags_for_note(id: int):
 	for child in add_tags_list.get_children():
 		child.queue_free()
 	
+	var attached_tag_ids: Dictionary = {}
 	for tag in tags:
 		var tag_instance = load("res://scenes/ui/tags/note_tag.tscn").instantiate()
 		print("3d Tag instance children: ", tag_instance.get_children())
 		tag_instance.text = tag.tag_name
 		add_tags_list.add_child(tag_instance)
+		attached_tag_ids[tag.tag_id] = true
 		print("Loaded tags for 3d note ", id, ": ", tags)
 		
 	# Remove Tags list --------------------------------------------
+	for child in remove_tags_list.get_children():
+		child.queue_free()
+		
+	var user_tags = await TagsService.get_user_tags()
+	for tag in user_tags:
+		if attached_tag_ids.has(tag.tag_id):
+			continue
+		var tag_instance = load("res://scenes/ui/tags/note_tag.tscn").instantiate()
+		tag_instance.text = tag.tag_name
+		remove_tags_list.add_child(tag_instance)
