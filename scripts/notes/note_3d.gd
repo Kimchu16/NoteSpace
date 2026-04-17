@@ -81,3 +81,4 @@ func _on_send_to_main() -> void:
 
 func update_tags_for_note(note_id: int):
 	$VisualRoot/SubViewport/Note_UI.update_tags_for_note(note_id)
+	$VisualRoot/Toolbar/Viewport2Din3D/Toolbar_UI.get_note_id(note_id)

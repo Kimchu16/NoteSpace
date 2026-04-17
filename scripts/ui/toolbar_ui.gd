@@ -2,10 +2,14 @@ extends CanvasLayer
 
 @onready var delete_menu = $Control/ColorRect/MarginContainer/HBoxContainer/Button2/PanelContainer
 @onready var edit_tags_menu = $Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer
+@onready var add_tags_list = $Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/AddList/MarginContainer5/ScrollContainer/TagList
+@onready var remove_tags_list = $Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/RemoveList/MarginContainer5/ScrollContainer/TagList
 
 signal edit_button
 signal delete_button
 signal send_to_main_interface
+
+var note_id: int
 
 func _on_button_pressed():
 	#print("Edit button pressed in toolbar UI:", self)
@@ -28,3 +32,26 @@ func _send_to_main_interface():
 
 func _on_edit_tags_pressed() -> void:
 	edit_tags_menu.visible = !edit_tags_menu.visible
+	
+	if edit_tags_menu.visible == true:
+		update_tags_for_note(note_id)
+
+func get_note_id(id: int) -> void:
+	note_id = id
+	print("note id obtained: ", id, "|| saved note_id: ", note_id)
+
+func update_tags_for_note(id: int):
+	print("update tags for note 3d MANAGEMENT called: ", id, " || Saved note_id: ", note_id)
+	# Add Tags list --------------------------------------------
+	var tags = await NotesService.load_tags_for_note(id)
+	for child in add_tags_list.get_children():
+		child.queue_free()
+	
+	for tag in tags:
+		var tag_instance = load("res://scenes/ui/tags/note_tag.tscn").instantiate()
+		print("3d Tag instance children: ", tag_instance.get_children())
+		tag_instance.text = tag.tag_name
+		add_tags_list.add_child(tag_instance)
+		print("Loaded tags for 3d note ", id, ": ", tags)
+		
+	# Remove Tags list --------------------------------------------

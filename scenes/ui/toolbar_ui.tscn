@@ -1,10 +1,9 @@
-[gd_scene load_steps=27 format=3 uid="uid://bhf7bu488y3xk"]
+[gd_scene load_steps=26 format=3 uid="uid://bhf7bu488y3xk"]
 
 [ext_resource type="Script" uid="uid://dxtogk4mssxrr" path="res://scripts/ui/toolbar_ui.gd" id="1_kfg2y"]
 [ext_resource type="Texture2D" uid="uid://ckk312qicbbeu" path="res://resources/icons/edit.png" id="2_01n0y"]
 [ext_resource type="Texture2D" uid="uid://menk3ea5v127" path="res://resources/icons/edit_tag.png" id="3_gxikp"]
 [ext_resource type="Texture2D" uid="uid://jh4m62058wlq" path="res://resources/icons/delete.png" id="3_txj2h"]
-[ext_resource type="PackedScene" uid="uid://dg77ppnt4t077" path="res://scenes/ui/tags/note_tag.tscn" id="4_3gflb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t253f"]
 bg_color = Color(0.11119679, 0.11119687, 0.11119679, 1)
@@ -294,9 +293,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 80
 
-[node name="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/AddList/MarginContainer5/ScrollContainer/TagList" instance=ExtResource("4_3gflb")]
-layout_mode = 2
-
 [node name="RemoveList" type="VBoxContainer" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 0
@@ -327,9 +323,6 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 80
-
-[node name="Button" parent="Control/ColorRect/MarginContainer/HBoxContainer/Button3/PanelContainer/HBoxContainer/RemoveList/MarginContainer5/ScrollContainer/TagList" instance=ExtResource("4_3gflb")]
-layout_mode = 2
 
 [node name="Panel2" type="Panel" parent="Control/ColorRect/MarginContainer/HBoxContainer"]
 custom_minimum_size = Vector2(5, 70)

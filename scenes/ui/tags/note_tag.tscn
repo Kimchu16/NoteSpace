@@ -1,31 +1,6 @@
-[gd_scene load_steps=11 format=3 uid="uid://dg77ppnt4t077"]
+[gd_scene load_steps=9 format=3 uid="uid://dg77ppnt4t077"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2moln"]
-content_margin_left = 20.0
-content_margin_top = 20.0
-content_margin_right = 20.0
-content_margin_bottom = 20.0
-bg_color = Color(0.10980392, 0.10980392, 0.10980392, 1)
-corner_radius_top_left = 30
-corner_radius_top_right = 30
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_707of"]
-content_margin_left = 20.0
-content_margin_top = 20.0
-content_margin_right = 20.0
-content_margin_bottom = 20.0
-bg_color = Color(0.080783375, 0.08078333, 0.080783345, 1)
-corner_radius_top_left = 30
-corner_radius_top_right = 30
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g8h4b"]
-content_margin_left = 20.0
-content_margin_top = 20.0
-content_margin_right = 20.0
-content_margin_bottom = 20.0
-bg_color = Color(0.16206557, 0.1620656, 0.16206557, 1)
-corner_radius_top_left = 30
-corner_radius_top_right = 30
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_dmgyh"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ce24w"]
 content_margin_left = 20.0
@@ -104,12 +79,10 @@ corner_radius_bottom_right = 35
 corner_radius_bottom_left = 35
 
 [node name="Button" type="Button"]
-theme_override_colors/font_pressed_color = Color(0.60784316, 0.1254902, 0.1254902, 1)
-theme_override_colors/font_hover_color = Color(0.70980394, 0.15686275, 0.15686275, 1)
+theme_override_colors/font_hover_color = Color(0.73719275, 0.7371929, 0.73719364, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.4506483, 0.4506483, 0.45064825, 1)
 theme_override_font_sizes/font_size = 50
-theme_override_styles/normal = SubResource("StyleBoxFlat_2moln")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_707of")
-theme_override_styles/hover = SubResource("StyleBoxFlat_g8h4b")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_dmgyh")
 text = "Tag"
 
 [node name="DeleteBtn" type="Button" parent="."]
