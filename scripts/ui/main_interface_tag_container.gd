@@ -28,20 +28,44 @@ func queue_layout() -> void:
 	_layout_dirty = true
 	call_deferred("_recompute_layout")
 
+func _rebuild_tags() -> void:
+	tags.clear()
+	for child in get_children():
+		if child == overflow_tag:
+			continue
+		if not is_instance_valid(child):
+			continue
+		if child.is_queued_for_deletion():
+			continue
+		if child is PanelContainer:
+			tags.append(child)
+
 func _recompute_layout() -> void:
 	_layout_dirty = false
+	_rebuild_tags()
+	
+	if not is_instance_valid(overflow_tag):
+		return
 	
 	var available := max_width # Remaining horizontal space available
 	var hidden_count:= 0
 	
 	# First pass: assume no overflow tag
 	for tag in tags:
+		if not is_instance_valid(tag):
+			continue
+		if tag.is_queued_for_deletion():
+			continue
 		tag.visible = true
 	
 	overflow_tag.visible = false
 	
 	# Second pass: measure and fit
 	for tag in tags:
+		if not is_instance_valid(tag):
+			continue
+		if tag.is_queued_for_deletion():
+			continue
 		var w := tag.get_combined_minimum_size().x
 		
 		if w <= available:
@@ -60,10 +84,14 @@ func _recompute_layout() -> void:
 		for i in range(tags.size() -1, -1, -1):
 			if available >= overflow_w:
 				break
-			
-			if tags[i].visible:
-				tags[i].visible = false
-				available += tags[i].get_combined_minimum_size().x
+			var tag := tags[i]
+			if not is_instance_valid(tag):
+				continue
+			if tag.is_queued_for_deletion():
+				continue
+			if tag.visible:
+				tag.visible = false
+				available += tag.get_combined_minimum_size().x
 				hidden_count += 1
 				
 		overflow_tag.set_hidden_count(hidden_count)

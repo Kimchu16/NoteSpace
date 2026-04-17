@@ -116,6 +116,12 @@ func _on_highlight_note(note_model):
 	if notes_by_id.has(note_model.id):
 		notes_by_id[note_model.id].highlight()
 
+func refresh_note_tags(note_id: int) -> void:
+	for child in menu_notes.get_children():
+		if child is MenuNote and child.note_model.id == note_id:
+			await child.update_tags_for_note(note_id)
+			return
+
 func _on_spawn_note_requested(note_model: NoteModel, menu_note: MenuNote) -> void:
 	spawn_note(note_model)
 	menu_note.spawn_button.visible = false

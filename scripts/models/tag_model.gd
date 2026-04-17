@@ -12,7 +12,7 @@ var updated_at: String = ""
 # Create from database result
 static func from_dict(data: Dictionary) -> TagModel:
 	var tag = TagModel.new()
-	tag.tag_id = int(data.get("tag_id", -1))
+	tag.tag_id = int(data.get("tag_id", data.get("id", -1)))
 	tag.tag_name = data.get("tag_name", "")
 	tag.description = data.get("description", "")
 	tag.owner = data.get("owner", "")

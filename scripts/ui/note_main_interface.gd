@@ -48,6 +48,8 @@ func update_tags_for_note(note_id: int):
 	var tags = await NotesService.load_tags_for_note(note_id)
 	print("Update tags for note:" ,tags)
 	for child in tag_container.get_children():
+		if child.name == "OverflowTag":
+			continue
 		child.queue_free()
 	
 	for tag in tags:
@@ -57,3 +59,6 @@ func update_tags_for_note(note_id: int):
 		tag_label.text = tag.tag_name
 		tag_container.add_child(tag_instance)
 		print("Loaded tags for note ", note_id, ": ", tags)
+	
+	if tag_container.has_method("queue_layout"):
+		tag_container.queue_layout()

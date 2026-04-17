@@ -102,6 +102,16 @@ func load_tags_for_note(note_id: int) -> Array[TagModel]:
 		
 	var task = Supabase.database.query(query)
 	await task.completed
+
+	if task.error != null:
+		printerr(
+			"Failed loading note_tags for note_id: ", note_id,
+			" | code: ", task.error.code,
+			" | message: ", task.error.message,
+			" | details: ", task.error.details,
+			" | hint: ", task.error.hint
+		)
+		return []
 	#print("Task completed, task data:", task.data)
 	
 	var tag_ids: Array = []
@@ -110,27 +120,31 @@ func load_tags_for_note(note_id: int) -> Array[TagModel]:
 			#print("Found tag_id:", str(tag_data["tag_id"]))
 			tag_ids.append(int(tag_data["tag_id"]))
 	
-	# Fetch the tags based on tag_ids
+	# Resolve tags through user's tags list so it works with schemas that use either id or tag_id.
+	var user_tags = await TagsService.get_user_tags()
+	var tags_by_id: Dictionary = {}
+	for tag_model in user_tags:
+		if tag_model.tag_id != -1:
+			tags_by_id[tag_model.tag_id] = tag_model
+
 	var tags: Array[TagModel] = []
-	#print("Fetching tags for tag_ids:", tag_ids)
+	var seen: Dictionary = {}
 	for tag_id in tag_ids:
-		var tag_query = SupabaseQuery.new().from("tags")\
-		.select(["tag_name", "tag_id"])\
-		.eq("tag_id", str(tag_id))
-		
-		var tag_task = Supabase.database.query(tag_query)
-		await tag_task.completed
-		#print("Tag fetch completed, task data:", tag_task.data)
-		
-		if tag_task.data:
-			var tag_model = TagModel.from_dict(tag_task.data[0])
-			#print("Created tag model:", tag_model)
-			tags.append(tag_model)
+		if tags_by_id.has(tag_id) and not seen.has(tag_id):
+			tags.append(tags_by_id[tag_id])
+			seen[tag_id] = true
 		else:
-			print("No data found for tag_id:", tag_id)
+			print("No user tag found for tag_id:", tag_id)
 		
 	print("Returning tags:", tags)
 	return tags
+
+func _note_has_tag(note_id: int, tag_id: int) -> bool:
+	var tags = await load_tags_for_note(note_id)
+	for tag in tags:
+		if tag.tag_id == tag_id:
+			return true
+	return false
 
 func add_tags_to_note(note_id: int, tag_ids: Array) -> bool:
 	if note_id == -1 or tag_ids.size() == 0:
@@ -139,16 +153,31 @@ func add_tags_to_note(note_id: int, tag_ids: Array) -> bool:
 	for tag_id in tag_ids:
 		var note_tag_data = {
 			"note_id": note_id,
-			"tag_id": tag_id,
-			}
+			"tag_id": tag_id
+		}
 			
 		# Insert the relationship into note_tags table
 		var query = SupabaseQuery.new().from("note_tags").insert([note_tag_data])
-		var task = Supabase.database.query(query)
+		var task: DatabaseTask = Supabase.database.query(query)
 		await task.completed
-		
-		if not task.data:
-			printerr("Failed to add tag relationship for note_id: ", note_id, " and tag_id: ", tag_id)
+
+		if task.error != null:
+			# 23505 => unique_violation, relation already exists.
+			if str(task.error.code) == "23505":
+				print("Tag relationship already exists for note_id: ", note_id, " and tag_id: ", tag_id)
+				continue
+			printerr(
+				"Failed to add tag relationship for note_id: ", note_id,
+				" and tag_id: ", tag_id,
+				" | code: ", task.error.code,
+				" | message: ", task.error.message,
+				" | details: ", task.error.details,
+				" | hint: ", task.error.hint
+			)
+			return false
+
+		if not await _note_has_tag(note_id, tag_id):
+			printerr("Tag insert did not persist for note_id: ", note_id, " and tag_id: ", tag_id)
 			return false
 	
 	print("Tags successfully added to note.")
@@ -161,12 +190,23 @@ func remove_tag_from_note(note_id: int, tag_id: int) -> bool:
 	.eq("note_id", str(note_id))\
 	.eq("tag_id", str(tag_id))
 	
-	var task = Supabase.database.query(query)
+	var task: DatabaseTask = Supabase.database.query(query)
 	await task.completed
-	
-	if task.data:
-		print("Tag successfully removed from note.")
-		return true
-	else:
-		printerr("Failed to remove tag from note.")
+
+	if task.error != null:
+		printerr(
+			"Failed to remove tag from note. note_id: ", note_id,
+			" | tag_id: ", tag_id,
+			" | code: ", task.error.code,
+			" | message: ", task.error.message,
+			" | details: ", task.error.details,
+			" | hint: ", task.error.hint
+		)
 		return false
+
+	if await _note_has_tag(note_id, tag_id):
+		printerr("Tag delete did not persist for note_id: ", note_id, " and tag_id: ", tag_id)
+		return false
+
+	print("Tag successfully removed from note.")
+	return true
