@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://bjgcgnv1qk85y"]
+
+[ext_resource type="Script" uid="uid://btd45sqt3vvc4" path="res://scripts/spatial/spatial_entity.gd" id="1_se2dd"]
+
+[node name="StaticBody3D" type="StaticBody3D"]
+collision_layer = 32
+script = ExtResource("1_se2dd")

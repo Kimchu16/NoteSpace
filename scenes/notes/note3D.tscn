@@ -1,114 +1,86 @@
-[gd_scene load_steps=12 format=3 uid="uid://c8afp62753414"]
+[gd_scene load_steps=14 format=3 uid="uid://c8afp62753414"]
 
 [ext_resource type="Script" uid="uid://d1cvex0hhwu6w" path="res://scripts/notes/note_3d.gd" id="2_o2bde"]
 [ext_resource type="Script" uid="uid://cyqboteu80tf0" path="res://scripts/notes/note3d_area3D.gd" id="2_qtaf0"]
-[ext_resource type="Script" uid="uid://bai1r3mrhbvgw" path="res://scripts/ui/note_ui.gd" id="2_ug2s1"]
 [ext_resource type="Script" uid="uid://birtph774gbgr" path="res://scripts/notes/toolbar.gd" id="3_geaw2"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="3_o2bde"]
-[ext_resource type="Script" uid="uid://dxtogk4mssxrr" path="res://scripts/ui/toolbar_ui.gd" id="4_ug2s1"]
 [ext_resource type="PackedScene" uid="uid://bhf7bu488y3xk" path="res://scenes/ui/toolbar_ui.tscn" id="4_ymklu"]
+[ext_resource type="PackedScene" uid="uid://c1onusjh3iu6f" path="res://scenes/ui/note_ui.tscn" id="6_bvxdc"]
+[ext_resource type="AudioStream" uid="uid://cdaeutlgf0c0o" path="res://resources/sounds/216634__timbre__synthetic-pings-light-bulb-indicator-[AudioTrimmer.com].mp3" id="7_s4ibr"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_e1omw"]
 resource_local_to_scene = true
 size = Vector2(0.2, 0.2)
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_qtaf0"]
-viewport_path = NodePath("SubViewport")
+viewport_path = NodePath("VisualRoot/SubViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_b26f6"]
 resource_local_to_scene = true
+cull_mode = 2
+shading_mode = 0
 albedo_texture = SubResource("ViewportTexture_qtaf0")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ygjor"]
-size = Vector3(0.2, 0.2, 0.01)
+size = Vector3(0.2, 0.2, 0.001)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bvxdc"]
+albedo_color = Color(0.5609411, 0.7615267, 0.90448457, 1)
+emission_enabled = true
+emission = Color(0.37237388, 0.7307242, 0.875249, 1)
+emission_energy_multiplier = 5.0
+
+[sub_resource type="TorusMesh" id="TorusMesh_s4ibr"]
+material = SubResource("StandardMaterial3D_bvxdc")
+inner_radius = 0.12
+outer_radius = 0.125
 
 [node name="Note3D" type="Node3D"]
 script = ExtResource("2_o2bde")
 
-[node name="XRToolsInteractableArea" type="Area3D" parent="."]
+[node name="VisualRoot" type="Node3D" parent="."]
+
+[node name="XRToolsInteractableArea" type="Area3D" parent="VisualRoot"]
 collision_layer = 1048580
 script = ExtResource("2_qtaf0")
 metadata/_custom_type_script = "uid://bgnwmkn54ch4j"
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="XRToolsInteractableArea"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="VisualRoot/XRToolsInteractableArea"]
 mesh = SubResource("QuadMesh_e1omw")
 skeleton = NodePath("")
 surface_material_override/0 = SubResource("StandardMaterial3D_b26f6")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="XRToolsInteractableArea"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="VisualRoot/XRToolsInteractableArea"]
 shape = SubResource("BoxShape3D_ygjor")
 
-[node name="Toolbar" type="Node3D" parent="."]
+[node name="Toolbar" type="Node3D" parent="VisualRoot"]
+visible = false
 script = ExtResource("3_geaw2")
 
-[node name="Viewport2Din3D" parent="Toolbar" instance=ExtResource("3_o2bde")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, 0)
-screen_size = Vector2(0.2, 0.05)
+[node name="Viewport2Din3D" parent="VisualRoot/Toolbar" instance=ExtResource("3_o2bde")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.044335246, 0.001)
+screen_size = Vector2(0.2, 0.21)
 collision_layer = 24
 scene = ExtResource("4_ymklu")
-viewport_size = Vector2(800, 200)
+viewport_size = Vector2(1000, 1050)
+unshaded = true
 scene_properties_keys = PackedStringArray("toolbar_ui.gd")
 
-[node name="Toolbar_UI" type="CanvasLayer" parent="Toolbar/Viewport2Din3D"]
-follow_viewport_enabled = true
-script = ExtResource("4_ug2s1")
+[node name="Toolbar_UI" parent="VisualRoot/Toolbar/Viewport2Din3D" instance=ExtResource("4_ymklu")]
 
-[node name="Control" type="Control" parent="Toolbar/Viewport2Din3D/Toolbar_UI"]
-layout_mode = 3
-anchors_preset = 0
+[node name="SubViewport" type="SubViewport" parent="VisualRoot"]
 
-[node name="ColorRect" type="ColorRect" parent="Toolbar/Viewport2Din3D/Toolbar_UI/Control"]
-layout_mode = 0
-offset_right = 800.0
-offset_bottom = 200.0
-color = Color(0.38431373, 0.38431373, 0.38431373, 1)
+[node name="Note_UI" parent="VisualRoot/SubViewport" instance=ExtResource("6_bvxdc")]
 
-[node name="MarginContainer" type="MarginContainer" parent="Toolbar/Viewport2Din3D/Toolbar_UI/Control/ColorRect"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="HighlightRing" type="MeshInstance3D" parent="VisualRoot"]
+visible = false
+mesh = SubResource("TorusMesh_s4ibr")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="Toolbar/Viewport2Din3D/Toolbar_UI/Control/ColorRect/MarginContainer"]
-layout_mode = 2
-size_flags_horizontal = 4
-size_flags_vertical = 4
-alignment = 1
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="VisualRoot/HighlightRing"]
+stream = ExtResource("7_s4ibr")
+attenuation_model = 2
+unit_size = 2.0
+max_db = 0.0
 
-[node name="Button" type="Button" parent="Toolbar/Viewport2Din3D/Toolbar_UI/Control/ColorRect/MarginContainer/HBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 60
-text = "Edit Note"
-
-[node name="SubViewport" type="SubViewport" parent="."]
-
-[node name="Note_UI" type="CanvasLayer" parent="SubViewport"]
-script = ExtResource("2_ug2s1")
-
-[node name="Control" type="Control" parent="SubViewport/Note_UI"]
-custom_minimum_size = Vector2(500, 500)
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="ColorRect" type="ColorRect" parent="SubViewport/Note_UI/Control"]
-layout_mode = 0
-offset_right = 512.0
-offset_bottom = 512.0
-color = Color(1, 1, 0.5019608, 1)
-
-[node name="MarginContainer" type="MarginContainer" parent="SubViewport/Note_UI/Control/ColorRect"]
-custom_minimum_size = Vector2(500, 500)
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="TextEdit" type="TextEdit" parent="SubViewport/Note_UI/Control/ColorRect/MarginContainer"]
-layout_mode = 2
-theme_override_colors/font_outline_color = Color(0.45840502, 0.45840508, 0.45840502, 1)
-placeholder_text = "New Note."
-virtual_keyboard_enabled = false
-virtual_keyboard_show_on_focus = false
+[editable path="VisualRoot/Toolbar/Viewport2Din3D/Toolbar_UI"]
+[editable path="VisualRoot/SubViewport/Note_UI"]

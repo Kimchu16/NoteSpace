@@ -1,9 +1,88 @@
 extends Node3D
+class_name Note3D
 
-func _enter_tree():
-	var toolbar = $Toolbar
-	#print("Note3D connecting to Toolbar instance:", toolbar)
+@onready var visual_root: Node3D = $VisualRoot
+@onready var highlight_ring: MeshInstance3D = $VisualRoot/HighlightRing
+@onready var highlight_sound: AudioStreamPlayer3D = $VisualRoot/HighlightRing/AudioStreamPlayer3D
+@onready var ui: Panel = $VisualRoot/SubViewport/Note_UI/Control/Panel
+
+signal returned_to_main_interface(note_model: NoteModel)
+
+var note_model: NoteModel = null
+var anchored: bool = false
+var anchor_uuid: String = ""
+var main_interface_ui: CanvasLayer
+
+func _get_toolbar_ui() -> CanvasLayer:
+	return $VisualRoot/Toolbar/Viewport2Din3D/Viewport/Toolbar_UI
+
+func _ready() -> void:
+	var toolbar = $VisualRoot/Toolbar
+	var toolbar_ui = _get_toolbar_ui()
+	main_interface_ui = get_tree().get_first_node_in_group("MainInterfaceUI")
 	toolbar.connect("edit_button", _on_edit_button_pressed)
+	toolbar_ui.connect("delete_button", _on_delete_button_pressed)
+	toolbar_ui.connect("send_to_main_interface", _on_send_to_main)
+	#print("Connected to:", toolbar_ui.get_instance_id())
+
+# Set the note data from database
+func set_note_data(model: NoteModel) -> void:
+	note_model = model
 	
+	# Update UI with content
+	var note_ui = $VisualRoot/SubViewport/Note_UI
+	note_ui.set_note_content(note_model.content)
+	_get_toolbar_ui().get_note_id(note_model.id)
+	
+	# Set color
+	var style_box = ui.get_theme_stylebox("panel").duplicate()
+	style_box.bg_color = note_model.get_godot_colour()
+	style_box.border_color = note_model.get_godot_colour()
+	ui.add_theme_stylebox_override("panel", style_box)
+
+# Save anchor state to database
+func save_anchor_state(state: bool) -> void:
+	if not note_model or note_model.id == -1:
+		return
+	
+	await NotesService.update_anchored_state(note_model.id, state)
+
+# Save content when editing finishes
+func save_content(new_content: String) -> void:
+	if not note_model or note_model.id == -1:
+		return
+	
+	note_model.content = new_content
+	await NotesService.update_note_content(note_model.id, new_content)
+	print("Content saved for note ", note_model.id)
+
+func highlight():
+	highlight_ring.visible = true
+	highlight_sound.play()
+	await get_tree().create_timer(5.0).timeout
+	highlight_ring.visible = false
+
 func _on_edit_button_pressed() -> void:
-	$SubViewport/Note_UI._edit_note()
+	$VisualRoot/SubViewport/Note_UI._edit_note()
+
+func _on_delete_button_pressed() -> void:
+	# Delete from database first
+	if note_model and note_model.id != -1:
+		await NotesService.delete_note(note_model.id)
+	main_interface_ui.unregister_note(self)
+	$VisualRoot/XRToolsInteractableArea.delete_spatial_anchor()
+	queue_free()
+	print("Note Deleted")
+
+func _on_send_to_main() -> void:
+	await save_anchor_state(false)
+	if note_model:
+		note_model.is_anchored = false
+	
+	main_interface_ui.unregister_note(self)
+	emit_signal("returned_to_main_interface", note_model)
+	call_deferred("queue_free") # Queue free after anchor and other procedures is done running
+
+func update_tags_for_note(note_id: int):
+	$VisualRoot/SubViewport/Note_UI.update_tags_for_note(note_id)
+	_get_toolbar_ui().get_note_id(note_id)
