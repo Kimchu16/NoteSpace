@@ -66,6 +66,7 @@ func _on_user_logged_in(user):
 
 func _on_user_logged_out():
 	print("User logged out -> clearing notes")
+	_reset_main_interface_state()
 	clear_menu_notes()
 	clear_menu_tags()
 	notes_by_id.clear()
@@ -210,6 +211,20 @@ func _return_to_tag_menu() -> void:
 
 func _on_logout_btn_pressed() -> void:
 	AuthManager.logout()
+
+func _reset_main_interface_state() -> void:
+	main_menu.visible = true
+	settings_menu.visible = false
+	tag_menu.visible = false
+	tag_editor.visible = false
+	filter_extension.visible = false
+	$Control/ColorRect/ColourExtension.visible = false
+	_reset_tag_editor()
+	KeyboardManager.unfocus_input()
+	
+	if opened_spawn_button:
+		opened_spawn_button.visible = false
+		opened_spawn_button = null
 
 func _on_color_btn_pressed() -> void:
 	$Control/ColorRect/ColourExtension.visible = !$Control/ColorRect/ColourExtension.visible
