@@ -12,6 +12,7 @@ var current_user = null
 var is_authenticated : bool = false
 var pending_email_confirmation := false
 var pending_email := ""
+var pending_auth_action := ""
 
 func _ready():
 	print("AuthManager ready")
@@ -22,10 +23,12 @@ func _ready():
 	_try_restore_session()
 
 func signup(email: String, password: String):
+	pending_auth_action = "signup"
 	Supabase.auth.sign_up(email, password)
 
 
 func login(email: String, password: String):
+	pending_auth_action = "login"
 	Supabase.auth.sign_in(email, password)
 
 func logout():
@@ -34,6 +37,7 @@ func logout():
 	is_authenticated = false
 	pending_email_confirmation = false
 	pending_email = ""
+	pending_auth_action = ""
 	_clear_session()
 	
 	emit_signal("logout_success")
@@ -43,6 +47,7 @@ func _on_signed_in(user: SupabaseUser):
 	print("SIGNED IN:", user)
 	pending_email_confirmation = false
 	pending_email = ""
+	pending_auth_action = ""
 	
 	current_user = user
 	is_authenticated = true
@@ -60,11 +65,28 @@ func _on_signed_up(user: SupabaseUser):
 	print("SIGNED UP:", user)
 	pending_email_confirmation = true
 	pending_email = user.email
+	pending_auth_action = ""
 	
+	emit_signal("signup_success", user)
 	emit_signal("email_confirmation_required", user.email)
 
 func _on_auth_error(err):
 	print("AUTH ERROR:", err)
+	var auth_action := pending_auth_action
+	pending_auth_action = ""
+
+	if auth_action == "signup":
+		emit_signal("auth_checked", false)
+		emit_signal("signup_failed", err)
+		return
+
+	if auth_action == "login":
+		current_user = null
+		is_authenticated = false
+		_clear_session()
+		emit_signal("auth_checked", false)
+		emit_signal("login_failed", err)
+		return
 	
 	if not is_authenticated:
 		print("Ignoring pre-login error")

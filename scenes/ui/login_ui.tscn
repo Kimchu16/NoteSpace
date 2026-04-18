@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://lg0la6gumfyi"]
+[gd_scene load_steps=10 format=3 uid="uid://lg0la6gumfyi"]
 
 [ext_resource type="Script" uid="uid://212tnujp5lk0" path="res://scripts/ui/login_ui.gd" id="1_pafcc"]
 
@@ -93,6 +93,22 @@ border_color = Color(0.35156286, 0.35156295, 0.35156265, 1)
 corner_radius_top_left = 20
 corner_radius_top_right = 20
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_error"]
+content_margin_left = 16.0
+content_margin_top = 12.0
+content_margin_right = 16.0
+content_margin_bottom = 12.0
+bg_color = Color(0.973, 0.855, 0.855, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.79, 0.29, 0.29, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
 [node name="LoginUI" type="CanvasLayer"]
 follow_viewport_enabled = true
 script = ExtResource("1_pafcc")
@@ -150,6 +166,19 @@ theme_override_font_sizes/normal_font_size = 25
 text = "Sign in to your NoteSpace account"
 fit_content = true
 horizontal_alignment = 1
+
+[node name="ErrorPopup" type="PanelContainer" parent="Control/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_error")
+
+[node name="Label" type="Label" parent="Control/MarginContainer/VBoxContainer/ErrorPopup"]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.5058824, 0.14509805, 0.14509805, 1)
+theme_override_font_sizes/font_size = 20
+text = "Login error"
+autowrap_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Control/MarginContainer/VBoxContainer"]
 layout_mode = 2
