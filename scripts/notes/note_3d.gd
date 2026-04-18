@@ -34,7 +34,7 @@ func set_note_data(model: NoteModel) -> void:
 	note_ui.set_note_content(note_model.content)
 	_get_toolbar_ui().get_note_id(note_model.id)
 	
-	# Set color
+	# Set colour
 	var style_box = ui.get_theme_stylebox("panel").duplicate()
 	style_box.bg_color = note_model.get_godot_colour()
 	style_box.border_color = note_model.get_godot_colour()

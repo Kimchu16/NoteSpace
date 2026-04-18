@@ -1,12 +1,12 @@
 extends Node
 
-func create_note(content: String, is_anchored: bool, color: String) -> NoteModel:
+func create_note(content: String, is_anchored: bool, colour: String) -> NoteModel:
 	var user_id = AuthManager.current_user["id"]
 	
 	var note_data = {
 		"context": content,
 		"is_anchored": is_anchored,
-		"colour": color,
+		"colour": colour,
 		"owner": user_id
 	}
 	
