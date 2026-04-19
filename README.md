@@ -3,6 +3,8 @@
 
 NoteSpace is an MR productivity tool built in **Godot 4** with **OpenXR** and **XR Tools**, allowing users to create, place, and manage virtual sticky notes in their real-world environment using the Meta Quest 3.
 
+This is the link to the website companion: http://cdgtt6hx10r40pag4jryv0nx.159.69.49.174.sslip.io/
+
 ##  Dependencies
 
 ###  Godot Engine 4.2+  
