@@ -152,6 +152,24 @@ static func get_note_record(
 
 	return {}
 
+static func get_anchor_room_lookup(rooms: Dictionary) -> Dictionary:
+	var anchor_room_lookup: Dictionary = {}
+
+	for room_id_variant in rooms.keys():
+		var room_id: String = str(room_id_variant)
+		var room = rooms.get(room_id, null)
+		if room == null:
+			continue
+
+		for anchor_uuid_variant in room.anchor_uuids:
+			var anchor_uuid: String = str(anchor_uuid_variant)
+			if anchor_uuid.is_empty():
+				continue
+
+			anchor_room_lookup[anchor_uuid] = room_id
+
+	return anchor_room_lookup
+
 static func generate_next_room_id(rooms: Dictionary) -> String:
 	var next_room_id: int = 1
 	for room_id_variant in rooms.keys():

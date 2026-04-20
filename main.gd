@@ -1,18 +1,27 @@
 extends Node3D
 
 var xr_interface: XRInterface
+const ROOM_ANCHOR_PROBE_INTERVAL_SEC := 6.0
+const ROOM_ANCHOR_PROBE_MOVE_THRESHOLD := 1.5
 
 @export var xr_origin: Node3D
 @export var right_controller: XRController3D
 
 @onready var login_ui = get_node("LoginUI")
 @onready var main_ui = get_node("MainInterface")
+@onready var xr_camera: Node3D = get_node_or_null("XROrigin3D/XRCamera3D")
 
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
 var room_manager: RoomManager
 var note_scene = preload("res://scenes/notes/note3D.tscn")
 var loaded_anchor_uuids: Array[String] = []
 var current_room_anchor_data: Dictionary = {}
+var known_room_anchor_ids: Dictionary = {}
+var pending_anchor_requests: Dictionary = {}
+var room_anchor_probe_elapsed: float = 0.0
+var last_room_anchor_probe_position: Vector3 = Vector3.ZERO
+var has_last_room_anchor_probe_position: bool = false
+var room_attach_generation: int = 0
 var xr_ready = false
 var auth_ready = false
 
@@ -25,10 +34,12 @@ func _ready():
 	room_manager = get_tree().get_first_node_in_group("RoomManager")
 	spatial_anchor_manager.connect("openxr_fb_spatial_anchor_tracked", _on_anchor_tracked)
 	spatial_anchor_manager.connect("openxr_fb_spatial_anchor_load_failed", _on_anchor_load_failed)
+	spatial_anchor_manager.connect("openxr_fb_spatial_anchor_track_failed", _on_anchor_track_failed)
 
 	if room_manager:
 		room_manager.room_loaded.connect(_on_room_loaded)
 		room_manager.room_unloading.connect(_on_room_unloading)
+		room_manager.room_anchor_records_changed.connect(_on_room_anchor_records_changed)
 	
 	if xr_interface and xr_interface.is_initialized():
 		# print("OpenXR initialized successfully")
@@ -73,9 +84,11 @@ func _load_room_anchors(room_id: String) -> void:
 	if not xr_ready or not auth_ready or room_manager == null:
 		return
 
+	room_attach_generation += 1
 	var current_user_id: String = str(AuthManager.current_user.id)
 	current_room_anchor_data = room_manager.get_room_note_map(room_id, current_user_id)
 	loaded_anchor_uuids.clear()
+	_refresh_known_room_anchor_ids()
 
 	for uuid in current_room_anchor_data.keys():
 		var existing = spatial_anchor_manager.get_anchor_node(uuid)
@@ -83,8 +96,7 @@ func _load_room_anchors(room_id: String) -> void:
 			_force_attach_note(uuid)
 			continue
 
-		# print("Loading anchor:", uuid, " for room: ", room_id)
-		spatial_anchor_manager.load_anchor(uuid)
+		_request_anchor_tracking(str(uuid), room_id)
 		loaded_anchor_uuids.append(uuid)
 
 func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: bool) -> void:
@@ -92,6 +104,7 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 		return
 
 	var anchor_uuid: String = str(spatial_entity.uuid)
+	pending_anchor_requests.erase(anchor_uuid)
 	# print("TRACKED:", anchor_uuid)
 
 	if is_new:
@@ -113,15 +126,25 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 	await _attach_note_to_anchor(anchor_node_3d, anchor_uuid)
 
 func _on_anchor_load_failed(uuid: StringName, _custom_data: Dictionary, _location: int) -> void:
-	if not current_room_anchor_data.has(str(uuid)):
+	var anchor_uuid: String = str(uuid)
+	pending_anchor_requests.erase(anchor_uuid)
+
+	if not current_room_anchor_data.has(anchor_uuid):
 		return
 
 	printerr("Failed to load saved spatial anchor: ", uuid)
+
+func _on_anchor_track_failed(spatial_entity: Object) -> void:
+	if spatial_entity == null:
+		return
+
+	pending_anchor_requests.erase(str(spatial_entity.uuid))
 
 func _attach_note_to_anchor(anchor_node: Node, anchor_uuid: String) -> void:
 	if not is_instance_valid(anchor_node):
 		return
 
+	var attach_generation: int = room_attach_generation
 	for child in anchor_node.get_children():
 		if child is Note3D:
 			# print("Note already exists on anchor, skipping:", anchor_uuid)
@@ -144,8 +167,26 @@ func _attach_note_to_anchor(anchor_node: Node, anchor_uuid: String) -> void:
 	if model == null:
 		return
 
+	if attach_generation != room_attach_generation:
+		return
+
+	var latest_data = current_room_anchor_data.get(anchor_uuid, {})
+	if latest_data.is_empty():
+		return
+
+	if int(latest_data.get("note_id", -1)) != note_id:
+		return
+
+	var live_anchor_node: Node = spatial_anchor_manager.get_anchor_node(anchor_uuid)
+	if not is_instance_valid(live_anchor_node):
+		return
+
+	for child in live_anchor_node.get_children():
+		if child is Note3D:
+			return
+
 	var note: Note3D = note_scene.instantiate()
-	anchor_node.add_child(note)
+	live_anchor_node.add_child(note)
 	note.anchor_uuid = anchor_uuid
 	note.position = Vector3.ZERO
 	note.rotation = Vector3.ZERO
@@ -171,10 +212,19 @@ func _on_logout():
 	# print("User logged out")
 	login_ui.visible = true
 	main_ui.visible = false
+	auth_ready = false
+	room_attach_generation += 1
 	if room_manager:
 		room_manager.unload_current_room()
+	known_room_anchor_ids.clear()
+	pending_anchor_requests.clear()
+	current_room_anchor_data.clear()
+	loaded_anchor_uuids.clear()
+	room_anchor_probe_elapsed = 0.0
+	has_last_room_anchor_probe_position = false
 
 func _clear_loaded_room_notes() -> void:
+	room_attach_generation += 1
 	var anchor_uuids: Array = current_room_anchor_data.keys()
 	for uuid in loaded_anchor_uuids:
 		if not anchor_uuids.has(uuid):
@@ -205,6 +255,7 @@ func _on_auth_checked(is_logged_in: bool):
 		# print("xr_ready: ", xr_ready, " || auth_ready: ", auth_ready)
 		_try_load()
 	else:
+		auth_ready = false
 		main_ui.visible = false
 		
 		if AuthManager.pending_email_confirmation:
@@ -213,15 +264,39 @@ func _on_auth_checked(is_logged_in: bool):
 			
 		login_ui.visible = true
 
+func _process(delta: float) -> void:
+	if not xr_ready or not auth_ready or room_manager == null:
+		return
+
+	room_anchor_probe_elapsed += delta
+	if room_anchor_probe_elapsed < ROOM_ANCHOR_PROBE_INTERVAL_SEC:
+		return
+
+	room_anchor_probe_elapsed = 0.0
+	if not _should_probe_room_anchors():
+		return
+
+	_probe_room_anchors()
+
 func _try_load():
-	if xr_ready and auth_ready and room_manager and not room_manager.current_room_id.is_empty():
+	if not xr_ready or not auth_ready or room_manager == null:
+		return
+
+	_refresh_known_room_anchor_ids()
+	_probe_room_anchors(true)
+
+	if not room_manager.current_room_id.is_empty():
 		_load_room_anchors(room_manager.current_room_id)
 
 func _on_room_loaded(room_id: String) -> void:
 	await _load_room_anchors(room_id)
+	_remember_room_anchor_probe_position()
 
 func _on_room_unloading(_room_id: String) -> void:
 	_clear_loaded_room_notes()
+
+func _on_room_anchor_records_changed() -> void:
+	_refresh_known_room_anchor_ids()
 
 func _force_attach_note(uuid: String) -> void:
 	await get_tree().create_timer(0.2).timeout
@@ -232,3 +307,71 @@ func _force_attach_note(uuid: String) -> void:
 		return
 
 	await _attach_note_to_anchor(anchor_node, uuid)
+
+func _refresh_known_room_anchor_ids() -> void:
+	if room_manager == null:
+		known_room_anchor_ids.clear()
+		return
+
+	known_room_anchor_ids = room_manager.get_anchor_room_lookup()
+
+func _should_probe_room_anchors() -> bool:
+	if known_room_anchor_ids.is_empty():
+		return false
+
+	if room_manager.current_room_id.is_empty():
+		return true
+
+	if xr_camera == null:
+		return false
+
+	if not has_last_room_anchor_probe_position:
+		return true
+
+	return xr_camera.global_position.distance_to(last_room_anchor_probe_position) >= ROOM_ANCHOR_PROBE_MOVE_THRESHOLD
+
+func _probe_room_anchors(force: bool = false) -> void:
+	if room_manager == null:
+		return
+
+	_refresh_known_room_anchor_ids()
+	if known_room_anchor_ids.is_empty():
+		return
+
+	var current_room_id: String = room_manager.current_room_id
+	for anchor_uuid_variant in known_room_anchor_ids.keys():
+		var anchor_uuid: String = str(anchor_uuid_variant)
+		var anchor_room_id: String = str(known_room_anchor_ids[anchor_uuid_variant])
+		if anchor_uuid.is_empty():
+			continue
+
+		if not force and not current_room_id.is_empty() and anchor_room_id == current_room_id:
+			continue
+
+		_request_anchor_tracking(anchor_uuid, anchor_room_id)
+
+	_remember_room_anchor_probe_position()
+
+func _request_anchor_tracking(anchor_uuid: String, room_id: String = "") -> void:
+	if anchor_uuid.is_empty() or pending_anchor_requests.has(anchor_uuid):
+		return
+
+	var spatial_entity: OpenXRFbSpatialEntity = spatial_anchor_manager.get_spatial_entity(anchor_uuid)
+	pending_anchor_requests[anchor_uuid] = true
+
+	if spatial_entity != null:
+		spatial_anchor_manager.track_anchor(spatial_entity)
+		return
+
+	var custom_data: Dictionary = {}
+	if not room_id.is_empty():
+		custom_data["room_id"] = room_id
+
+	spatial_anchor_manager.load_anchor(anchor_uuid, custom_data)
+
+func _remember_room_anchor_probe_position() -> void:
+	if xr_camera == null:
+		return
+
+	last_room_anchor_probe_position = xr_camera.global_position
+	has_last_room_anchor_probe_position = true

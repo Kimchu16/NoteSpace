@@ -102,6 +102,22 @@ static func match_existing_room_id(
 
 	return best_room_id
 
+static func get_room_overlap_count(room: RoomData, scene_anchor_uuids: Array[String]) -> int:
+	var known_entity_uuids: Array[String] = get_room_collision_entity_uuids(room)
+	if known_entity_uuids.is_empty() or scene_anchor_uuids.is_empty():
+		return 0
+
+	var scene_anchor_lookup: Dictionary = {}
+	for entity_uuid in scene_anchor_uuids:
+		scene_anchor_lookup[entity_uuid] = true
+
+	var overlap: int = 0
+	for entity_uuid in known_entity_uuids:
+		if scene_anchor_lookup.has(entity_uuid):
+			overlap += 1
+
+	return overlap
+
 static func get_room_collision_entity_uuids(room: RoomData) -> Array[String]:
 	var entity_uuids: Array[String] = []
 	for collision_data in room.collision_shapes:
