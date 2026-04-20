@@ -16,29 +16,30 @@ func _ready():
 	signupUI = get_tree().get_first_node_in_group("SignupUI")
 
 func _on_login_pressed():
-	print("BUTTON CLICKED")
+	# print("BUTTON CLICKED")
 	var email = email_input.text.strip_edges()
 	var password = password_input.text.strip_edges()
 
 	if email == "" or password == "":
-		print("Missing fields")
+		# print("Missing fields")
 		return
 
-	print("Logging in:", email)
+	# print("Logging in:", email)
 	AuthManager.login(email, password)
 
 func _on_login_failed(error):
-	print("Login failed UI:", error)
+	# print("Login failed UI:", error)
+	pass
 
 func _on_email_focus():
-	print("on_email focus input")
+	# print("on_email focus input")
 	KeyboardManager.focus_input(email_input, ui_panel)
 
 func _unfocus():
 	KeyboardManager.unfocus_input()
 
 func _on_password_focus():
-	print("on_password focus input")
+	# print("on_password focus input")
 	KeyboardManager.focus_input(password_input, ui_panel)
 
 func _on_link_button_pressed():

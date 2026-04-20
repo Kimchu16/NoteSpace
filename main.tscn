@@ -5,11 +5,13 @@
 [ext_resource type="PackedScene" uid="uid://cqhw276realc" path="res://addons/godot-xr-tools/functions/function_pointer.tscn" id="2_lquwl"]
 [ext_resource type="PackedScene" uid="uid://bjgcgnv1qk85y" path="res://scenes/spatial/spatial_entity.tscn" id="3_dg77c"]
 [ext_resource type="Script" uid="uid://dgrxlekct1whn" path="res://scripts/spatial/scene_controller.gd" id="3_efxa6"]
+[ext_resource type="Script" path="res://scripts/rooms/room_manager.gd" id="4_4c4qc"]
 [ext_resource type="PackedScene" uid="uid://clujaf3u776a3" path="res://addons/godot-xr-tools/objects/viewport_2d_in_3d.tscn" id="4_7mycd"]
 [ext_resource type="PackedScene" uid="uid://bc0yfcnodswwj" path="res://scenes/spatial/spatial_anchor.tscn" id="4_ycdy4"]
 [ext_resource type="PackedScene" uid="uid://lg0la6gumfyi" path="res://scenes/ui/login_ui.tscn" id="8_w48qg"]
 [ext_resource type="PackedScene" uid="uid://dktunsg52chsy" path="res://scenes/ui/signup_ui.tscn" id="9_4c57u"]
 [ext_resource type="PackedScene" uid="uid://dgdb1texynduw" path="res://addons/godot-xr-tools/objects/virtual_keyboard.tscn" id="9_kek77"]
+[ext_resource type="PackedScene" path="res://scenes/ui/room_debug_ui.tscn" id="10_5x4pn"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_0xm2m"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -40,6 +42,14 @@ process_mode = 3
 
 [node name="XRCamera3D" type="XRCamera3D" parent="XROrigin3D"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="RoomDebugPanel" parent="XROrigin3D/XRCamera3D" groups=["RoomDebugPanel3D"] instance=ExtResource("4_7mycd")]
+transform = Transform3D(0.9961947, 0, -0.08715574, 0, 1, 0, 0.08715574, 0, 0.9961947, -0.2, -0.15, -0.65)
+screen_size = Vector2(0.22, 0.13)
+collision_layer = 29
+scene = ExtResource("10_5x4pn")
+viewport_size = Vector2(420, 250)
+scene_properties_keys = PackedStringArray("room_debug_ui.gd")
 
 [node name="LeftHand" type="XRNode3D" parent="XROrigin3D"]
 tracker = &"/user/hand_tracker/left"
@@ -107,6 +117,7 @@ collision_mask = 44
 collide_with_areas = true
 
 [node name="OpenXRFbSceneManager" type="OpenXRFbSceneManager" parent="XROrigin3D" groups=["Managers"]]
+auto_create = false
 default_scene = ExtResource("3_dg77c")
 
 [node name="OpenXRFbSpatialAnchorManager" type="OpenXRFbSpatialAnchorManager" parent="XROrigin3D" groups=["Managers"]]
@@ -116,6 +127,9 @@ scene = ExtResource("4_ycdy4")
 
 [node name="SceneController" type="Node" parent="Managers"]
 script = ExtResource("3_efxa6")
+
+[node name="RoomManager" type="Node" parent="Managers" groups=["RoomManager"]]
+script = ExtResource("4_4c4qc")
 
 [node name="MainInterface" type="Node3D" parent="."]
 transform = Transform3D(0.76604444, 0, 0.6427876, 0, 1, 0, -0.6427876, 0, 0.76604444, -0.291, 1.2372029, -0.424)

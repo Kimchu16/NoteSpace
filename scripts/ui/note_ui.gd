@@ -17,7 +17,7 @@ func get_note_content() -> String:
 	return note_label.text
 
 func focus_note():
-	var note_owner := _find_note_owner() as Node3D
+	var note_owner: Node3D = _find_note_owner() as Node3D
 	KeyboardManager.focus_input(note_label, note_owner)
 
 func _edit_note():
@@ -43,32 +43,32 @@ func _edit_note():
 			printerr("save_content not found.")
 
 func update_tags_for_note(note_id: int):
-	print("update tags for note 3d called")
+	# print("update tags for note 3d called")
 	var tags = await NotesService.load_tags_for_note(note_id)
 	for child in tag_container.get_children():
 		child.queue_free()
 	
 	for tag in tags:
 		var tag_instance = load("res://scenes/ui/tags/tag.tscn").instantiate()
-		print("3d Tag instance children: ", tag_instance.get_children())
+		# print("3d Tag instance children: ", tag_instance.get_children())
 		var tag_label = tag_instance.get_node("Label")
 		tag_label.text = tag.tag_name
 		tag_container.add_child(tag_instance)
-		print("Loaded tags for 3d note ", note_id, ": ", tags)
+		# print("Loaded tags for 3d note ", note_id, ": ", tags)
 
 func _cache_current_border_colour() -> void:
-	var panel_stylebox := note_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	var panel_stylebox: StyleBoxFlat = note_panel.get_theme_stylebox("panel") as StyleBoxFlat
 	if panel_stylebox == null:
 		return
 	
 	saved_border_colour = panel_stylebox.border_color
 
 func _set_panel_border_colour(border_colour: Color) -> void:
-	var panel_stylebox := note_panel.get_theme_stylebox("panel") as StyleBoxFlat
+	var panel_stylebox: StyleBoxFlat = note_panel.get_theme_stylebox("panel") as StyleBoxFlat
 	if panel_stylebox == null:
 		return
 	
-	var updated_stylebox := panel_stylebox.duplicate() as StyleBoxFlat
+	var updated_stylebox: StyleBoxFlat = panel_stylebox.duplicate() as StyleBoxFlat
 	if updated_stylebox == null:
 		return
 	

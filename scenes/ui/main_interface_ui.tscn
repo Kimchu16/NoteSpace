@@ -1051,6 +1051,7 @@ icon_alignment = 1
 vertical_icon_alignment = 0
 
 [node name="FilterExtension" type="PanelContainer" parent="Control/ColorRect"]
+visible = false
 layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5

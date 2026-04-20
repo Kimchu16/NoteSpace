@@ -36,9 +36,9 @@ func _on_spawn_button_pressed():
 	emit_signal("spawn_note_button_pressed", note_model, self)
 
 func _on_pressed() -> void:
-	print("is note placed: ", is_note_placed)
+	# print("is note placed: ", is_note_placed)
 	if is_note_placed == true:
-		print("Note already placed.")
+		# print("Note already placed.")
 		emit_signal("highlight_note", note_model)
 	else: 
 		var mainUI = get_tree().get_first_node_in_group("MainInterfaceUI")
@@ -48,7 +48,7 @@ func update_tags_for_note(note_id: int):
 	var tags = await NotesService.load_tags_for_note(note_id)
 	if note_model != null:
 		note_model.tags = tags
-	print("Update tags for note:" ,tags)
+	# print("Update tags for note:" ,tags)
 	for child in tag_container.get_children():
 		if child.name == "OverflowTag":
 			continue
@@ -56,11 +56,11 @@ func update_tags_for_note(note_id: int):
 	
 	for tag in tags:
 		var tag_instance = load("res://scenes/ui/tags/tag.tscn").instantiate()
-		print("Tag instance children: ", tag_instance.get_children())
+		# print("Tag instance children: ", tag_instance.get_children())
 		var tag_label = tag_instance.get_node("Label")
 		tag_label.text = tag.tag_name
 		tag_container.add_child(tag_instance)
-		print("Loaded tags for note ", note_id, ": ", tags)
+		# print("Loaded tags for note ", note_id, ": ", tags)
 	
 	if tag_container.has_method("queue_layout"):
 		tag_container.queue_layout()

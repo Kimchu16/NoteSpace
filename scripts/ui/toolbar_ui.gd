@@ -27,7 +27,7 @@ func _on_perma_del_pressed():
 	emit_signal("delete_button")
 
 func _send_to_main_interface():
-	print("Send back to main interface.")
+	# print("Send back to main interface.")
 	emit_signal("send_to_main_interface")
 	#print("Emitted from:", get_instance_id())
 
@@ -44,7 +44,7 @@ func _on_edit_tags_pressed() -> void:
 
 func get_note_id(id: int) -> void:
 	note_id = id
-	print("note id obtained: ", id, "|| saved note_id: ", note_id, " || toolbar ui id: ", get_instance_id())
+	# print("note id obtained: ", id, "|| saved note_id: ", note_id, " || toolbar ui id: ", get_instance_id())
 
 func _resolve_note_id() -> int:
 	if note_id != -1:
@@ -62,7 +62,7 @@ func _resolve_note_id() -> int:
 	return -1
 
 func update_tags_for_note(id: int):
-	print("update tags for note 3d MANAGEMENT called: ", id, " || Saved note_id: ", note_id, " || toolbar ui id: ", get_instance_id())
+	# print("update tags for note 3d MANAGEMENT called: ", id, " || Saved note_id: ", note_id, " || toolbar ui id: ", get_instance_id())
 	# Add Tags list --------------------------------------------
 	var attached_tags = await NotesService.load_tags_for_note(id)
 	for child in add_tags_list.get_children():
@@ -73,7 +73,7 @@ func update_tags_for_note(id: int):
 		var tag_instance: Button = _create_manage_tag_item(tag, true)
 		add_tags_list.add_child(tag_instance)
 		attached_tag_ids[tag.tag_id] = true
-		print("Loaded attached tag for 3d note ", id, ": ", tag.tag_name)
+		# print("Loaded attached tag for 3d note ", id, ": ", tag.tag_name)
 		
 	# Remove Tags list --------------------------------------------
 	for child in remove_tags_list.get_children():

@@ -14,7 +14,7 @@ var pending_email_confirmation := false
 var pending_email := ""
 
 func _ready():
-	print("AuthManager ready")
+	# print("AuthManager ready")
 	Supabase.auth.connect("signed_in", _on_signed_in)
 	Supabase.auth.connect("signed_up", _on_signed_up)
 	Supabase.auth.token_refreshed.connect(_on_token_restored)
@@ -40,7 +40,7 @@ func logout():
 	emit_signal("auth_checked", false)
 
 func _on_signed_in(user: SupabaseUser):
-	print("SIGNED IN:", user)
+	# print("SIGNED IN:", user)
 	pending_email_confirmation = false
 	pending_email = ""
 	
@@ -57,17 +57,17 @@ func _on_signed_in(user: SupabaseUser):
 	emit_signal("auth_checked", true) 
 
 func _on_signed_up(user: SupabaseUser):
-	print("SIGNED UP:", user)
+	# print("SIGNED UP:", user)
 	pending_email_confirmation = true
 	pending_email = user.email
 	
 	emit_signal("email_confirmation_required", user.email)
 
 func _on_auth_error(err):
-	print("AUTH ERROR:", err)
+	# print("AUTH ERROR:", err)
 	
 	if not is_authenticated:
-		print("Ignoring pre-login error")
+		# print("Ignoring pre-login error")
 		emit_signal("auth_checked", false)
 		return
 	
@@ -84,20 +84,20 @@ func _check_existing_user():
 
 func _on_user_checked(task):
 	if task.error:
-		print("No active session")
+		# print("No active session")
 		emit_signal("auth_checked", false)
 		return
 	
 	current_user = task.user
 	is_authenticated = true
 	
-	print("SESSION EXISTS:", current_user.email)
+	# print("SESSION EXISTS:", current_user.email)
 	
 	emit_signal("auth_checked", true)
 	emit_signal("login_success", current_user)
 
 func _on_token_restored(user: SupabaseUser):
-	print("SESSION RESTORED:", user.email)
+	# print("SESSION RESTORED:", user.email)
 	current_user = user
 	is_authenticated = true
 	
@@ -113,7 +113,7 @@ func _on_token_restored(user: SupabaseUser):
 
 func _try_restore_session():
 	if not FileAccess.file_exists("user://session.save"):
-		print("No saved session...checking SDK")
+		# print("No saved session...checking SDK")
 		_check_existing_user()
 		return
 	
@@ -122,11 +122,11 @@ func _try_restore_session():
 	file.close()
 	
 	if data == null or not data.has("refresh_token") or data["refresh_token"] == null:
-		print("Invalid session... fallback to SDK")
+		# print("Invalid session... fallback to SDK")
 		_check_existing_user()
 		return
 	
-	print("Restoring session...")
+	# print("Restoring session...")
 	var task = await Supabase.auth.refresh_token(
 		data["refresh_token"],
 		data.get("expires_in", 3600),
@@ -136,12 +136,12 @@ func _try_restore_session():
 
 func _on_refresh_completed(task):
 	if task.error:
-		print("Refresh failed:", task.error)
+		# print("Refresh failed:", task.error)
 		_clear_session()
 		emit_signal("auth_checked", false)
 		return
 	
-	print("Refresh success:", task.data)
+	# print("Refresh success:", task.data)
 	
 	var user_task = Supabase.auth.user()
 	user_task.completed.connect(_on_user_checked)

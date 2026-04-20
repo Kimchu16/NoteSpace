@@ -21,10 +21,10 @@ const SNAP_EXIT_DISTANCE = 0.251
 
 var snapped_surface: Node = null
 var spatial_anchor_manager: OpenXRFbSpatialAnchorManager
+var room_manager: RoomManager
 
 var anchor_uuid : String = ""
 var pending_note_for_anchor : Node3D = null
-const SPATIAL_ANCHORS_FILE = "user://spatial_anchors.json"
 
 func _ready() -> void:
 	note = get_parent().get_parent()
@@ -34,7 +34,8 @@ func _ready() -> void:
 	toolbar = get_parent().get_node("Toolbar")
 	pointer_event.connect(_on_pointer_event)
 	xr_controller_l.connect("button_pressed", _on_left_hand_pressed)
-	spatial_anchor_manager =  get_tree().get_nodes_in_group("Managers")[1]
+	spatial_anchor_manager = get_tree().current_scene.get_node("XROrigin3D/OpenXRFbSpatialAnchorManager")
+	room_manager = get_tree().get_first_node_in_group("RoomManager")
 	spatial_anchor_manager.connect("openxr_fb_spatial_anchor_tracked", _on_anchor_tracked)
 	note.returned_to_main_interface.connect(_on_note_returned_to_main)
 
@@ -213,49 +214,23 @@ func delete_spatial_anchor() -> void:
 	if note.anchor_uuid == "":
 		return
 		
-	print("Deleting anchor:", note.anchor_uuid)
+	# print("Deleting anchor:", note.anchor_uuid)
 	spatial_anchor_manager.untrack_anchor(note.anchor_uuid)
-	
-	var anchor_data: Dictionary
-			
-	# READ existing file if exists
-	if FileAccess.file_exists(SPATIAL_ANCHORS_FILE):
-		var read_file = FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ)
-		
-		var json := JSON.new()
-		if json.parse(read_file.get_as_text()) != OK:
-			print("ERROR: Unable to parse ", SPATIAL_ANCHORS_FILE)
-			pass
-		else:
-			anchor_data = json.data
-			print("parsed json: ", JSON.stringify(anchor_data))
-		
-		read_file.close()
-	
-	# UPDATE anchor data
-	if anchor_data.has(note.anchor_uuid):
-		anchor_data.erase(note.anchor_uuid)
-		
-	# WRITE updated data
-	var write_file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.WRITE)
-	if not write_file:
-		print("ERROR: Unable to open file for writing: ", SPATIAL_ANCHORS_FILE)
-		return
-	
-	var stringified_json = JSON.stringify(anchor_data)
-	write_file.store_string(stringified_json)
-	write_file.close()
+
+	if room_manager:
+		room_manager.remove_anchor_record(note.anchor_uuid)
 	
 	note.anchored = false
 	note.anchor_uuid = ""
 	note.save_anchor_state(false)
-	
-	print("new stringified json: ", stringified_json)
-	print("------------------------------------------------------------------------")
 
 func create_spatial_anchor_and_parent() -> void:
+	if room_manager == null or room_manager.current_room_id.is_empty():
+		# print("Cannot create a spatial anchor without an active room.")
+		return
+
 	pending_note_for_anchor = get_parent().get_parent()
-	print("Pending_note_for_anchor: ", pending_note_for_anchor)
+	# print("Pending_note_for_anchor: ", pending_note_for_anchor)
 	
 	# Apply current visual root rotation
 	var visual_global_basis = pending_note_for_anchor.visual_root.global_transform.basis
@@ -268,32 +243,33 @@ func create_spatial_anchor_and_parent() -> void:
 	# Create a new spatial anchor at the note's current position
 	var custom_data: Dictionary = {
 		"note_id": pending_note_for_anchor.note_model.id,
-		"owner": AuthManager.current_user.id
+		"owner": AuthManager.current_user.id,
+		"room_id": room_manager.current_room_id
 	}
 	spatial_anchor_manager.create_anchor(note_transform, custom_data)
 
 # Gets called after create_anchor (or load_anchor but this code block doesn't run for load)
 func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: bool) -> void:
-	print("Anchor tracked successfully.")
+	# print("Anchor tracked successfully.")
 	
-	print("Note: ", note, " || pending_note_for_anchor: ", pending_note_for_anchor)
+	# print("Note: ", note, " || pending_note_for_anchor: ", pending_note_for_anchor)
 	if note != pending_note_for_anchor:
 		return
 	
 	var old_anchor_uuid = note.anchor_uuid
-	print("Note: ", note)
-	print ("old anchor uuid: ", old_anchor_uuid)
+	# print("Note: ", note)
+	# print("old anchor uuid: ", old_anchor_uuid)
 	
 	if spatial_entity:
 		# Get the corresponding XRAnchor3D node for the spatial entity
 		anchor_node = spatial_anchor_manager.get_anchor_node(spatial_entity.uuid)  # Get the XRAnchor3D node
-		print("SE custom data: ",spatial_entity.get_custom_data())
+		# print("SE custom data: ",spatial_entity.get_custom_data())
 		
 		note.anchor_uuid = spatial_entity.uuid
-		print("Note: ", note, " with UUID: ", note.anchor_uuid)
+		# print("Note: ", note, " with UUID: ", note.anchor_uuid)
 		
 	if is_new: # New anchored created
-		print("New anchor tracked.")
+		# print("New anchor tracked.")
 		
 		if pending_note_for_anchor == null:
 			return  # Ignore anchors not created by this note
@@ -303,7 +279,7 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 		
 		if anchor_node:
 			#var global = note.global_transform
-			print("This note: ",note)
+			# print("This note: ",note)
 			note.get_parent().remove_child(note)
 			anchor_node.add_child(note)  # Attach the note to the anchor node
 			#note.global_transform = global
@@ -311,42 +287,19 @@ func _on_anchor_tracked(anchor_node: Object, spatial_entity: Object, is_new: boo
 			note.rotation = Vector3.ZERO
 			note.anchored = true
 			note.save_anchor_state(true)
-			
-			var anchor_data: Dictionary
-			
-			# READ existing file if exists
-			if FileAccess.file_exists(SPATIAL_ANCHORS_FILE):
-				var read_file = FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.READ)
-				
-				var json := JSON.new()
-				if json.parse(read_file.get_as_text()) != OK:
-					print("ERROR: Unable to parse ", SPATIAL_ANCHORS_FILE)
-					pass
-				else:
-					anchor_data = json.data
-					print("parsed json: ", JSON.stringify(anchor_data))
-				
-				read_file.close()
-			
-			# UPDATE anchor data
-			anchor_data[note.anchor_uuid] = spatial_entity.get_custom_data()	
-			
+
+			if room_manager:
+				room_manager.upsert_anchor_note(
+					room_manager.current_room_id,
+					note.anchor_uuid,
+					note.note_model.id,
+					str(AuthManager.current_user.id)
+				)
+
 			if old_anchor_uuid != "":
 				spatial_anchor_manager.untrack_anchor(old_anchor_uuid)
-				anchor_data.erase(old_anchor_uuid)
-				
-			# WRITE updated data
-			var write_file := FileAccess.open(SPATIAL_ANCHORS_FILE, FileAccess.WRITE)
-			if not write_file:
-				print("ERROR: Unable to open file for writing: ", SPATIAL_ANCHORS_FILE)
-				return
-			
-			var stringified_json = JSON.stringify(anchor_data)
-			write_file.store_string(stringified_json)
-			write_file.close()
-			
-			print("new stringified json: ", stringified_json)
-			print("------------------------------------------------------------------------")
+				if room_manager:
+					room_manager.remove_anchor_record(old_anchor_uuid)
 
 func _on_note_returned_to_main(note_model):
 	delete_spatial_anchor()

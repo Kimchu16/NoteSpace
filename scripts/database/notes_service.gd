@@ -15,7 +15,7 @@ func create_note(content: String, is_anchored: bool, color: String) -> NoteModel
 	await task.completed
 	
 	if task.data and task.data.size() > 0:
-		print("Note created in database")
+		# print("Note created in database")
 		return NoteModel.from_dict(task.data[0])
 	else:
 		push_error("Failed to create note in database")
@@ -41,7 +41,7 @@ func get_note_by_id(note_id: int) -> NoteModel:
 
 	var task = Supabase.database.query(query)
 	await task.completed
-	print("Query result:", task.data)
+	# print("Query result:", task.data)
 
 	if task.data and task.data.size() > 0:
 		return NoteModel.from_dict(task.data[0]) # ID column
@@ -75,7 +75,7 @@ func delete_note(note_id: int) -> bool:
 	await task.completed
 	
 	if task.data != null:
-		print("Note deleted from database")
+		# print("Note deleted from database")
 		return true
 	return false
 
@@ -133,10 +133,10 @@ func load_tags_for_note(note_id: int) -> Array[TagModel]:
 		if tags_by_id.has(tag_id) and not seen.has(tag_id):
 			tags.append(tags_by_id[tag_id])
 			seen[tag_id] = true
-		else:
-			print("No user tag found for tag_id:", tag_id)
+		#else:
+			# print("No user tag found for tag_id:", tag_id)
 		
-	print("Returning tags:", tags)
+	# print("Returning tags:", tags)
 	return tags
 
 func _note_has_tag(note_id: int, tag_id: int) -> bool:
@@ -164,7 +164,7 @@ func add_tags_to_note(note_id: int, tag_ids: Array) -> bool:
 		if task.error != null:
 			# 23505 => unique_violation, relation already exists.
 			if str(task.error.code) == "23505":
-				print("Tag relationship already exists for note_id: ", note_id, " and tag_id: ", tag_id)
+				# print("Tag relationship already exists for note_id: ", note_id, " and tag_id: ", tag_id)
 				continue
 			printerr(
 				"Failed to add tag relationship for note_id: ", note_id,
@@ -180,7 +180,7 @@ func add_tags_to_note(note_id: int, tag_ids: Array) -> bool:
 			printerr("Tag insert did not persist for note_id: ", note_id, " and tag_id: ", tag_id)
 			return false
 	
-	print("Tags successfully added to note.")
+	# print("Tags successfully added to note.")
 	return true
 
 func remove_tag_from_note(note_id: int, tag_id: int) -> bool:
@@ -208,5 +208,5 @@ func remove_tag_from_note(note_id: int, tag_id: int) -> bool:
 		printerr("Tag delete did not persist for note_id: ", note_id, " and tag_id: ", tag_id)
 		return false
 
-	print("Tag successfully removed from note.")
+	# print("Tag successfully removed from note.")
 	return true

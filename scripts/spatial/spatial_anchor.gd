@@ -4,4 +4,4 @@ extends Node3D
 
 func setup_scene(spatial_entity: OpenXRFbSpatialEntity) -> void:#
 	var note = get_parent().find_child("Note3D")
-	print("Child: ", note)
+	# print("Child: ", note)

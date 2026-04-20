@@ -1,31 +1,169 @@
 extends Node
 
-@onready var scene_manager: OpenXRFbSceneManager
-@onready var spatial_anchor_manager : OpenXRFbSpatialAnchorManager
+@onready var scene_manager: OpenXRFbSceneManager = get_tree().current_scene.get_node("XROrigin3D/OpenXRFbSceneManager")
+@onready var room_manager: RoomManager = get_tree().get_first_node_in_group("RoomManager")
+@onready var xr_camera: Node3D = get_tree().current_scene.get_node_or_null("XROrigin3D/XRCamera3D")
+
+const AUTO_ROOM_SCAN_INTERVAL_SEC := 6.0
+const AUTO_ROOM_SCAN_MOVE_THRESHOLD := 2.5
+
+var xr_interface: XRInterface
+var scene_capture_requested: bool = false
+var scene_refresh_in_progress: bool = false
+var ignore_room_change_refresh: bool = false
+var room_switch_pending_refresh: bool = false
+var auto_room_scan_elapsed: float = 0.0
+var last_scan_origin: Vector3 = Vector3.ZERO
+var has_last_scan_origin: bool = false
+var allow_scene_capture_on_missing: bool = false
 
 func _ready():
-	scene_manager = get_tree().get_nodes_in_group("Managers")[0]
-	spatial_anchor_manager = get_tree().get_nodes_in_group("Managers")[1]
 	scene_manager.openxr_fb_scene_data_missing.connect(_on_scene_data_missing)
 	scene_manager.openxr_fb_scene_capture_completed.connect(_on_scene_capture_completed)
-	
-	#print("Managers: ", get_tree().get_nodes_in_group("Managers"))
+	xr_interface = XRServer.find_interface("OpenXR")
+
+	if room_manager:
+		room_manager.current_room_changed.connect(_on_current_room_changed)
+		room_manager.room_loaded.connect(_on_room_loaded)
+
+	if xr_interface and xr_interface.is_initialized():
+		xr_interface.session_begun.connect(_on_openxr_session_begun)
+
+func _on_openxr_session_begun() -> void:
+	refresh_current_room("Loading room data for the current space", true)
+
+func _process(delta: float) -> void:
+	if xr_interface == null or not xr_interface.is_initialized():
+		return
+
+	if scene_capture_requested or scene_refresh_in_progress:
+		return
+
+	auto_room_scan_elapsed += delta
+	if auto_room_scan_elapsed < AUTO_ROOM_SCAN_INTERVAL_SEC:
+		return
+
+	auto_room_scan_elapsed = 0.0
+
+	if room_manager == null:
+		return
+
+	if room_manager.current_room_id.is_empty():
+		refresh_current_room("Searching for a room")
+		return
+
+	if xr_camera == null:
+		return
+
+	if not has_last_scan_origin:
+		refresh_current_room("Refreshing room after startup")
+		return
+
+	if xr_camera.global_position.distance_to(last_scan_origin) >= AUTO_ROOM_SCAN_MOVE_THRESHOLD:
+		refresh_current_room("User moved far enough to check the current room")
+
+func _clear_scene_surfaces() -> void:
+	for surface in get_tree().get_nodes_in_group("valid_surfaces"):
+		if is_instance_valid(surface):
+			surface.queue_free()
+
+func refresh_current_room(reason: String = "Refreshing current room", allow_capture_if_missing: bool = false) -> void:
+	auto_room_scan_elapsed = 0.0
+	_rebuild_room_from_current_scene(reason, allow_capture_if_missing)
+
+func force_scene_capture(reason: String = "Manual room rescan") -> void:
+	if scene_capture_requested or scene_refresh_in_progress:
+		return
+
+	auto_room_scan_elapsed = 0.0
+	allow_scene_capture_on_missing = false
+	_request_scene_capture(reason)
+
+func _rebuild_room_from_current_scene(_reason: String = "Refreshing current room", allow_capture_if_missing: bool = false) -> void:
+	if scene_refresh_in_progress:
+		return
+
+	scene_refresh_in_progress = true
+	ignore_room_change_refresh = true
+	allow_scene_capture_on_missing = allow_capture_if_missing
+
+	if room_manager:
+		room_manager.begin_scene_discovery()
+		room_manager.unload_current_room()
+
+	_clear_scene_surfaces()
+
+	if scene_manager.are_scene_anchors_created():
+		# print("Removing cached scene anchors before creating fresh room anchors")
+		scene_manager.remove_scene_anchors()
+
+	var create_error: Error = scene_manager.create_scene_anchors()
+	if create_error != OK:
+		_finish_scene_refresh_without_room()
+		return
+
+	_remember_scan_origin()
+
+func _on_current_room_changed(previous_room_id: String, current_room_id: String) -> void:
+	if ignore_room_change_refresh:
+		if current_room_id.is_empty():
+			return
+
+		ignore_room_change_refresh = false
+		return
+
+	if not previous_room_id.is_empty() and current_room_id.is_empty():
+		room_switch_pending_refresh = true
+		return
+
+	if room_switch_pending_refresh and not current_room_id.is_empty():
+		room_switch_pending_refresh = false
+		refresh_current_room("Room changed - rebuilding scene data")
+
+func _on_room_loaded(_room_id: String) -> void:
+	scene_refresh_in_progress = false
+	allow_scene_capture_on_missing = false
+	ignore_room_change_refresh = false
+
+func _request_scene_capture(reason: String) -> void:
+	if scene_capture_requested:
+		return
+
+	if not scene_manager.is_scene_capture_supported():
+		return
+
+	scene_capture_requested = true
+
+	# print(reason)
+	if not scene_manager.request_scene_capture(reason):
+		scene_capture_requested = false
 
 func _on_scene_data_missing():
-	print("Scene data missing - requesting capture")
-	scene_manager.request_scene_capture()
+	var should_request_capture: bool = allow_scene_capture_on_missing
+	_finish_scene_refresh_without_room()
+
+	if should_request_capture:
+		_request_scene_capture("Scene data missing - please scan this room")
 
 func _on_scene_capture_completed(success: bool):
+	scene_capture_requested = false
+
 	if not success:
-		print("Scene capture failed")
+		allow_scene_capture_on_missing = false
+		ignore_room_change_refresh = false
+		# print("Scene capture failed")
 		return
-	print("Scene capture completed")
-	
-	if scene_manager.are_scene_anchors_created():
-		scene_manager.remove_scene_anchors()
-	
-	scene_manager.create_scene_anchors()
-	
-	var anchor_uuids = scene_manager.get_anchor_uuids()
-	for uuid in anchor_uuids:
-		print("Anchor UUID: ", uuid)
+
+	refresh_current_room("Scene capture completed", false)
+
+func _remember_scan_origin() -> void:
+	if xr_camera == null:
+		return
+
+	last_scan_origin = xr_camera.global_position
+	has_last_scan_origin = true
+
+func _finish_scene_refresh_without_room() -> void:
+	scene_refresh_in_progress = false
+	allow_scene_capture_on_missing = false
+	ignore_room_change_refresh = false

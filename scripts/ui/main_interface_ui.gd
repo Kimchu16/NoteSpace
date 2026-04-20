@@ -41,7 +41,7 @@ var selected_filter_tag_ids: Dictionary = {}
 
 func _ready() -> void:
 	AuthManager.login_success.connect(_on_user_logged_in)
-	AuthManager.auth_checked.connect(_on_auth_checked)
+	#AuthManager.auth_checked.connect(_on_auth_checked)
 	AuthManager.logout_success.connect(_on_user_logged_out)
 	if notes_root == null:
 		notes_root = get_tree().get_first_node_in_group("Notes")
@@ -50,33 +50,33 @@ func _ready() -> void:
 	ui_panel = get_tree().get_first_node_in_group("MainUI3D")
 	_connect_search_inputs()
 
-func _on_auth_checked(is_logged_in):
-	if is_logged_in:
+#func _on_auth_checked(is_logged_in):
+	#if is_logged_in:
 		#await load_notes_from_database()
 		#await load_tags_from_database()
-		print("load notes on auth checked")
+		# print("load notes on auth checked")
 
 func _on_user_logged_in(user):
-	print("User authenticated -> loading notes...")
+	# print("User authenticated -> loading notes...")
 	clear_menu_notes()
 	clear_menu_tags()
 	await load_notes_from_database()
 	await load_tags_from_database()
-	print("load notes on user logged in")
+	# print("load notes on user logged in")
 
 func _on_user_logged_out():
-	print("User logged out -> clearing notes")
+	# print("User logged out -> clearing notes")
 	clear_menu_notes()
 	clear_menu_tags()
 	notes_by_id.clear()
 
 func clear_menu_notes():
-	print("Clearing menu notes...")
+	# print("Clearing menu notes...")
 	for child in menu_notes.get_children():
 		child.queue_free()
 
 func clear_menu_tags():
-	print("Clearing menu tags...")
+	# print("Clearing menu tags...")
 	for child in tag_container.get_children():
 		child.queue_free()
 	_clear_filter_tag_buttons()
@@ -86,13 +86,13 @@ func load_notes_from_database() -> void:
 	var notes = await NotesService.get_user_notes()
 	note_count = notes.size()
 	note_count_label.text = str(note_count)
-	print("Loading ", notes.size(), " notes from database...")
+	# print("Loading ", notes.size(), " notes from database...")
 	
 	for note_model in notes:
 		var menu_note_instance: MenuNote = menu_note_scene.instantiate()
 		menu_notes.add_child(menu_note_instance)
 		menu_note_instance.set_note_data(note_model)
-		print("note model id: ", note_model.id)
+		# print("note model id: ", note_model.id)
 		await menu_note_instance.update_tags_for_note(note_model.id)
 		menu_note_instance.spawn_note_button_pressed.connect(_on_spawn_note_requested)
 		
@@ -109,7 +109,7 @@ func load_tags_from_database() -> void:
 	var tags = await TagsService.get_user_tags()
 	tag_count = tags.size()
 	tag_count_label.text = str(tag_count)
-	print("Loading ", tags.size(), " tags from database...")
+	# print("Loading ", tags.size(), " tags from database...")
 	
 	for tag_model in tags:
 		var tag_instance: MenuTag = tag_scene.instantiate()
@@ -122,6 +122,11 @@ func load_tags_from_database() -> void:
 
 func register_note(note_instance: Note3D):
 	notes_by_id[note_instance.note_model.id] = note_instance
+
+func unregister_loaded_note(note_instance: Note3D):
+	if note_instance == null or note_instance.note_model == null:
+		return
+	notes_by_id.erase(note_instance.note_model.id)
 
 func unregister_note(note_instance: Note3D):
 	notes_by_id.erase(note_instance.note_model.id)
@@ -150,13 +155,13 @@ func spawn_note(note_model: NoteModel) -> void:
 	var spawn_position = hmd.origin + forward * 0.5
 	var note_instance: Note3D = note_scene.instantiate()
 	notes_root.add_child(note_instance)
-	print("Spawn note id: ", note_model.id, " | node name: ", note_instance.name)
+	# print("Spawn note id: ", note_model.id, " | node name: ", note_instance.name)
 	
 	# Set position
 	note_instance.global_position = hmd.origin + forward * 0.5
 	
 	note_instance.set_note_data(note_model)
-	print("CALLED NOTE3D TAGS FOR NOTE: ", note_model.id)
+	# print("CALLED NOTE3D TAGS FOR NOTE: ", note_model.id)
 	note_instance.update_tags_for_note(note_model.id)
 	register_note(note_instance)
 
@@ -182,7 +187,7 @@ func _on_create_button_pressed() -> void:
 	
 	if note_model:
 		spawn_note(note_model)
-		print(note_model)
+		# print(note_model)
 	else:
 		printerr("note model null")
 	
@@ -239,7 +244,7 @@ func _on_colour_pick_pressed(colour: String) -> void:
 	colour_chosen.add_theme_stylebox_override("panel", style_box)
 
 func _on_tag_edit_requested(tag_instance: MenuTag) -> void:
-	print("edit tag pressed: ", tag_instance)
+	# print("edit tag pressed: ", tag_instance)
 	edit_tag_instance = tag_instance
 	tag_menu.visible = false
 	tag_editor.visible = true
@@ -249,12 +254,12 @@ func _on_tag_edit_requested(tag_instance: MenuTag) -> void:
 	tag_editor_del_btn.pressed.connect(_on_tag_delete_btn_pressed)
 
 func _on_save_btn_pressed():
-	print("button pressed: ", edit_tag_instance)
+	# print("button pressed: ", edit_tag_instance)
 	if is_new_tag != true:
 		if tag_editor_name.text != "":
 			var updated_tag = await TagsService.update_tag(edit_tag_instance.tag_data.tag_id, tag_editor_name.text, tag_editor_desc.text)
 			if updated_tag:
-				print("Tag updated")
+				# print("Tag updated")
 				edit_tag_instance.set_tag_data(updated_tag)
 				await _refresh_filter_tag_buttons()
 				_apply_tags_filter(tags_search_input.text)
@@ -271,7 +276,7 @@ func _on_save_btn_pressed():
 	# Save the tag in the database and add to menu list
 	var created_tag = await TagsService.create_tag(tag_model.tag_name, tag_model.description)
 	if created_tag:
-		print("Tag created: ", created_tag.tag_name)
+		# print("Tag created: ", created_tag.tag_name)
 		_update_tag_count("plus")
 		var tag_instance: MenuTag = tag_scene.instantiate()
 		tag_container.add_child(tag_instance)
@@ -280,7 +285,8 @@ func _on_save_btn_pressed():
 		await _refresh_filter_tag_buttons()
 		_apply_tags_filter(tags_search_input.text)
 	else:
-		print("Failed to create tag.")
+		# print("Failed to create tag.")
+		pass
 
 func _reset_tag_editor() -> void:
 	tag_editor_name.text = ""
@@ -315,14 +321,16 @@ func _on_tag_delete_btn_pressed(tag_instance: MenuTag) -> void:
 		if success:
 			tag_container.remove_child(tag_instance)
 			tag_instance.queue_free()
-			print("Tag deleted from UI and database.")
+			# print("Tag deleted from UI and database.")
 			_update_tag_count("minus")
 			await _refresh_filter_tag_buttons()
 			_apply_tags_filter(tags_search_input.text)
 		else:
-			print("Failed to delete tag.")
+			# print("Failed to delete tag.")
+			pass
 	else:
-		print("Invalid tag ID.")
+		# print("Invalid tag ID.")
+		pass
 
 
 func _on_blue_pressed() -> void:

@@ -17,7 +17,10 @@ func _on_task_completed(result : int, response_code : int, headers : PackedStrin
 	if response_code < 300:
 		complete(result_body)
 	else:
-		var supabase_error : SupabaseDatabaseError = SupabaseDatabaseError.new(result_body)
+		var error_body: Dictionary = {}
+		if result_body is Dictionary:
+			error_body = result_body
+		var supabase_error : SupabaseDatabaseError = SupabaseDatabaseError.new(error_body)
 		complete(null, supabase_error)
 	handler.queue_free()
 

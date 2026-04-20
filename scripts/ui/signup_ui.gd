@@ -19,30 +19,31 @@ func _ready():
 	signupUI = get_tree().get_first_node_in_group("SignupUI")
 
 func _on_signup_pressed():
-	print("BUTTON CLICKED")
+	# print("BUTTON CLICKED")
 	var email = email_input.text.strip_edges()
 	var password = password_input.text.strip_edges()
 	var error = _validate_signup(email, password)
 	
 	if error != "":
-		print(error)
+		# print(error)
 		return
 		
-	print("Signing up with:", email)
+	# print("Signing up with:", email)
 	AuthManager.signup(email, password)
 
 func _on_signup_failed(error):
-	print("Signup failed UI:", error)
+	# print("Signup failed UI:", error)
+	pass
 
 func _on_email_focus():
-	print("on_email focus input")
+	# print("on_email focus input")
 	KeyboardManager.focus_input(email_input, ui_panel)
 
 func _unfocus():
 	KeyboardManager.unfocus_input()
 
 func _on_password_focus():
-	print("on_password focus input")
+	# print("on_password focus input")
 	KeyboardManager.focus_input(password_input, ui_panel)
 
 func _validate_signup(email: String, password: String) -> String:
@@ -58,11 +59,11 @@ func _validate_signup(email: String, password: String) -> String:
 	return ""
 
 func _on_email_confirmation(email):
-	print("Check your email:", email)
+	# print("Check your email:", email)
 	signup_panel.visible = false
 	email_confirmation.visible = true
 
 func _switch_to_login():
-	print("Switch to login")
+	# print("Switch to login")
 	signupUI.visible = false
 	loginUI.visible = true

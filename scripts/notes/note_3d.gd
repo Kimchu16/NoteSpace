@@ -54,7 +54,7 @@ func save_content(new_content: String) -> void:
 	
 	note_model.content = new_content
 	await NotesService.update_note_content(note_model.id, new_content)
-	print("Content saved for note ", note_model.id)
+	# print("Content saved for note ", note_model.id)
 
 func highlight():
 	highlight_ring.visible = true
@@ -72,7 +72,7 @@ func _on_delete_button_pressed() -> void:
 	main_interface_ui.unregister_note(self)
 	$VisualRoot/XRToolsInteractableArea.delete_spatial_anchor()
 	queue_free()
-	print("Note Deleted")
+	# print("Note Deleted")
 
 func _on_send_to_main() -> void:
 	await save_anchor_state(false)

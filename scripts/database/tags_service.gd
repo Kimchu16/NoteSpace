@@ -14,7 +14,7 @@ func create_tag(tag_name: String, description: String) -> TagModel:
 	await task.completed
 
 	if task.data and task.data.size() > 0:
-		print("Tag created in database")
+		# print("Tag created in database")
 		return TagModel.from_dict(task.data[0])
 	else:
 		push_error("Failed to create tag in database")
@@ -73,6 +73,6 @@ func delete_tag(tag_id: int) -> bool:
 	await task.completed
 
 	if task.data != null:
-		print("Tag deleted from database")
+		# print("Tag deleted from database")
 		return true
 	return false
